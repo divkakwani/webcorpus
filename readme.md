@@ -1,16 +1,44 @@
+## Indian Corpora
 
 
-#### Scripts
+
+This repository contains newspaper datasets and scraping code for several Indian languages
 
 
-* gather_urls.py -> fetches urls of news websites
-* fetch_articles.py -> scrapes news websites
+
+#### Setup
+
+Run the following command to install the dependencies:
+```bash
+make build
+```
 
 
-#### Data
 
-* news_sources.json -> Holds the urls of news websites
-* raw/:
-    * raw/<lang id>/<source id>/<article-id> stores html dump
-* processed/:
-    * processed/<lang id>/<source id>/<article-id> stores structured dump
+#### Usage
+
+* To re-compile the list of news sources, run:
+
+  ```
+  python3 main.py fetch-sources
+  ```
+
+* To scrape news sources and build raw dataset, run:
+
+  ```bash
+  python3 main.py fetch-news
+  ```
+
+* To process a raw dataset, run:
+
+  ```bash
+  python3 main.py process-news --corpuspath <path> --lang <langcode>
+  ```
+
+  
+
+#### Datasets
+
+* Hindi
+* Kannada
+* Oriya
