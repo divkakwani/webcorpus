@@ -1,0 +1,6 @@
+[submodule "vendor/indic_nlp_library"]
+	path = vendor/indic_nlp_library
+	url = https://github.com/anoopkunchukuttan/indic_nlp_library.git
+[submodule "vendor/indic_nlp_resources"]
+	path = vendor/indic_nlp_resources
+	url = https://github.com/anoopkunchukuttan/indic_nlp_resources.git
