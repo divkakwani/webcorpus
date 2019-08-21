@@ -7,6 +7,8 @@ name = "pypi"
 pycld2 = "*"
 morfessor = "*"
 polyglot = "*"
+tldextract = "*"
+spacy = "*"
 
 [dev-packages]
 
