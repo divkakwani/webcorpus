@@ -4,6 +4,7 @@ import json
 
 from crawlers import W3NewsPaperSpider
 from crawlers import make_news_crawler
+from corpus import NewsCorpusProcessor
 from scrapy.crawler import CrawlerProcess
 
 
@@ -16,7 +17,7 @@ def cli(debug):
     click.echo('Debug mode is %s' % ('on' if debug else 'off'))
 
 
-@cli.command(name="fetch-sources")
+@cli.command(name='fetch-sources')
 def fetch_urls():
     W3NewsPaperSpider.disk_path = SOURCES_PATH
     process = CrawlerProcess()
@@ -30,7 +31,7 @@ def load_urls(disk_path):
     return [(l, u) for l in urls for u in urls[l]]
 
 
-@cli.command(name="fetch-news")
+@cli.command(name='fetch-news')
 @click.option('--lang', default=None)
 def download_news(lang):
     sources = load_urls(SOURCES_PATH)
@@ -42,10 +43,12 @@ def download_news(lang):
     process.start()  # block until all crawling jobs are finished
 
 
-@cli.command(name="process-news")
-def process_datasets(corpus_path, lang):
-    pass
-    # processor = NewsCorpusProcessor(corpus_path, lang)
+@cli.command(name='process-news')
+@click.option('--corpuspath')
+@click.option('--lang')
+def process_datasets(corpuspath, lang):
+    processor = NewsCorpusProcessor(corpuspath, lang)
+    processor.process()
 
 
 if __name__ == '__main__':

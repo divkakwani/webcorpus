@@ -8,7 +8,9 @@ Tricks in preparing dataset
 """
 
 import os
+import re
 import sys
+import string
 
 
 INDIC_NLP_LIB_HOME = './vendor/indic_nlp_library'
@@ -50,9 +52,15 @@ class NewsCorpusWriter:
 
     def __init__(self, corpus_path, amalgamated=True):
         self.corpus_path = corpus_path
+        self.fp = open(self.corpus_path, 'w', encoding='utf-8')
+        self.writing_started = False
 
-    def add_article(self):
-        pass
+    def add_article(self, sents):
+        if len(sents) > 0 and self.writing_started:
+            self.fp.write('\n')
+        if not self.writing_started:
+            self.writing_started = True
+        self.fp.write('\n'.join(sents))
 
 
 class NewsCorpusProcessor:
@@ -63,9 +71,9 @@ class NewsCorpusProcessor:
         self.corpus_reader = NewsCorpusReader(corpus_path)
         normalizer_factory = indic_normalize.IndicNormalizerFactory()
         self.normalizer = normalizer_factory.get_normalizer(lang)
-        self.stop_sents = self._stop_sents()
+        self.stop_sents = set(self._stop_sents())
         self.corpus_reader.reset()
-        self.corpus_writer = NewsCorpusWriter('./data/processed')
+        self.corpus_writer = NewsCorpusWriter('./data/processed/' + self.lang)
         print(self.stop_sents)
 
     def _stop_sents(self):
@@ -91,12 +99,22 @@ class NewsCorpusProcessor:
         return freq.keys()
 
     def _process_sent(self, sent):
-        newline_removed = sent.replace('\n',' ')
+        newline_removed = sent.replace('\n', ' ')
         normalized = self.normalizer.normalize(newline_removed)
-        punc_removed = ' '.join(indic_tokenize.trivial_tokenize(normalized, self.lang))
+        exclude = set(string.punctuation)
+        punc_removed = ''.join(c for c in normalized if c not in exclude)
         return punc_removed
 
     def process(self):
         for article in self.corpus_reader.read_articles():
             sents = sentence_tokenize.sentence_split(article, 'hi')
             sents = map(self._process_sent, sents)
+            sents = list(filter(self._sent_filter, sents))
+            self.corpus_writer.add_article(sents)
+
+    def _sent_filter(self, sent):
+        if sent in self.stop_sents or len(sent) < 10:
+            return False
+        if re.search('[a-zA-Z]', sent) is not None:
+            return False
+        return True
