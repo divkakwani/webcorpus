@@ -38,5 +38,5 @@ make build
 #### Datasets
 
 * Hindi
-* Kannada
+* Kannada: About 800 articles, 93k tokens
 * Oriya
