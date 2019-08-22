@@ -4,7 +4,7 @@
 
 This repository contains newspaper datasets and scraping code for several Indian languages
 
-
+For discussion, join us on [![Join the chat at https://gitter.im/indian-nlp/community](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/indian-nlp/community)
 
 #### Setup
 
@@ -12,8 +12,6 @@ Run the following command to install the dependencies:
 ```bash
 make build
 ```
-
-
 
 #### Usage
 
