@@ -37,6 +37,6 @@ make build
 
 #### Datasets
 
-* Hindi
-* Kannada: About 800 articles, 93k tokens
-* Oriya
+| Language | # News Articles | # Lines | # Tokens  | # Unique Tokens | Link |
+| -------- | --------------- | ------- | --------- | --------------- | ---- |
+| Kannada  | 43,484          | 484,501 | 5,086,301 | 402,195         |      |
