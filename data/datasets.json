@@ -1,0 +1,13 @@
+{
+    "./data/processed/kn": {
+        "num_lines": 484501,
+        "num_tokens": 5086301,
+        "num_unique_lines": 348625,
+        "num_unique_tokens": 402195,
+        "path": "./data/processed/kn"
+    },
+    "./data/raw/kn": {
+        "num_articles": 43483,
+        "path": "./data/raw/kn"
+    }
+}
