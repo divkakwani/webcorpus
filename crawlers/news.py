@@ -40,7 +40,7 @@ def getcrawler(source):
 class BaseNewsSpider(scrapy.Spider):
 
     custom_settings = {
-        'DOWNLOAD_DELAY': 0.1,
+        'DOWNLOAD_DELAY': 0.2,
         # 'LOG_ENABLED': False,
         'CONCURRENT_REQUESTS': 32,
         'scrapy.spidermiddlewares.offsite.OffsiteMiddleware': None,
@@ -113,8 +113,8 @@ class BaseNewsSpider(scrapy.Spider):
 class NewsSitemapSpider(BaseNewsSpider, scrapy.spiders.SitemapSpider):
 
     def __init__(self, source):
-        self.sitemap_urls = [source['sitemap_url']]
         super().__init__(source)
+        self.sitemap_urls = [source['sitemap_url']]
 
     def parse(self, response):
         article = self.parse_article(response)
@@ -147,3 +147,34 @@ class SanjevaniSpider(RecursiveSpider):
         for node in sel.css('.entry-content *::text'):
             text = text + '\n' + node.extract()
         return text
+
+
+class BalkaniNewsSpider(NewsSitemapSpider):
+
+    def __init__(self, source):
+        super().__init__(source)
+        self.link_extractor = LinkExtractor()
+
+    def parse(self, response):
+        article = self.parse_article(response)
+        if article:
+            self.write_article(article)
+
+        links = self.link_extractor.extract_links(response)
+        for link in links:
+            yield scrapy.Request(link.url)
+
+
+class SahilOnlineSpider(BaseNewsSpider):
+
+    def __init__(self, source):
+        super().__init__(source)
+        response = requests.get(source['sitemap_url'])
+        urls = URL.extract(str(response.content))
+        urls = list(filter(lambda u: not u.lower().endswith('jpg'), urls))
+        self.start_urls = urls
+
+    def parse(self, response):
+        article = self.parse_article(response)
+        if article:
+            self.write_article(article)
