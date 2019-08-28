@@ -819,12 +819,6 @@
             "sitemap_url": "https://vijaykarnataka.indiatimes.com/sitemap.xml"
         },
         {
-            "home_url": "http://epaper.sudharmasanskritdaily.in/",
-            "language": "kn",
-            "name": "sudharmasanskritdaily",
-            "sitemap_url": "http://epaper.sudharmasanskritdaily.in/sitemap.xml"
-        },
-        {
             "home_url": "https://www.udayavani.com/",
             "language": "kn",
             "name": "udayavani",
@@ -840,13 +834,7 @@
             "home_url": "http://www.sahilonline.net/ka",
             "language": "kn",
             "name": "sahilonline",
-            "sitemap_url": "https://www.sahilonline.net/sitemap/ka"
-        },
-        {
-            "home_url": "http://epaper.suddimoola.com/",
-            "language": "kn",
-            "name": "suddimoola",
-            "sitemap_url": "http://epaper.suddimoola.com/sitemap.xml"
+            "sitemap_url": "https://www.sahilonline.net/sitemap/posts/ka"
         },
         {
             "home_url": "http://www.suddidina.com/",
@@ -859,24 +847,6 @@
             "language": "kn",
             "name": "webdunia",
             "sitemap_url": "http://kannada.webdunia.com/sitemap.xml"
-        },
-        {
-            "home_url": "https://balkaninews.com/",
-            "language": "kn",
-            "name": "balkaninews",
-            "sitemap_url": "https://balkaninews.com/sitemap.xml"
-        },
-        {
-            "home_url": "https://kannadaratna.com/",
-            "language": "kn",
-            "name": "kannadaratna",
-            "sitemap_url": "https://kannadaratna.com/sitemap.xml"
-        },
-        {
-            "home_url": "http://epapervijayavani.in/",
-            "language": "kn",
-            "name": "epapervijayavani",
-            "sitemap_url": "http://epapervijayavani.in/sitemap.xml"
         },
         {
             "home_url": "https://vaarte.com/",
@@ -915,24 +885,6 @@
             "sitemap_url": "http://kannadadunia.com/sitemap.xml"
         },
         {
-            "home_url": "http://sanjevani.com/sanjevani/",
-            "language": "kn",
-            "name": "sanjevani",
-            "sitemap_url": "http://sanjevani.com/sanjevani/sitemap.xml"
-        },
-        {
-            "home_url": "http://www.karnatakamalla.com/",
-            "language": "kn",
-            "name": "karnatakamalla",
-            "sitemap_url": "http://www.karnatakamalla.com/sitemap.xml"
-        },
-        {
-            "home_url": "http://www.newsvani.com/",
-            "language": "kn",
-            "name": "newsvani",
-            "sitemap_url": "http://www.newsvani.com/sitemap.xml"
-        },
-        {
             "home_url": "http://vishwavani.news/",
             "language": "kn",
             "name": "vishwavani",
@@ -954,7 +906,7 @@
             "home_url": "https://www.kannadaprabha.com/",
             "language": "kn",
             "name": "kannadaprabha",
-            "sitemap_url": "https://www.kannadaprabha.com/sitemap.xml"
+            "sitemap_url": ""
         },
         {
             "home_url": "http://kannadadunia.com/",
@@ -966,22 +918,28 @@
             "home_url": "https://www.eesanje.com/",
             "language": "kn",
             "name": "eesanje",
-            "sitemap_url": "https://www.eesanje.com/sitemap.xml"
+            "sitemap_url": ""
         },
         {
-            "home_url": "http://epaper.samyukthakarnataka.com/",
+            "home_url": "https://balkaninews.com/",
             "language": "kn",
-            "name": "samyukthakarnataka",
-            "sitemap_url": "http://epaper.samyukthakarnataka.com/sitemap.xml"
+            "name": "balkaninews",
+            "sitemap_url": "https://balkaninews.com/sitemap.xml"
+        },
+        {
+            "home_url": "https://kannadaratna.com/",
+            "language": "kn",
+            "name": "kannadaratna",
+            "sitemap_url": ""
+        },
+        {
+            "home_url": "http://sanjevani.com/sanjevani/",
+            "language": "kn",
+            "name": "sanjevani",
+            "sitemap_url": ""
         }
     ],
     "or": [
-        {
-            "home_url": "http://eodishasamachar.com/",
-            "language": "or",
-            "name": "eodishasamachar",
-            "sitemap_url": "http://eodishasamachar.com/sitemap.xml"
-        },
         {
             "home_url": "http://www.pragativadi.com/",
             "language": "or",
