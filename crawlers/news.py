@@ -1,84 +1,149 @@
-
 import scrapy
+import json
 import os
 import requests
+import tldextract
+import sys
+import inspect
 
 from boilerpipe.extract import Extractor
-from utils import URL
+from utils import URL, get_lang_name, is_alphabet
 from scrapy.linkextractors import LinkExtractor
+from scrapy.selector import Selector
 
 
-def make_news_crawler(lang, source):
-    use_sitemap = False
-    request = requests.get(source['sitemap_url'])
-    if request.status_code == 200:
-        use_sitemap = True
-    if use_sitemap:
-        subclass = type(source['name'], (NewsSitemapSpider,),
-                        {"name": source['name'], 'lang': lang,
-                         "sitemap_urls": [source['sitemap_url']]})
-    else:
-        subclass = type(source['name'], (NewsHomeSpider,),
-                        {"name": source['name'], "lang": lang,
-                         "start_urls": [source['home_url']]})
-    return subclass
+def getcrawler(source):
+    """
+    Dynamically selects spider class based on the source
+    """
+    # check for a custom spider
+    classes = inspect.getmembers(sys.modules[__name__], inspect.isclass)
+    mangled_name = (source['name'] + 'spider').lower()
+    for cls_name, clas in classes:
+        if mangled_name == cls_name.lower():
+            return clas
+
+    # check for the sitemap spider
+    if URL.validate(source['sitemap_url']):
+        response = requests.get(source['sitemap_url'])
+        if response.status_code == 200:
+            return NewsSitemapSpider
+
+    # check for recursive spider
+    response = requests.get(source['home_url'])
+    if response.status_code == 200 or response.status_code == 406:
+        return RecursiveSpider
+
+    return None
 
 
-class NewsSpider:
-    name = "newsspider"
-    disk_path = './data/raw'
+class BaseNewsSpider(scrapy.Spider):
 
     custom_settings = {
-        'DOWNLOAD_DELAY': 0.25,
+        'DOWNLOAD_DELAY': 0.1,
+        # 'LOG_ENABLED': False,
+        'CONCURRENT_REQUESTS': 32,
+        'scrapy.spidermiddlewares.offsite.OffsiteMiddleware': None,
     }
 
-    def parse(self, response):
-        cls = self.__class__
-        # Use scrapy items?
-        extractor = Extractor(extractor="ArticleExtractor", html=response.body)
+    def __init__(self, source):
+        super().__init__(source['name'])
+        self.lang = source['language']
+        self.lang_name = get_lang_name(self.lang)
+        self.disk_path = os.path.join('./data/raw', self.lang, self.name)
+        os.makedirs(self.disk_path, exist_ok=True)
+        components = tldextract.extract(source['home_url'])
+        domain = components.domain + '.' + components.suffix
+        self.allowed_domains = [domain]
+
+    def extract_article_content(self, html):
+        extractor = Extractor(extractor="ArticleExtractor", html=html)
         text = extractor.getText()
+        return text
 
-        if not self._articleness_test(text):
-            return
+    def parse_article(self, response):
+        """
+        Extracts the article content from the response body and prepares
+        the article object
+        """
+        text = self.extract_article_content(response.body)
+        if self._is_article(text):
+            article = {
+                'name': URL.page_name(response.url),
+                'content': text,
+                'source': response.request.url
+            }
+            return article
+        return None
 
-        article_name = URL.page_name(response.url)
-        dirpath = os.path.join(cls.disk_path, cls.lang, cls.name)
-        os.makedirs(dirpath, exist_ok=True)
-        fpath = dirpath + '/' + article_name
-        with open(fpath, 'w') as fp:
-            fp.write(text)
-
-    def _articleness_test(self, text):
-        if len(text) < 100:
+    def _is_article(self, text, win_sz=300, thres=260):
+        """
+        It performs two tests on the text to determine if is a valid news
+        article or not:
+        1. Has length greater than `win_sz`
+        2. Contains a continuous subtext of atleast length `win_sz` having
+           atleast `thres` characters in the required language
+        """
+        txt_sz = len(text)
+        if txt_sz < win_sz:
             return False
-        return True
 
+        chr_valid = [is_alphabet(c, self.lang_name) for c in text]
+        subarr_sum = chr_valid.copy()
+        for cur_sz in range(2, win_sz):
+            subarr_sum = [chr_valid[i] + subarr_sum[i+1]
+                          for i in range(txt_sz - cur_sz)]
+        if max(subarr_sum) >= thres:
+            return True
 
-class NewsSitemapSpider(NewsSpider, scrapy.spiders.SitemapSpider):
-    pass
+        return False
 
-
-class NewsHomeSpider(NewsSpider, scrapy.Spider):
-
-    link_extractor = LinkExtractor()
+    def write_article(self, article):
+        """
+        writes articles to disk
+        """
+        fpath = os.path.join(self.disk_path, article['name'])
+        with open(fpath, 'w', encoding='utf-8') as fp:
+            json.dump(article, fp, indent=4, ensure_ascii=False)
 
     def parse(self, response):
-        cls = self.__class__
-        # Use scrapy items?
-        extractor = Extractor(extractor="ArticleExtractor", html=response.body)
-        text = extractor.getText()
+        raise NotImplementedError
 
-        if not self._articleness_test(text):
-            return
 
-        article_name = URL.page_name(response.url)
-        dirpath = os.path.join(cls.disk_path, cls.lang, cls.name)
-        os.makedirs(dirpath, exist_ok=True)
-        fpath = dirpath + '/' + article_name
-        with open(fpath, 'w') as fp:
-            fp.write(text)
+class NewsSitemapSpider(BaseNewsSpider, scrapy.spiders.SitemapSpider):
 
-        links = cls.link_extractor.extract_links(response)
-        print(list(links))
+    def __init__(self, source):
+        self.sitemap_urls = [source['sitemap_url']]
+        super().__init__(source)
+
+    def parse(self, response):
+        article = self.parse_article(response)
+        if article:
+            self.write_article(article)
+
+
+class RecursiveSpider(BaseNewsSpider):
+
+    def __init__(self, source):
+        super().__init__(source)
+        self.start_urls = [source['home_url']]
+        self.link_extractor = LinkExtractor()
+
+    def parse(self, response):
+        article = self.parse_article(response)
+        if article:
+            self.write_article(article)
+
+        links = self.link_extractor.extract_links(response)
         for link in links:
             yield scrapy.Request(link.url)
+
+
+class SanjevaniSpider(RecursiveSpider):
+
+    def extract_article_content(self, html):
+        sel = Selector(text=html)
+        text = ''
+        for node in sel.css('.entry-content *::text'):
+            text = text + '\n' + node.extract()
+        return text
