@@ -6,6 +6,8 @@ This repository contains newspaper datasets and scraping code for several Indian
 
 For discussion, join us on [![Join the chat at https://gitter.im/indian-nlp/community](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/indian-nlp/community)
 
+
+
 #### Setup
 
 Run the following command to install the dependencies:
@@ -13,30 +15,45 @@ Run the following command to install the dependencies:
 make build
 ```
 
+
+
 #### Usage
 
-* To re-compile the list of news sources, run:
+* Re-compile the list of news sources:
 
   ```
   python3 main.py fetch-sources
   ```
 
-* To scrape news sources and build raw dataset, run:
+* Scrape news sources and build raw dataset:
 
   ```bash
   python3 main.py fetch-news
   ```
 
-* To process a raw dataset, run:
+* Process a raw dataset:
 
   ```bash
   python3 main.py process-news --corpuspath <path> --lang <langcode>
   ```
 
-  
+* Print the meta-data of a raw/processed dataset:
+
+  ```bash
+  python3 main.py metadata --corpuspath <path>
+  ```
+
+* Sync a dataset
+
+  ```bash
+  python3 main.py sync --corpuspath <path> [--override]
+  ```
+
+
 
 #### Datasets
 
 | Language | # News Articles | # Lines | # Tokens  | # Unique Tokens | Link |
 | -------- | --------------- | ------- | --------- | --------------- | ---- |
-| Kannada  | 43,484          | 484,501 | 5,086,301 | 402,195         |      |
+| Kannada  | 93K          | 1.1M | 13.5M | 0.8M         |      |
+
