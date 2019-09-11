@@ -1,10 +1,16 @@
 
 import click
+import logging
 import json
+import warnings
+
+warnings.filterwarnings("ignore")
+logging.getLogger("urllib3").setLevel(logging.ERROR)
+logging.getLogger("tldextract").setLevel(logging.ERROR)
 
 from crawlers import W3NewsPaperSpider
-from crawlers import make_news_crawler
-from corpus import NewsCorpusProcessor
+from crawlers import getcrawler
+from corpus import NewsCorpusProcessor, CorpusMetadataManager
 from scrapy.crawler import CrawlerProcess
 
 
@@ -18,28 +24,30 @@ def cli(debug):
 
 
 @cli.command(name='fetch-sources')
-def fetch_urls():
+def fetch_sources():
     W3NewsPaperSpider.disk_path = SOURCES_PATH
     process = CrawlerProcess()
     process.crawl(W3NewsPaperSpider)
     process.start()
 
 
-def load_urls(disk_path):
+def load_sources(disk_path):
     with open(disk_path) as fp:
-        urls = json.load(fp)
-    return [(l, u) for l in urls for u in urls[l]]
+        sources = json.load(fp)
+    return [(l, s) for l in sources for s in sources[l]]
 
 
 @cli.command(name='fetch-news')
 @click.option('--lang', default=None)
 def download_news(lang):
-    sources = load_urls(SOURCES_PATH)
+    sources = load_sources(SOURCES_PATH)
     if lang:
         sources = filter((lambda e: e[0] == lang), sources)
     process = CrawlerProcess()
-    for lang, url in sources:
-        process.crawl(make_news_crawler(lang, url))
+    for lang, source in sources:
+        crawler = getcrawler(source)
+        if crawler:
+            process.crawl(crawler, source=source)
     process.start()  # block until all crawling jobs are finished
 
 
@@ -49,6 +57,26 @@ def download_news(lang):
 def process_datasets(corpuspath, lang):
     processor = NewsCorpusProcessor(corpuspath, lang)
     processor.process()
+
+
+@cli.command(name='stats')
+@click.option('--corpuspath')
+def compute_stats(corpuspath):
+    metadata = CorpusMetadataManager()
+    stats = metadata.compute_stats(corpuspath)
+    print('\u2500'*40)
+    print('Statistics of the Dataset:')
+    print('\u2500'*40)
+    for k, v in stats.items():
+        print('{0:<20} {1}'.format(k, v))
+        print('\u2500'*40)
+
+
+@cli.command(name='sync')
+@click.option('--corpuspath')
+def sync_dataset(corpuspath):
+    # metadata = CorpusMetadataManager()
+    pass
 
 
 if __name__ == '__main__':
