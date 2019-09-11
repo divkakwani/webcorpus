@@ -49,6 +49,7 @@ class BaseNewsSpider(scrapy.Spider):
     def __init__(self, source):
         self.lang = source['language']
         self.lang_name = get_lang_name(self.lang)
+        self.name = source['name']
 
         self.disk_path = os.path.join('./data/raw', self.lang, self.name)
         os.makedirs(self.disk_path, exist_ok=True)
