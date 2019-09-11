@@ -10,7 +10,7 @@ For discussion, join us on [![Join the chat at https://gitter.im/indian-nlp/comm
 
 #### Setup
 
-Run the following command to install the dependencies:
+Make sure to pull all the submodules while cloning. After that, run the following command to install the dependencies:
 ```bash
 make build
 ```
