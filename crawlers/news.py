@@ -57,7 +57,6 @@ class BaseNewsSpider(scrapy.Spider):
         domain = components.domain + '.' + components.suffix
         self.allowed_domains = [domain]
 
-
         super().__init__(source['name'])
 
     def extract_article_content(self, html):
@@ -129,9 +128,9 @@ class NewsSitemapSpider(BaseNewsSpider, scrapy.spiders.SitemapSpider):
 class RecursiveSpider(BaseNewsSpider):
 
     def __init__(self, source):
-        super().__init__(source)
         self.start_urls = [source['home_url']]
         self.link_extractor = LinkExtractor()
+        super().__init__(source)
 
     def parse(self, response):
         article = self.parse_article(response)
@@ -172,11 +171,11 @@ class BalkaniNewsSpider(NewsSitemapSpider):
 class SahilOnlineSpider(BaseNewsSpider):
 
     def __init__(self, source):
-        super().__init__(source)
         response = requests.get(source['sitemap_url'])
         urls = URL.extract(str(response.content))
         urls = list(filter(lambda u: not u.lower().endswith('jpg'), urls))
         self.start_urls = urls
+        super().__init__(source)
 
     def parse(self, response):
         article = self.parse_article(response)
