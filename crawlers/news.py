@@ -47,14 +47,18 @@ class BaseNewsSpider(scrapy.Spider):
     }
 
     def __init__(self, source):
-        super().__init__(source['name'])
         self.lang = source['language']
         self.lang_name = get_lang_name(self.lang)
+
         self.disk_path = os.path.join('./data/raw', self.lang, self.name)
         os.makedirs(self.disk_path, exist_ok=True)
+
         components = tldextract.extract(source['home_url'])
         domain = components.domain + '.' + components.suffix
         self.allowed_domains = [domain]
+
+
+        super().__init__(source['name'])
 
     def extract_article_content(self, html):
         extractor = Extractor(extractor="ArticleExtractor", html=html)
