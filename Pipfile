@@ -8,6 +8,8 @@ morfessor = "*"
 tldextract = "*"
 click = "*"
 scrapy = "*"
+tqdm = "*"
+pandas = "*"
 
 [dev-packages]
 
