@@ -39,10 +39,14 @@ def load_sources(disk_path):
 
 @cli.command(name='fetch-news')
 @click.option('--lang', default=None)
-def download_news(lang):
+@click.option('--srange', default=None)
+def download_news(lang, srange):
     sources = load_sources(SOURCES_PATH)
     if lang:
         sources = filter((lambda e: e[0] == lang), sources)
+    if srange is not None:
+        start, end = list(map(int, srange.split(',')))
+        sources = sources[start:end]
     process = CrawlerProcess()
     for lang, source in sources:
         crawler = getcrawler(source)
@@ -70,13 +74,6 @@ def compute_stats(corpuspath):
     for k, v in stats.items():
         print('{0:<20} {1}'.format(k, v))
         print('\u2500'*40)
-
-
-@cli.command(name='sync')
-@click.option('--corpuspath')
-def sync_dataset(corpuspath):
-    # metadata = CorpusMetadataManager()
-    pass
 
 
 if __name__ == '__main__':
