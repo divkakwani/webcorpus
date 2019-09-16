@@ -43,7 +43,7 @@ def load_sources(disk_path):
 def download_news(lang, srange):
     sources = load_sources(SOURCES_PATH)
     if lang:
-        sources = filter((lambda e: e[0] == lang), sources)
+        sources = list(filter((lambda e: e[0] == lang), sources))
     if srange is not None:
         start, end = list(map(int, srange.split(',')))
         sources = sources[start:end]
