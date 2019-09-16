@@ -28,7 +28,7 @@ make build
 * Scrape news sources and build raw dataset:
 
   ```bash
-  python3 main.py fetch-news
+  python3 main.py fetch-news --lang <langcode>
   ```
 
 * Process a raw dataset:
@@ -42,13 +42,6 @@ make build
   ```bash
   python3 main.py metadata --corpuspath <path>
   ```
-
-* Sync a dataset
-
-  ```bash
-  python3 main.py sync --corpuspath <path> [--override]
-  ```
-
 
 
 #### Datasets
