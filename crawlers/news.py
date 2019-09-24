@@ -1,3 +1,19 @@
+"""
+Copyright © Divyanshu Kakwani 2019, all rights reserved
+
+Defines general and custom spiders for news sources
+
+There are two general spiders: RecursiveSpider and NewsSitemapSpider. The
+former starts at the home page and recursively follows all the links. The
+latter extracts all the urls from the sitemap and then simply pulls those urls
+without following further links found in the page.
+
+Custom spiders are needed to handle irregular news sources. A custom spider
+should have a name in the format <Source Name>Spider. e.g. SahilOnlineSpider
+and it should inherit from one of the general spider and override whatever
+functionality it wants to override
+
+"""
 import scrapy
 import json
 import os
@@ -14,7 +30,7 @@ from scrapy.selector import Selector
 
 def getcrawler(source):
     """
-    Dynamically selects spider class based on the source
+    Dynamically selects spider class based on the source.
     """
     # check for a custom spider
     classes = inspect.getmembers(sys.modules[__name__], inspect.isclass)
@@ -40,7 +56,7 @@ def getcrawler(source):
 class BaseNewsSpider(scrapy.Spider):
 
     custom_settings = {
-        'DOWNLOAD_DELAY': 0.2,
+        'DOWNLOAD_DELAY': 0.1,
         # 'LOG_ENABLED': False,
         'CONCURRENT_REQUESTS': 32,
         'scrapy.spidermiddlewares.offsite.OffsiteMiddleware': None,
@@ -82,8 +98,8 @@ class BaseNewsSpider(scrapy.Spider):
 
     def _is_article(self, text, win_sz=300, thres=260):
         """
-        It performs two tests on the text to determine if is a valid news
-        article or not:
+        It performs two tests on the text to determine if the text represents
+        a valid news article or not:
         1. Has length greater than `win_sz`
         2. Contains a continuous subtext of atleast length `win_sz` having
            atleast `thres` characters in the required language
@@ -144,6 +160,9 @@ class RecursiveSpider(BaseNewsSpider):
 
 
 class SanjevaniSpider(RecursiveSpider):
+    """
+    Boilerpipe does not work for this news source
+    """
 
     def extract_article_content(self, html):
         sel = Selector(text=html)
@@ -154,6 +173,10 @@ class SanjevaniSpider(RecursiveSpider):
 
 
 class BalkaniNewsSpider(NewsSitemapSpider):
+    """
+    The urls contained in the sitemap do not directly link to the page
+    where the complete article exists
+    """
 
     def __init__(self, source):
         super().__init__(source)
@@ -170,6 +193,10 @@ class BalkaniNewsSpider(NewsSitemapSpider):
 
 
 class SahilOnlineSpider(BaseNewsSpider):
+    """
+    The sitemap is broken, invalid xml. But we can still extract the urls
+    using scrapy's LinkExtractor
+    """
 
     def __init__(self, source):
         response = requests.get(source['sitemap_url'])
