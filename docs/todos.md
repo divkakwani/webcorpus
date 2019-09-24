@@ -4,4 +4,5 @@
 - Use the newspaper library with a custom content extractor
 - Override get_category_urls in newspaper library
 - Separate category pages and post pages
+- use unicodedata to check the correct language
 
