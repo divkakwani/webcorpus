@@ -8,7 +8,7 @@ import scrapy
 
 from dataclasses import dataclass
 from urllib.parse import urljoin
-from utils import lang_code, URL
+from utils import langname2code, url_validate, url_tld
 
 
 @dataclass
@@ -31,13 +31,13 @@ class W3NewsPaperSpider(scrapy.Spider):
         urls = [urljoin(cls.base_url, lang) for lang in cls.languages]
         for url, lang in zip(urls, cls.languages):
             yield scrapy.Request(url=url, callback=self.parse,
-                                 meta={'lang': lang_code(lang)})
+                                 meta={'lang': langname2code(lang)})
 
     def parse(self, response):
         cls = self.__class__
         urls = response.css('.bgbul li a::attr(href)').extract()
         urls = list(set(urls))
-        urls = list(filter(URL.validate, urls))
+        urls = list(filter(url_validate, urls))
         lang = response.request.meta['lang']
         cls.source_urls[lang] = urls
 
@@ -46,7 +46,7 @@ class W3NewsPaperSpider(scrapy.Spider):
         sources = {lang: [] for lang in cls.source_urls}
         for lang in cls.source_urls:
             for url in cls.source_urls[lang]:
-                source = Source(name=URL.tld(url), language=lang, home_url=url,
+                source = Source(name=url_tld(url), language=lang, home_url=url,
                                 sitemap_url=urljoin(url, 'sitemap.xml'))
                 sources[lang].append(dataclasses.asdict(source))
         with open(cls.disk_path, 'w') as fp:

@@ -23,7 +23,8 @@ import sys
 import inspect
 
 from boilerpipe.extract import Extractor
-from utils import URL, get_lang_name, is_alphabet
+from utils import url_validate, extract_links, page_name
+from utils import langcode2name, langcode2script, in_script
 from scrapy.linkextractors import LinkExtractor
 from scrapy.selector import Selector
 
@@ -40,7 +41,7 @@ def getcrawler(source):
             return clas
 
     # check for the sitemap spider
-    if URL.validate(source['sitemap_url']):
+    if url_validate(source['sitemap_url']):
         response = requests.get(source['sitemap_url'])
         if response.status_code == 200:
             return NewsSitemapSpider
@@ -64,7 +65,8 @@ class BaseNewsSpider(scrapy.Spider):
 
     def __init__(self, source):
         self.lang = source['language']
-        self.lang_name = get_lang_name(self.lang)
+        self.lang_name = langcode2name(self.lang)
+        self.script = langcode2script(self.lang)
         self.name = source['name']
 
         self.disk_path = os.path.join('./data/raw', self.lang, self.name)
@@ -89,7 +91,7 @@ class BaseNewsSpider(scrapy.Spider):
         text = self.extract_article_content(response.body)
         if self._is_article(text):
             article = {
-                'name': URL.page_name(response.url),
+                'name': page_name(response.url),
                 'content': text,
                 'source': response.request.url
             }
@@ -108,7 +110,7 @@ class BaseNewsSpider(scrapy.Spider):
         if txt_sz < win_sz:
             return False
 
-        chr_valid = [is_alphabet(c, self.lang_name) for c in text]
+        chr_valid = [in_script(c, self.script) for c in text]
         subarr_sum = chr_valid.copy()
         for cur_sz in range(2, win_sz):
             subarr_sum = [chr_valid[i] + subarr_sum[i+1]
@@ -200,7 +202,7 @@ class SahilOnlineSpider(BaseNewsSpider):
 
     def __init__(self, source):
         response = requests.get(source['sitemap_url'])
-        urls = URL.extract(str(response.content))
+        urls = extract_links(str(response.content))
         urls = list(filter(lambda u: not u.lower().endswith('jpg'), urls))
         self.start_urls = urls
         super().__init__(source)

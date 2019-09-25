@@ -10,7 +10,7 @@ logging.getLogger("tldextract").setLevel(logging.ERROR)
 
 from crawlers import W3NewsPaperSpider
 from crawlers import getcrawler
-from corpus import NewsCorpusProcessor, CorpusMetadataManager
+from corpus import CorpusProcessor, CorpusMetadataManager
 from scrapy.crawler import CrawlerProcess
 
 
@@ -58,8 +58,9 @@ def download_news(lang, srange):
 @cli.command(name='process-news')
 @click.option('--corpuspath')
 @click.option('--lang')
-def process_datasets(corpuspath, lang):
-    processor = NewsCorpusProcessor(corpuspath, lang)
+@click.option('--fmt', default='json')
+def process_datasets(corpuspath, lang, fmt):
+    processor = CorpusProcessor(corpuspath, lang, fmt)
     processor.process()
 
 
