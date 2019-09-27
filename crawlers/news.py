@@ -57,9 +57,10 @@ def getcrawler(source):
 class BaseNewsSpider(scrapy.Spider):
 
     custom_settings = {
-        'DOWNLOAD_DELAY': 0.1,
-        # 'LOG_ENABLED': False,
-        'CONCURRENT_REQUESTS': 32,
+        'DOWNLOAD_DELAY': 0.05,
+        'LOG_ENABLED': False,
+        'CONCURRENT_REQUESTS': 64,
+        'AUTOTHROTTLE_ENABLED': True,
         'scrapy.spidermiddlewares.offsite.OffsiteMiddleware': None,
     }
 
