@@ -40,6 +40,7 @@ def download_news(lang, srange, timeout):
     if srange is not None:
         start, end = list(map(int, srange.split(',')))
         sources = sources[start:end]
+    sources = list(filter(lambda s: s['active'], sources))
     print("Crawling sources: ", sources)
 
     process = CrawlerProcess(settings={
