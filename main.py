@@ -4,14 +4,16 @@ import logging
 import json
 import warnings
 
-warnings.filterwarnings("ignore")
-logging.getLogger("urllib3").setLevel(logging.ERROR)
-logging.getLogger("tldextract").setLevel(logging.ERROR)
-
 from crawlers import W3NewsPaperSpider
 from crawlers import getcrawler
 from corpus import CorpusProcessor, CorpusMetadataManager
 from scrapy.crawler import CrawlerProcess
+from sources import SourceList
+
+
+warnings.filterwarnings("ignore")
+logging.getLogger("urllib3").setLevel(logging.ERROR)
+logging.getLogger("tldextract").setLevel(logging.ERROR)
 
 
 @click.group()
@@ -27,19 +29,13 @@ def fetch_sources():
     process.start()
 
 
-def load_sources(disk_path):
-    with open(disk_path) as fp:
-        sources = json.load(fp)
-    return [(l, s) for l in sources for s in sources[l]]
-
-
 @cli.command(name='fetch-news')
-@click.option('--lang', default=None)
+@click.option('--lang', required=True) 
 @click.option('--srange', default=None)
 def download_news(lang, srange):
-    sources = load_sources(SOURCES_PATH)
-    if lang:
-        sources = list(filter((lambda e: e[0] == lang), sources))
+    source_list = SourceList(lang)
+    sources = [source for source in source_list]
+    sources = sorted(sources, key=lambda s: s['id'])
     if srange is not None:
         start, end = list(map(int, srange.split(',')))
         sources = sources[start:end]
