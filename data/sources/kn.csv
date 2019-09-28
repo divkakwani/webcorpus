@@ -28,3 +28,4 @@ id,name,language,home_url,sitemap_url,active
 26,oneindia,kn,https://kannada.oneindia.com/,https://kannada.oneindia.com/sitemap.xml,True
 27,kannadaratna,kn,https://kannadaratna.com/,,True
 28,justkannada,kn,https://www.justkannada.in/,,True
+29,news18,kn,https://kannada.news18.com/,https://kannada.news18.com/sitemap.xml,True
