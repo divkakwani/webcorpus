@@ -44,7 +44,7 @@ def download_news(lang, srange, timeout):
     print("Crawling sources: ", sources)
 
     process = CrawlerProcess(settings={
-        'CLOSESPIDER_TIMEOUT': timeout,
+        'CLOSESPIDER_TIMEOUT': int(timeout),
         'JOBDIR': 'data/job'
     })
     for source in sources:
