@@ -14,9 +14,6 @@ from corpus import CorpusProcessor, CorpusMetadataManager
 from scrapy.crawler import CrawlerProcess
 
 
-SOURCES_PATH = './data/news_sources.json'
-
-
 @click.group()
 @click.option('--debug/--no-debug', default=False)
 def cli(debug):
@@ -25,7 +22,6 @@ def cli(debug):
 
 @cli.command(name='fetch-sources')
 def fetch_sources():
-    W3NewsPaperSpider.disk_path = SOURCES_PATH
     process = CrawlerProcess()
     process.crawl(W3NewsPaperSpider)
     process.start()

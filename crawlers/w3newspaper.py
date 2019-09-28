@@ -2,55 +2,44 @@
 Crawls w3newspaper and builds a list of all newspaper URLs
 """
 
-import dataclasses
-import json
 import scrapy
 
-from dataclasses import dataclass
 from urllib.parse import urljoin
 from utils import langname2code, url_validate, url_tld
-
-
-@dataclass
-class Source:
-    name: str
-    language: str
-    home_url: str
-    sitemap_url: str
+from sources import SourceList
 
 
 class W3NewsPaperSpider(scrapy.Spider):
     name = 'w3newspaper'
     base_url = 'https://www.w3newspapers.com/india/'
-    languages = ['kannada', 'oriya', 'hindi']
-    source_urls = {}
-    disk_path = None
+
+    def __init__(self):
+        self.languages = ['kannada', 'oriya', 'hindi', 'punjabi',
+                          'assamese', 'punjabi']
+        self.source_lists = {}
+        for lang in self.languages:
+            langcode = langname2code(lang)
+            self.source_lists[langcode] = SourceList(langcode)
 
     def start_requests(self):
         cls = self.__class__
-        urls = [urljoin(cls.base_url, lang) for lang in cls.languages]
-        for url, lang in zip(urls, cls.languages):
+        urls = [urljoin(cls.base_url, lang) for lang in self.languages]
+        for url, lang in zip(urls, self.languages):
             yield scrapy.Request(url=url, callback=self.parse,
                                  meta={'lang': langname2code(lang)})
 
     def parse(self, response):
-        cls = self.__class__
+        lang = response.request.meta['lang']
+
+        # extract urls
         urls = response.css('.bgbul li a::attr(href)').extract()
         urls = list(set(urls))
         urls = list(filter(url_validate, urls))
-        lang = response.request.meta['lang']
-        cls.source_urls[lang] = urls
 
-    def closed(self, reason):
-        cls = self.__class__
-        sources = {lang: [] for lang in cls.source_urls}
-        for lang in cls.source_urls:
-            for url in cls.source_urls[lang]:
-                source = Source(name=url_tld(url), language=lang, home_url=url,
-                                sitemap_url=urljoin(url, 'sitemap.xml'))
-                sources[lang].append(dataclasses.asdict(source))
-        with open(cls.disk_path, 'w') as fp:
-            json.dump(sources, fp, indent=4, sort_keys=True)
-
-    def _merge_urls(self, old_source_urls, new_source_urls):
-        pass
+        # prepare and add sources
+        for url in urls:
+            name = url_tld(url)
+            sitemap_url = urljoin(url, 'sitemap.xml')
+            source = {'name': name, 'language': lang, 'home_url': url,
+                      'sitemap_url': sitemap_url}
+            self.source_lists[lang].add_source(source)
