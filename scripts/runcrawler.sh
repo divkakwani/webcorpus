@@ -9,8 +9,17 @@ chkpt=0
 
 while true
 do
-    # run with a timeout of 6 hours - 21600
-    python3 main.py fetch-news --lang kn --srange 16,17 --timeout 10
-    cp -r data/job "data/chkpt-$chkpt"
-    chkpt=$((chkpt+1))
+    SECONDS=0
+
+    # run with a timeout of 6 hours
+    python3 main.py fetch-news --lang kn --srange 8,20 --timeout 21600
+    wait $!
+
+    duration=$SECONDS
+    if (( duration > 60 ));
+    then
+        echo "Creating Checkpoint..."
+        cp -r data/job "data/chkpt-$chkpt"
+        chkpt=$((chkpt+1))
+    fi
 done
