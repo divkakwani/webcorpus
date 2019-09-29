@@ -1,6 +1,7 @@
 
 import click
 import logging
+import os
 import json
 import warnings
 
@@ -43,14 +44,21 @@ def download_news(lang, srange, timeout):
     sources = list(filter(lambda s: s['active'], sources))
     print("Crawling sources: ", sources)
 
+    # create job directories
+    jobdirs = {}
+    for source in sources:
+        name = source['name']
+        jobdir ='data/job/' + name
+        jobdirs[name] = jobdir
+        os.makedirs(jobdir, exist_ok=True)
+
     process = CrawlerProcess(settings={
         'CLOSESPIDER_TIMEOUT': int(timeout),
-        'JOBDIR': 'data/job'
     })
     for source in sources:
         crawler = getcrawler(source)
         if crawler:
-            process.crawl(crawler, source=source)
+            process.crawl(crawler, source=source, JOBDIR=jobdirs[source['name']])
     process.start()  # block until all crawling jobs are finished
 
 
