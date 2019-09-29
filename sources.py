@@ -39,7 +39,7 @@ class SourceList:
         reader = csv.DictReader(fp)
         for source in reader:
             source['id'] = int(source['id'])
-            source['active'] = bool(source['active'])
+            source['active'] = (source['active'] == 'True')
             self._sources[source['name']] = dict(source)
             self._id2name[source['id']] = source['name']
             self._next_id = max(source['id']+1, self._next_id)
