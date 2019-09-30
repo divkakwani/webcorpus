@@ -11,7 +11,7 @@ import sys
 import subprocess
 
 from tqdm import tqdm
-from utils import langcode2script, in_script
+from utils import langcode2script, in_script, get_digits
 
 
 INDIC_NLP_LIB_HOME = './vendor/indic_nlp_library'
@@ -91,6 +91,7 @@ class CorpusProcessor:
     for more details.
         * Remove sentences that contain one or more words not in the
           desired language
+        * Remove short sentences
         * Treat punctuation marks as words. Insert spaces around them
         * Lowercase all the letters (in case of English)
         * Replace every number by # token
@@ -137,6 +138,8 @@ class CorpusProcessor:
         newline_removed = sent.replace('\n', ' ')
         normalized = self.normalizer.normalize(newline_removed)
         num_masked = re.sub(r'[0-9]+', '#', normalized)
+        native_digits = get_digits(self.script)
+        num_masked = re.sub(r'[{}]+'.format(native_digits), '#', num_masked)
         spaced = ' '.join(indic_tokenize.trivial_tokenize(num_masked,
                                                           self.lang))
         return spaced

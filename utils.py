@@ -20,7 +20,7 @@ lang_names = [
     ('mr', 'Marathi'),
     ('ne', 'Nepali'),
     ('or', 'Oriya'),
-    ('pa', 'Panjabi; Punjabi'),
+    ('pa', 'Punjabi'),
     ('sa', 'Sanskrit'),
     ('sd', 'Sindhi'),
     ('ta', 'Tamil'),
@@ -30,8 +30,21 @@ lang_names = [
 
 scripts = [
     ('hi', 'devanagari'),
-    ('kn', 'kannada')
+    ('kn', 'kannada'),
+    ('mr', 'devanagari'),
+    ('te', 'telugu'),
+    ('gu', 'gujarati')
 ]
+
+digits = {
+    'devanagari': '०१२३४५६७८९',
+    'gujarati': '૦૧૨૩૪૫૬૭૮૯',
+    'telugu': '౦౧౨౩౪౫౬౭౮౯'
+}
+
+
+def get_digits(script):
+    return digits.get(script, None)
 
 
 def langcode2name(iso_code):
@@ -65,7 +78,7 @@ def in_script(c, script_name):
         if script_name not in ud.name(c).lower():
             return False
     except:
-        return True
+        return False
     return True
 
 
