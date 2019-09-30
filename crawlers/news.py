@@ -29,9 +29,9 @@ from scrapy.linkextractors import LinkExtractor
 from scrapy.selector import Selector
 
 
-def getcrawler(source):
+def _select_blueprint(source):
     """
-    Dynamically selects spider class based on the source.
+    dynamically selects spider class based on the source
     """
     # check for a custom spider
     classes = inspect.getmembers(sys.modules[__name__], inspect.isclass)
@@ -51,7 +51,26 @@ def getcrawler(source):
     if response.status_code == 200 or response.status_code == 406:
         return RecursiveSpider
 
-    return None
+
+def makecrawler(source, **settings):
+    """
+    creates a new spider class by cloning one of the blueprint classes
+    and then populating the class variables appropriately
+    """
+    blueprint = _select_blueprint(source)
+    if blueprint is None:
+        return None
+
+    # clone the blueprint
+    spidername = source['name'].capitalize() + 'Final' + 'Spider'
+    spidercls = type(spidername, (blueprint,), {})
+
+    # populate class variables
+    if spidercls.custom_settings is None:
+        spidercls.custom_settings = {}
+    spidercls.custom_settings.update(settings)
+
+    return spidercls
 
 
 class BaseNewsSpider(scrapy.Spider):
