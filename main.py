@@ -10,7 +10,7 @@ logging.getLogger("urllib3").setLevel(logging.ERROR)
 logging.getLogger("tldextract").setLevel(logging.ERROR)
 
 from crawlers import W3NewsPaperSpider
-from crawlers import getcrawler
+from crawlers import makecrawler
 from corpus import CorpusProcessor, CorpusMetadataManager
 from scrapy.crawler import CrawlerProcess
 from sources import SourceList
@@ -48,7 +48,7 @@ def download_news(lang, srange, timeout):
     jobdirs = {}
     for source in sources:
         name = source['name']
-        jobdir ='data/job/' + name
+        jobdir = 'data/job/' + name
         jobdirs[name] = jobdir
         os.makedirs(jobdir, exist_ok=True)
 
@@ -56,9 +56,9 @@ def download_news(lang, srange, timeout):
         'CLOSESPIDER_TIMEOUT': int(timeout),
     })
     for source in sources:
-        crawler = getcrawler(source)
+        crawler = makecrawler(source, JOBDIR=jobdirs[source['name']])
         if crawler:
-            process.crawl(crawler, source=source, JOBDIR=jobdirs[source['name']])
+            process.crawl(crawler, source=source)
     process.start()  # block until all crawling jobs are finished
 
 
