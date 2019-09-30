@@ -34,14 +34,18 @@ from indicnlp.tokenize import sentence_tokenize
 class CorpusReader:
 
     def __init__(self, corpus_path, lang, fmt='json'):
-        self.corpus_path, self.lang, self.fmt = corpus_path, lang, fmt
-        self.fpaths, self.fid = [], 0
+        self.corpus_path = corpus_path
+        self.lang = lang
+        self.fmt = fmt
+
+        self.files = []
         if os.path.isfile(corpus_path):
-            self.fpaths = [corpus_path]
+            self.files = [{'path': corpus_path}]
         else:
-            for (dir_path, _, fnames) in os.walk(corpus_path):
-                self.fpaths += [os.path.join(dir_path, file)
-                                for file in fnames]
+            for (dirpath, _, fnames) in os.walk(corpus_path):
+                self.files += [{'publisher': os.path.basename(dirpath),
+                                'path': os.path.join(dirpath, file)}
+                               for file in fnames]
 
     def _get_content(self, fpath):
         if self.fmt != 'json':
@@ -58,23 +62,34 @@ class CorpusReader:
         return content
 
     def sents(self):
-        while self.fid < len(self.fpaths):
-            content = self._get_content(self.fpaths[self.fid])
+        for fid in range(len(self.files)):
+            content = self._get_content(self.files[fid]['path'])
             if content:
                 sents = sentence_tokenize.sentence_split(content, self.lang)
                 for sent in sents:
                     yield sent
-            self.fid += 1
 
-    def reset(self):
-        self.fid = 0
+    def articles(self):
+        for fid in range(len(self.files)):
+            fpath = self.files[fid]['path']
+            with open(fpath) as fp:
+                try:
+                    art = json.load(fp)
+                    art['publisher'] = self.files[fid]['publisher']
+                    yield art
+                except json.decoder.JSONDecodeError:
+                    pass
 
 
 class CorpusWriter:
 
     def __init__(self, corpus_path, amalgamated=True):
         self.corpus_path = corpus_path
-        self.fp = open(self.corpus_path, 'w', encoding='utf-8', buffering=8192)
+        if amalgamated:
+            self.fp = open(self.corpus_path, 'w', encoding='utf-8',
+                           buffering=8192)
+        else:
+            os.makedirs(corpus_path, exist_ok=True)
 
     def add_sents(self, sents):
         if len(sents) <= 0:
@@ -83,6 +98,14 @@ class CorpusWriter:
         sents = [sents] if isinstance(sents, str) else sents
         self.fp.write('\n'.join(sents))
         self.fp.write('\n')
+
+    def add_article(self, art):
+        publisher = art['publisher']
+        del art['publisher']
+        fpath = os.path.join(self.corpus_path, publisher, art['name'])
+        os.makedirs(os.path.join(self.corpus_path, publisher), exist_ok=True)
+        with open(fpath) as fp:
+            json.dump(art, fp)
 
 
 class CorpusProcessor:
@@ -107,7 +130,6 @@ class CorpusProcessor:
         self.normalizer = normalizer_factory.get_normalizer(lang)
         # self.stop_sents = self._stop_sents()
         self.stop_sents = set()
-        self.corpus_reader.reset()
         self.corpus_writer = CorpusWriter('./data/processed/' + self.lang)
 
     def _stop_sents(self):
@@ -223,3 +245,14 @@ class CorpusMetadataManager:
         except subprocess.CalledProcessError:
             pass
         return stats
+
+
+def merge_corpus(out_path, *in_paths):
+    outc = CorpusWriter(out_path, amalgamated=False)
+    urls = set()
+    for in_path in in_paths:
+        print('Scanning corpus: {}'.format(in_path))
+        inc = CorpusReader(in_path)
+        for art in tqdm(inc.articles()):
+            if art['source'] not in urls:
+                outc.add_article(art)
