@@ -10,7 +10,7 @@ For discussion, join us on [![Join the chat at https://gitter.im/indian-nlp/comm
 
 #### Setup
 
-Make sure to pull all the submodules while cloning. After that, run the following command to install the dependencies:
+After cloning, run the following command to install all the dependencies:
 ```bash
 make build
 ```
@@ -28,7 +28,7 @@ make build
 * Scrape news sources and build raw dataset:
 
   ```bash
-  python3 main.py fetch-news --lang <langcode>
+  python3 main.py fetch-news --lang <langcode> [--srange a,b]
   ```
 
 * Process a raw dataset:
@@ -44,9 +44,18 @@ make build
   ```
 
 
+
+#### Performance
+
+* Crawls around 0.5 GB of raw data / day for 10 sources.
+* To achieve better efficiency, run multiple instances of crawlers on different machines, each operating on a different set of sources.
+* Need around 5GB of raw data for 100M tokens
+
+
+
 #### Datasets
 
 | Language | # News Articles | # Lines | # Tokens  | # Unique Tokens | Link |
 | -------- | --------------- | ------- | --------- | --------------- | ---- |
-| Kannada  | 93K          | 1.1M | 13.5M | 0.8M         |      |
+| Kannada  | 450K |  | 77M |          |      |
 
