@@ -36,5 +36,7 @@ id,name,language,home_url,sitemap_url,active
 34,boldsky,kn,https://kannada.boldsky.com/,https://kannada.boldsky.com/sitemap.xml,True
 35,krishijagran,kn,https://kannada.krishijagran.com/,,True
 36,prajaatvkannada,kn,http://prajaatvkannada.com/,,True
+37,btvnewslive,kn,https://btvnewslive.com/,https://btvnewslive.com/sitemap_index.xml,True
+38,publictv,kn,https://publictv.in/,,True
 
 

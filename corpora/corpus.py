@@ -11,6 +11,7 @@ import sys
 import subprocess
 
 from tqdm import tqdm
+from shutil import copyfile
 from utils import langcode2script, in_script, get_digits
 
 
@@ -33,7 +34,7 @@ from indicnlp.tokenize import sentence_tokenize
 
 class CorpusReader:
 
-    def __init__(self, corpus_path, lang, fmt='json'):
+    def __init__(self, corpus_path, lang=None, fmt='json'):
         self.corpus_path = corpus_path
         self.lang = lang
         self.fmt = fmt
@@ -104,7 +105,7 @@ class CorpusWriter:
         del art['publisher']
         fpath = os.path.join(self.corpus_path, publisher, art['name'])
         os.makedirs(os.path.join(self.corpus_path, publisher), exist_ok=True)
-        with open(fpath) as fp:
+        with open(fpath, 'w') as fp:
             json.dump(art, fp)
 
 
@@ -248,11 +249,17 @@ class CorpusMetadataManager:
 
 
 def merge_corpus(out_path, *in_paths):
-    outc = CorpusWriter(out_path, amalgamated=False)
-    urls = set()
+    os.makedirs(out_path, exist_ok=True)
+    idenfiers = set()
     for in_path in in_paths:
         print('Scanning corpus: {}'.format(in_path))
         inc = CorpusReader(in_path)
-        for art in tqdm(inc.articles()):
-            if art['source'] not in urls:
-                outc.add_article(art)
+        for art in tqdm(inc.files):
+            pub, path = art['publisher'], art['path']
+            iden = pub + os.path.basename(path)
+            if iden not in idenfiers:
+                dstdir = os.path.join(out_path, pub)
+                os.makedirs(dstdir, exist_ok=True)
+                dst = os.path.join(dstdir, os.path.basename(path))
+                copyfile(path, dst)
+                idenfiers.add(iden)
