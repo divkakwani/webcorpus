@@ -33,7 +33,8 @@ scripts = [
     ('kn', 'kannada'),
     ('mr', 'devanagari'),
     ('te', 'telugu'),
-    ('gu', 'gujarati')
+    ('gu', 'gujarati'),
+    ('or', 'oriya')
 ]
 
 digits = {
