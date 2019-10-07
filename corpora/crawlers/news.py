@@ -42,14 +42,22 @@ def _select_blueprint(source):
 
     # check for the sitemap spider
     if url_validate(source['sitemap_url']):
-        response = requests.get(source['sitemap_url'])
-        if response.status_code == 200:
-            return NewsSitemapSpider
+        try:
+            response = requests.get(source['sitemap_url'])
+            if response.status_code == 200:
+                return NewsSitemapSpider
+        except requests.exceptions.ConnectionError:
+            pass
 
     # check for recursive spider
-    response = requests.get(source['home_url'])
-    if response.status_code == 200 or response.status_code == 406:
-        return RecursiveSpider
+    try:
+        response = requests.get(source['home_url'])
+        if response.status_code == 200 or response.status_code == 406:
+            return RecursiveSpider
+    except requests.exceptions.ConnectionError:
+        pass
+
+    return None
 
 
 def makecrawler(source, **settings):
@@ -77,7 +85,7 @@ class BaseNewsSpider(scrapy.Spider):
 
     custom_settings = {
         'DOWNLOAD_DELAY': 0.05,
-        'LOG_ENABLED': False,
+        'LOG_ENABLED': True,
         'CONCURRENT_REQUESTS': 64,
         'AUTOTHROTTLE_ENABLED': True,
         'scrapy.spidermiddlewares.offsite.OffsiteMiddleware': None,
