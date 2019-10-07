@@ -5,7 +5,7 @@ Corpora is language-agnostic web crawler and corpora processor tools specificall
 
 #### Setup
 
-After cloning, run the following command to install all the dependencies:
+Clone the repository and run the following command:
 ```bash
 pip3 install .
 ```
