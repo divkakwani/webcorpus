@@ -1,18 +1,13 @@
-## Indian Corpora
+## Corpora
 
-
-
-This repository contains newspaper datasets and scraping code for several Indian languages
-
-For discussion, join us on [![Join the chat at https://gitter.im/indian-nlp/community](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/indian-nlp/community)
-
+Corpora is language-agnostic web crawler and corpora processor tools specifically designed for Indian languages.
 
 
 #### Setup
 
 After cloning, run the following command to install all the dependencies:
 ```bash
-make build
+pip3 install .
 ```
 
 
@@ -22,27 +17,20 @@ make build
 * Re-compile the list of news sources:
 
   ```
-  python3 main.py fetch-sources
+  corpora fetch-sources
   ```
 
 * Scrape news sources and build raw dataset:
 
   ```bash
-  python3 main.py fetch-news --lang <langcode> [--srange a,b]
+  corpora fetch-news --lang <langcode> [--srange a,b]
   ```
 
 * Process a raw dataset:
 
   ```bash
-  python3 main.py process-news --corpuspath <path> --lang <langcode>
+  corpora process-news --corpuspath <path> --lang <langcode>
   ```
-
-* Print the meta-data of a raw/processed dataset:
-
-  ```bash
-  python3 main.py metadata --corpuspath <path>
-  ```
-
 
 
 #### Performance
@@ -57,5 +45,5 @@ make build
 
 | Language | # News Articles | # Lines | # Tokens  | # Unique Tokens | Link |
 | -------- | --------------- | ------- | --------- | --------------- | ---- |
-| Kannada  | 450K |  | 77M |          |      |
+| Kannada  |  |  | 94M |          |      |
 

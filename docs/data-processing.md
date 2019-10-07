@@ -16,7 +16,7 @@
 * Remove short sentences because they are probably not proper sentences
 * Treat punctuation marks as words. Insert spaces around them
 * Lowercase all the letters (in case of English)
-* Replace every number by `#` token
+* Replace every number (both in the Latin and the native scripts) by `#` token
 * Remove "stop sentences"
 
 
