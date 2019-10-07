@@ -1,6 +1,6 @@
 ## Corpora
 
-Corpora is language-agnostic web crawler and a corpora processor tool specifically designed for Indian languages.
+Corpora is a language-agnostic corpus crawler and processor specifically designed for Indian languages.
 
 
 #### Setup
@@ -33,6 +33,7 @@ pip3 install .
   ```
 
 
+
 #### Performance
 
 * Crawls around 0.5 GB of raw data / day for 10 sources.
@@ -45,5 +46,11 @@ pip3 install .
 
 | Language | # News Articles | # Lines | # Tokens  | # Unique Tokens | Link |
 | -------- | --------------- | ------- | --------- | --------------- | ---- |
-| Kannada  |  |  | 94M |          |      |
-
+| Bengali |  |  |  |          |      |
+| Gujarati | | |  | | |
+| Hindi | | |  | | |
+| Kannada | 713K | 12M | 128M     | 2.4M | |
+| Malayalam | | |  | | |
+| Marathi | | |  | | |
+| Tamil | | |  | | |
+| Telugu | | |  | | |
