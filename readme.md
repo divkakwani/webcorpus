@@ -1,6 +1,6 @@
 ## Corpora
 
-Corpora is language-agnostic web crawler and corpora processor tools specifically designed for Indian languages.
+Corpora is language-agnostic web crawler and a corpora processor tool specifically designed for Indian languages.
 
 
 #### Setup
