@@ -1,0 +1,6 @@
+
+global-exclude *.py[co]
+recursive-exclude .git *
+
+include corpora/sources/*
+recursive-include corpora/vendor *
