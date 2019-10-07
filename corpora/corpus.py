@@ -1,8 +1,7 @@
 """
 Copyright © Divyanshu Kakwani 2019, all rights reserved.
 
-This file defines corpus functions/classes - reader, writer, processor etc.
-
+Defines corpus reader, writer and processor
 """
 import json
 import os
@@ -12,18 +11,20 @@ import subprocess
 
 from tqdm import tqdm
 from shutil import copyfile
-from utils import langcode2script, in_script, get_digits
+from .utils import langcode2script, in_script, get_digits
 
+# import bundled indic nlp library and resources
 
-INDIC_NLP_LIB_HOME = './vendor/indic_nlp_library'
-INDIC_NLP_RESOURCES = './vendor/indic_nlp_resources'
+pkgdir = os.path.dirname(os.path.abspath(__file__))
+indicnlp_lib_dir = os.path.join(pkgdir, 'vendor/indic_nlp_library')
+indicnlp_resources_dir = os.path.join(pkgdir, 'vendor/indic_nlp_resources')
 
-sys.path.append('{}/src'.format(INDIC_NLP_LIB_HOME))
+sys.path.append('{}/src'.format(indicnlp_lib_dir))
 
 from indicnlp import common
 from indicnlp import loader
 
-common.set_resources_path(INDIC_NLP_RESOURCES)
+common.set_resources_path(indicnlp_resources_dir)
 loader.load()
 
 from indicnlp.tokenize import indic_tokenize
@@ -122,16 +123,16 @@ class CorpusProcessor:
         * Remove "stop sentences"
     """
 
-    def __init__(self, corpus_path, lang, corpus_fmt):
+    def __init__(self, ip_corpus_path, lang, corpus_fmt, op_corpus_path):
         self.lang = lang
         self.script = langcode2script(lang)
-        self.corpus_path = corpus_path
-        self.corpus_reader = CorpusReader(corpus_path, lang, corpus_fmt)
+        self.corpus_path = ip_corpus_path
+        self.corpus_reader = CorpusReader(ip_corpus_path, lang, corpus_fmt)
         normalizer_factory = indic_normalize.IndicNormalizerFactory()
         self.normalizer = normalizer_factory.get_normalizer(lang)
         # self.stop_sents = self._stop_sents()
         self.stop_sents = set()
-        self.corpus_writer = CorpusWriter('./data/processed/' + self.lang)
+        self.corpus_writer = CorpusWriter(op_corpus_path)
 
     def _stop_sents(self):
         """
@@ -180,86 +181,3 @@ class CorpusProcessor:
             if not in_script(c, self.script):
                 return False
         return True
-
-
-class CorpusMetadataManager:
-
-    def __init__(self):
-        self._persist_fname = './data/datasets.json'
-        try:
-            self._persist_fp = open(self._persist_fname, 'r')
-            self._pmetadata = json.load(self._persist_fp)
-        except FileNotFoundError:
-            self._pmetadata = {}
-
-    def set_remote_link(self, corpus_path, link):
-        self._update_metadata({'path': corpus_path, 'link': link})
-        return
-
-    def _update_metadata(self, metadata):
-        dataset_id = metadata['path']
-        if dataset_id not in self._pmetadata:
-            self._pmetadata[dataset_id] = metadata
-        else:
-            self._pmetadata[dataset_id].update(metadata)
-        with open(self._persist_fname, 'w') as fp:
-            json.dump(self._pmetadata, fp, indent=4, sort_keys=True)
-
-    def compute_stats(self, corpus_path):
-        # if corpus_path in self._pmetadata:
-        #     return self._pmetadata[corpus_path]
-        if os.path.isdir(corpus_path):
-            stats = self._stats_raw(corpus_path)
-        else:
-            stats = self._stats_processed(corpus_path)
-        self._update_metadata(stats)
-        return stats
-
-    def _stats_raw(self, corpus_path):
-        num_articles = sum(len(files) for r, d, files in os.walk(corpus_path))
-        stats = {'path': corpus_path, 'num_articles': num_articles}
-        return stats
-
-    def _stats_processed(self, corpus_path):
-        stats = {'path': corpus_path}
-        try:
-            cmd = 'cat {} | wc -l'.format(corpus_path)
-            num_lines = subprocess.check_output(cmd, stderr=subprocess.STDOUT,
-                                                shell=True)
-            print(num_lines)
-            cmd = 'cat {} | sort | uniq | wc -l'.format(corpus_path)
-            num_ulines = subprocess.check_output(cmd, stderr=subprocess.STDOUT,
-                                                 shell=True)
-            print(num_ulines)
-            cmd = 'cat {} | tr \' \' \'\n\' | wc -l'.format(corpus_path)
-            num_toks = subprocess.check_output(cmd, stderr=subprocess.STDOUT,
-                                               shell=True)
-            print(num_toks)
-            cmd = 'cat {} | tr \' \' \'\n\' | sort | uniq | wc -l'\
-                .format(corpus_path)
-            num_utoks = subprocess.check_output(cmd, stderr=subprocess.STDOUT,
-                                                shell=True)
-            stats['num_lines'] = int(num_lines)
-            stats['num_unique_lines'] = int(num_ulines)
-            stats['num_tokens'] = int(num_toks)
-            stats['num_unique_tokens'] = int(num_utoks)
-        except subprocess.CalledProcessError:
-            pass
-        return stats
-
-
-def merge_corpus(out_path, *in_paths):
-    os.makedirs(out_path, exist_ok=True)
-    idenfiers = set()
-    for in_path in in_paths:
-        print('Scanning corpus: {}'.format(in_path))
-        inc = CorpusReader(in_path)
-        for art in tqdm(inc.files):
-            pub, path = art['publisher'], art['path']
-            iden = pub + os.path.basename(path)
-            if iden not in idenfiers:
-                dstdir = os.path.join(out_path, pub)
-                os.makedirs(dstdir, exist_ok=True)
-                dst = os.path.join(dstdir, os.path.basename(path))
-                copyfile(path, dst)
-                idenfiers.add(iden)

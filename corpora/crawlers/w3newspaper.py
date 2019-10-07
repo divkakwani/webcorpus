@@ -5,8 +5,8 @@ Crawls w3newspaper and builds a list of all newspaper URLs
 import scrapy
 
 from urllib.parse import urljoin
-from utils import langname2code, url_validate, url_tld
-from sources import SourceList
+from ..utils import langname2code, url_validate, url_tld
+from ..sources import SourceList
 
 
 class W3NewsPaperSpider(scrapy.Spider):

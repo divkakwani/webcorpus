@@ -13,7 +13,9 @@ class SourceList:
 
     def __init__(self, langcode):
         self.langcode = langcode
-        self._fpath = 'data/sources/{}.csv'.format(self.langcode)
+        pkgdir = os.path.dirname(os.path.abspath(__file__))
+        self._fpath = os.path.join(pkgdir,
+                                   'sources/{}.csv'.format(self.langcode))
         self._fields = ['id', 'name', 'language', 'home_url',
                         'sitemap_url', 'active']
 

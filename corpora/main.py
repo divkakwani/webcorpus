@@ -1,19 +1,23 @@
-
 import click
 import logging
 import os
-import json
 import warnings
 
 warnings.filterwarnings("ignore")
 logging.getLogger("urllib3").setLevel(logging.ERROR)
 logging.getLogger("tldextract").setLevel(logging.ERROR)
 
-from crawlers import W3NewsPaperSpider
-from crawlers import makecrawler
-from corpus import CorpusProcessor, CorpusMetadataManager
 from scrapy.crawler import CrawlerProcess
-from sources import SourceList
+from .crawlers import W3NewsPaperSpider
+from .crawlers import makecrawler
+from .corpus import CorpusProcessor
+from .sources import SourceList
+
+
+DATASTORE_PATH = os.environ.get('DATASTORE')
+if DATASTORE_PATH is None:
+    os.environ['DATASTORE'] = os.path.join(os.environ.get('HOME'), 'datastore')
+    DATASTORE_PATH = os.environ.get('DATASTORE')
 
 
 @click.group()
@@ -48,7 +52,7 @@ def download_news(lang, srange, timeout):
     jobdirs = {}
     for source in sources:
         name = source['name']
-        jobdir = 'data/job/' + name
+        jobdir = os.path.join(DATASTORE_PATH, 'jobs/current', name)
         jobdirs[name] = jobdir
         os.makedirs(jobdir, exist_ok=True)
 
@@ -59,7 +63,7 @@ def download_news(lang, srange, timeout):
     for source in sources:
         crawler = makecrawler(source, JOBDIR=jobdirs[source['name']])
         if crawler:
-            process.crawl(crawler, source=source)
+            process.crawl(crawler, source=source, datadir=DATASTORE_PATH)
     process.start()  # block until all crawling jobs are finished
 
 
@@ -68,22 +72,6 @@ def download_news(lang, srange, timeout):
 @click.option('--lang')
 @click.option('--fmt', default='json')
 def process_datasets(corpuspath, lang, fmt):
-    processor = CorpusProcessor(corpuspath, lang, fmt)
+    op_path = os.path.join(DATASTORE_PATH, 'processed', lang)
+    processor = CorpusProcessor(corpuspath, lang, fmt, op_path)
     processor.process()
-
-
-@cli.command(name='stats')
-@click.option('--corpuspath')
-def compute_stats(corpuspath):
-    metadata = CorpusMetadataManager()
-    stats = metadata.compute_stats(corpuspath)
-    print('\u2500'*40)
-    print('Statistics of the Dataset:')
-    print('\u2500'*40)
-    for k, v in stats.items():
-        print('{0:<20} {1}'.format(k, v))
-        print('\u2500'*40)
-
-
-if __name__ == '__main__':
-    cli()
