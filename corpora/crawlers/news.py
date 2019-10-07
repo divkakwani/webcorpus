@@ -23,8 +23,8 @@ import sys
 import inspect
 
 from boilerpipe.extract import Extractor
-from utils import url_validate, extract_links, page_name
-from utils import langcode2name, langcode2script, in_script
+from ..utils import url_validate, extract_links, page_name
+from ..utils import langcode2name, langcode2script, in_script
 from scrapy.linkextractors import LinkExtractor
 from scrapy.selector import Selector
 
@@ -83,13 +83,13 @@ class BaseNewsSpider(scrapy.Spider):
         'scrapy.spidermiddlewares.offsite.OffsiteMiddleware': None,
     }
 
-    def __init__(self, source):
+    def __init__(self, source, datadir):
         self.lang = source['language']
         self.lang_name = langcode2name(self.lang)
         self.script = langcode2script(self.lang)
         self.name = source['name']
 
-        self.disk_path = os.path.join('./data/raw', self.lang, self.name)
+        self.disk_path = os.path.join(datadir, 'raw', self.lang, self.name)
         os.makedirs(self.disk_path, exist_ok=True)
 
         components = tldextract.extract(source['home_url'])
@@ -154,8 +154,8 @@ class BaseNewsSpider(scrapy.Spider):
 
 class NewsSitemapSpider(BaseNewsSpider, scrapy.spiders.SitemapSpider):
 
-    def __init__(self, source):
-        super().__init__(source)
+    def __init__(self, source, datadir):
+        super().__init__(source, datadir)
         self.sitemap_urls = [source['sitemap_url']]
 
     def parse(self, response):
@@ -166,10 +166,10 @@ class NewsSitemapSpider(BaseNewsSpider, scrapy.spiders.SitemapSpider):
 
 class RecursiveSpider(BaseNewsSpider):
 
-    def __init__(self, source):
+    def __init__(self, source, datadir):
         self.start_urls = [source['home_url']]
         self.link_extractor = LinkExtractor()
-        super().__init__(source)
+        super().__init__(source, datadir)
 
     def parse(self, response):
         article = self.parse_article(response)
@@ -200,8 +200,8 @@ class BalkaniNewsSpider(NewsSitemapSpider):
     where the complete article exists
     """
 
-    def __init__(self, source):
-        super().__init__(source)
+    def __init__(self, source, datadir):
+        super().__init__(source, datadir)
         self.link_extractor = LinkExtractor()
 
     def parse(self, response):
@@ -220,12 +220,12 @@ class SahilOnlineSpider(BaseNewsSpider):
     using scrapy's LinkExtractor
     """
 
-    def __init__(self, source):
+    def __init__(self, source, datadir):
         response = requests.get(source['sitemap_url'])
         urls = extract_links(str(response.content))
         urls = list(filter(lambda u: not u.lower().endswith('jpg'), urls))
         self.start_urls = urls
-        super().__init__(source)
+        super().__init__(source, datadir)
 
     def parse(self, response):
         article = self.parse_article(response)
