@@ -75,3 +75,7 @@ def process_datasets(corpuspath, lang, fmt):
     op_path = os.path.join(DATASTORE_PATH, 'processed', lang)
     processor = CorpusProcessor(corpuspath, lang, fmt, op_path)
     processor.process()
+
+
+if __name__ == "__main__":
+    cli()
