@@ -53,4 +53,4 @@ pip3 install .
 | Malayalam | | |  | | |
 | Marathi | | |  | | |
 | Tamil | | |  | | |
-| Telugu | | |  | | |
+| Telugu |  | 14M | 190M | 4.2M | |
