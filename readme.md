@@ -46,11 +46,14 @@ pip3 install .
 
 | Language | # News Articles | # Lines | # Tokens  | # Unique Tokens | Link |
 | -------- | --------------- | ------- | --------- | --------------- | ---- |
+| Assamese |  |  |  |          |      |
 | Bengali |  |  |  |          |      |
 | Gujarati | | |  | | |
 | Hindi | | |  | | |
 | Kannada | 713K | 12M | 128M     | 2.4M | |
 | Malayalam | | |  | | |
 | Marathi | | |  | | |
+| Oriya | | |  | | |
+| Punjabi | | |  | | |
 | Tamil | | |  | | |
 | Telugu |  | 14M | 190M | 4.2M | |
