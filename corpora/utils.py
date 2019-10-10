@@ -25,7 +25,7 @@ lang_names = [
     ('sd', 'Sindhi'),
     ('ta', 'Tamil'),
     ('te', 'Telugu'),
-    ('ur', 'Urdu'),
+    ('ur', 'Urdu')
 ]
 
 scripts = [
@@ -33,14 +33,25 @@ scripts = [
     ('kn', 'kannada'),
     ('mr', 'devanagari'),
     ('te', 'telugu'),
+    ('ta', 'tamil'),
     ('gu', 'gujarati'),
-    ('or', 'oriya')
+    ('or', 'oriya'),
+    ('bn', 'bengali'),
+    ('ml', 'malayalam'),
+    ('pa', 'gurmukhi')
 ]
+
 
 digits = {
     'devanagari': '०१२३४५६७८९',
     'gujarati': '૦૧૨૩૪૫૬૭૮૯',
-    'telugu': '౦౧౨౩౪౫౬౭౮౯'
+    'telugu': '౦౧౨౩౪౫౬౭౮౯',
+    'bengali': '০১২৩৪৫৬৭৮৯',
+    'malayalam': '൦൧൨൩൪൫൬൭൮൯',
+    'tamil': '௦௧௨௩௪௫௬௭௮௯௰',
+    'kannada': '೦೧೨೩೪೫೬೭೮',
+    'oriya': '୦୧୨୩୪୫୬୭୮୯',
+    'gurmukhi': '੦੧੨੩੪੫੬੭੮੯'
 }
 
 
