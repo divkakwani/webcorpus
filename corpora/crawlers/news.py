@@ -78,6 +78,10 @@ def makecrawler(source, **settings):
         spidercls.custom_settings = {}
     spidercls.custom_settings.update(settings)
 
+    # Custom settings for sites
+    if source['name'] == 'anupambharatonline':
+        spidercls.custom_settings.update({'DUPEFILTER_CLASS': 'scrapy.dupefilters.BaseDupeFilter'})
+
     return spidercls
 
 
