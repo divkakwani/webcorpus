@@ -23,7 +23,7 @@ if DATASTORE_PATH is None:
 @click.group()
 @click.option('--debug/--no-debug', default=False)
 def cli(debug):
-    click.echo('Debug mode is %s' % ('on' if debug else 'off'))
+    if debug: click.echo('Debug mode is ON')
 
 
 @cli.command(name='fetch-sources')
@@ -67,7 +67,17 @@ def download_news(lang, srange, timeout, verbose):
         if crawler:
             process.crawl(crawler, source=source, datadir=DATASTORE_PATH)
     process.start()  # block until all crawling jobs are finished
+    return
 
+@cli.command(name='clean-csv')
+@click.option('--lang', required=True)
+@click.option('--threshold', default=10)
+def clean_csv(lang, threshold):
+    """After crawling raw data for say an hr, disable all the sources with `data_count < threshold`
+    """
+    src_list = SourceList(lang)
+    src_list.clean_csv(DATASTORE_PATH, threshold)
+    return
 
 @cli.command(name='process-news')
 @click.option('--corpuspath')
