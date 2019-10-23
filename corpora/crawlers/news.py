@@ -23,7 +23,7 @@ import sys
 import inspect
 
 from boilerpipe.extract import Extractor
-from ..utils import url_validate, extract_links, page_name
+from ..utils import url_validate, extract_links, flatten_url_path
 from ..utils import langcode2name, langcode2script, in_script
 from scrapy.linkextractors import LinkExtractor
 from scrapy.selector import Selector
@@ -123,7 +123,7 @@ class BaseNewsSpider(scrapy.Spider):
         text = self.extract_article_content(response.body)
         if self._is_article(text):
             article = {
-                'name': page_name(response.url),
+                'name': flatten_url_path(response.url),
                 'content': text,
                 'source': response.request.url
             }
