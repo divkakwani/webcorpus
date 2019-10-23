@@ -37,8 +37,9 @@ def fetch_sources():
 @click.option('--lang', required=True)
 @click.option('--srange', default=None)
 @click.option('--timeout', default=0)
+@click.option('--download-delay', default=0.05)
 @click.option('--verbose/--no-verbose', default=False)
-def download_news(lang, srange, timeout, verbose):
+def download_news(lang, srange, timeout, download_delay, verbose):
     # prepare list of sources
     source_list = SourceList(lang)
     sources = [source for source in source_list]
@@ -47,7 +48,7 @@ def download_news(lang, srange, timeout, verbose):
         start, end = list(map(int, srange.split(',')))
         sources = sources[start:end]
     sources = list(filter(lambda s: s['active'], sources))
-    if verbose: print('<<< RUNNING IN DEBUG MODE >>>')
+    if verbose: print('<<< RUNNING IN VERBOSE MODE >>>')
     print("Crawling sources: ", sources)
 
     # create job directories
@@ -63,7 +64,8 @@ def download_news(lang, srange, timeout, verbose):
         'USER_AGENT': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.131 Safari/537.36'
     })
     for source in sources:
-        crawler = makecrawler(source, JOBDIR=jobdirs[source['name']], DUPEFILTER_DEBUG=verbose)
+        crawler = makecrawler(source, JOBDIR=jobdirs[source['name']],
+                              DUPEFILTER_DEBUG=verbose, DOWNLOAD_DELAY=download_delay)
         if crawler:
             process.crawl(crawler, source=source, datadir=DATASTORE_PATH)
     process.start()  # block until all crawling jobs are finished
