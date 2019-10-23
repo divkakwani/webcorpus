@@ -25,16 +25,20 @@ class SourceList:
 
         if os.path.isfile(self._fpath):
             self._load_sources()
+            self.init_writers()
         else:
             # create a new file and write the headers
-            fp = open(self._fpath, 'w')
-            writer = csv.writer(fp)
-            writer.writerow(self._fields)
-            fp.close()
-
+            self.init_writers('w')
+        
+    def init_writers(self, mode='a', close=False):
+        if close: self._write_fp.close()
         # initialize the csv writer
-        self._write_fp = open(self._fpath, 'a')
+        self._write_fp = open(self._fpath, mode)
         self._writer = csv.writer(self._write_fp)
+        if 'w' in mode:
+            # Write header
+            self._writer.writerow(self._fields)
+            self._write_fp.flush()
 
     def _load_sources(self):
         fp = open(self._fpath)
@@ -73,3 +77,28 @@ class SourceList:
             row = list(map(lambda f: source[f], self._fields))
             self._writer.writerow(row)
             self._write_fp.flush()
+            
+    def clean_csv(self, datadir, threshold):
+        disk_path = os.path.join(datadir, 'raw', self.langcode)
+        for src_name in self._sources:
+            dir = os.path.join(disk_path, src_name)
+            if not os.path.isdir(dir):
+                # self._sources[src_name]['active'] = False
+                continue
+            num_files = len(os.listdir(dir))
+            if num_files < threshold:
+                print('In-active:\t%20s\t(total: %d)'%(src_name, num_files))
+                self._sources[src_name]['active'] = False
+            else:
+                self._sources[src_name]['active'] = True
+        
+        self.rewrite_csv()
+        return
+    
+    def rewrite_csv(self):
+        self.init_writers('w', close=True)
+        for src_name in self._sources:
+            source = self._sources[src_name]
+            row = list(map(lambda f: source[f], self._fields))
+            self._writer.writerow(row)
+        self._write_fp.flush()

@@ -88,11 +88,12 @@ def makecrawler(source, **settings):
 class BaseNewsSpider(scrapy.Spider):
 
     custom_settings = {
-        'DOWNLOAD_DELAY': 0.05,
+        #'DOWNLOAD_DELAY': 0.05,
         'LOG_ENABLED': True,
         'CONCURRENT_REQUESTS': 64,
         'AUTOTHROTTLE_ENABLED': True,
         #'scrapy.spidermiddlewares.offsite.OffsiteMiddleware': None, #To Disable Offsite Duplicate filtering
+        'TELNETCONSOLE_PORT': None,
     }
 
     def __init__(self, source, datadir):

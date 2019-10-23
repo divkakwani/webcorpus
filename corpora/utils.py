@@ -138,12 +138,12 @@ def flatten_url_path(url):
     """
     
     url = urlparse(url)
-    path = url.path[1:].replace('/', '-').rsplit('.', 1)[0]
+    path = url.path[1:].rsplit('.', 1)[0]
     if url.params:
         path += '-' + url.params
     if url.query:
         path += '--' + url.query
-    return path if path else url.hostname
+    return path.replace('/', '-') if path else url.hostname
 
 def url_tld(url):
     ext = tldextract.extract(url)
