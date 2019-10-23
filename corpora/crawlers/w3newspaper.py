@@ -15,7 +15,8 @@ class W3NewsPaperSpider(scrapy.Spider):
 
     def __init__(self):
         self.languages = ['kannada', 'oriya', 'hindi', 'punjabi',
-                          'assamese', 'punjabi']
+                          'assamese', 'punjabi', 'tamil', 'telugu',
+                          'gujarati']
         self.source_lists = {}
         for lang in self.languages:
             langcode = langname2code(lang)
