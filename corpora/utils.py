@@ -143,7 +143,7 @@ def flatten_url_path(url):
         path += '-' + url.params
     if url.query:
         path += '--' + url.query
-    return path
+    return path if path else url.hostname
 
 def url_tld(url):
     ext = tldextract.extract(url)

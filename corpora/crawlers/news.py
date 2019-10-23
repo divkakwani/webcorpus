@@ -92,7 +92,7 @@ class BaseNewsSpider(scrapy.Spider):
         'LOG_ENABLED': True,
         'CONCURRENT_REQUESTS': 64,
         'AUTOTHROTTLE_ENABLED': True,
-        'scrapy.spidermiddlewares.offsite.OffsiteMiddleware': None,
+        #'scrapy.spidermiddlewares.offsite.OffsiteMiddleware': None, #To Disable Offsite Duplicate filtering
     }
 
     def __init__(self, source, datadir):
