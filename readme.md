@@ -10,7 +10,7 @@ Clone the repository and run the following command:
 pip3 install .
 ```
 
-
+Note: Ensure that you're using `python3` and have JDK installed. (If not: `sudo apt install default-jdk`)
 
 #### Usage
 
