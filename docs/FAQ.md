@@ -21,3 +21,12 @@ pip3 uninstall pyOpenSSL
 
 ### My modifications are not reflected in `corpora`
 It's recommended to do `pip3 install .` after your modifications to them in effect in `corpora`.
+
+### `Error occurred during initialization of VM`
+```
+java.lang.Error: Properties init: Could not determine current working directory.
+        at java.lang.System.initProperties(Native Method)
+        at java.lang.System.initializeSystemClass(System.java:1166)
+```
+
+`cd` into some other directory and get back into your original directory. And try again.

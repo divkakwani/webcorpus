@@ -71,14 +71,16 @@ def download_news(lang, srange, timeout, download_delay, verbose):
     process.start()  # block until all crawling jobs are finished
     return
 
-@cli.command(name='clean-csv')
+@cli.command(name='detect-inactives')
 @click.option('--lang', required=True)
-@click.option('--threshold', default=10)
-def clean_csv(lang, threshold):
+@click.option('--threshold', required=True)
+def detect_inactives(lang, threshold):
     """After crawling raw data for say an hr, disable all the sources with `data_count < threshold`
+    
+    Recommended threshold: atleast 50 (if you ran for an hour)
     """
     src_list = SourceList(lang)
-    src_list.clean_csv(DATASTORE_PATH, threshold)
+    src_list.disable_inactives(DATASTORE_PATH, int(threshold))
     return
 
 @cli.command(name='process-news')

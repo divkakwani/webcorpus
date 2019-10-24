@@ -93,7 +93,8 @@ class BaseNewsSpider(scrapy.Spider):
         'CONCURRENT_REQUESTS': 64,
         'AUTOTHROTTLE_ENABLED': True,
         #'scrapy.spidermiddlewares.offsite.OffsiteMiddleware': None, #To Disable Offsite Duplicate filtering
-        'TELNETCONSOLE_PORT': None,
+        'TELNETCONSOLE_ENABLED': False,
+        #'TELNETCONSOLE_PORT': None,
     }
 
     def __init__(self, source, datadir):
