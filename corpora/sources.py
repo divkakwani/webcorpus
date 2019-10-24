@@ -78,7 +78,7 @@ class SourceList:
             self._writer.writerow(row)
             self._write_fp.flush()
             
-    def clean_csv(self, datadir, threshold):
+    def disable_inactives(self, datadir, threshold):
         disk_path = os.path.join(datadir, 'raw', self.langcode)
         for src_name in self._sources:
             dir = os.path.join(disk_path, src_name)
