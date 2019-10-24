@@ -80,7 +80,7 @@ def detect_inactives(lang, threshold):
     Recommended threshold: atleast 50 (if you ran for an hour)
     """
     src_list = SourceList(lang)
-    src_list.disable_inactives(DATASTORE_PATH, threshold)
+    src_list.disable_inactives(DATASTORE_PATH, int(threshold))
     return
 
 @cli.command(name='process-news')
