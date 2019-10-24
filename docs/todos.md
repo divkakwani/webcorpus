@@ -5,8 +5,6 @@
 - Override get_category_urls in newspaper library
 - Separate category pages and post pages
 - use unicodedata to check the correct language
-- Compatibility for `python2`
-- Unit tests
 
 #### References
 
