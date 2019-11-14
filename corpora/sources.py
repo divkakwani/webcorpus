@@ -4,17 +4,18 @@ Copyright © Divyanshu Kakwani 2019, all rights reserved.
 
 import csv
 import os
-
+from .utils import url_tld
+from urllib.parse import urljoin
 
 class SourceList:
     """
     Represents a storage-persisted source list
     """
 
-    def __init__(self, langcode):
+    def __init__(self, langcode, filename=None):
         self.langcode = langcode
         pkgdir = os.path.dirname(os.path.abspath(__file__))
-        self._fpath = os.path.join(pkgdir,
+        self._fpath = filename if filename else os.path.join(pkgdir,
                                    'sources/{}.csv'.format(self.langcode))
         self._fields = ['id', 'name', 'language', 'home_url',
                         'sitemap_url', 'active']
@@ -33,7 +34,7 @@ class SourceList:
     def init_writers(self, mode='a', close=False):
         if close: self._write_fp.close()
         # initialize the csv writer
-        self._write_fp = open(self._fpath, mode)
+        self._write_fp = open(self._fpath, mode, buffering=1)
         self._writer = csv.writer(self._write_fp)
         if 'w' in mode:
             # Write header
@@ -68,17 +69,19 @@ class SourceList:
 
     def add_source(self, source):
         assert(source['language'] == self.langcode)
-        if source['name'] not in self._sources:
-            source = source.copy()
-            source['id'] = self._next_id
-            source['active'] = True
-            self._next_id += 1
-            self._sources[source['name']] = source
-            row = list(map(lambda f: source[f], self._fields))
-            self._writer.writerow(row)
-            self._write_fp.flush()
+        if source['name'] in self._sources:
+            return False
+        source = source.copy()
+        source['id'] = self._next_id
+        source['active'] = True
+        self._next_id += 1
+        self._sources[source['name']] = source
+        row = list(map(lambda f: source[f], self._fields))
+        self._writer.writerow(row)
+        self._write_fp.flush()
+        return True
             
-    def disable_inactives(self, datadir, threshold):
+    def disable_inactives(self, datadir, threshold, enable_actives=False):
         disk_path = os.path.join(datadir, 'raw', self.langcode)
         for src_name in self._sources:
             dir = os.path.join(disk_path, src_name)
@@ -89,7 +92,7 @@ class SourceList:
             if num_files < threshold:
                 print('In-active:\t%20s\t(total: %d)'%(src_name, num_files))
                 self._sources[src_name]['active'] = False
-            else:
+            elif enable_actives:
                 self._sources[src_name]['active'] = True
         
         self.rewrite_csv()
@@ -102,3 +105,20 @@ class SourceList:
             row = list(map(lambda f: source[f], self._fields))
             self._writer.writerow(row)
         self._write_fp.flush()
+        
+    def disable_all_sources(self):
+        for src_name in self._sources:
+            self._sources[src_name]['active'] = False
+        self.rewrite_csv()
+        
+    def enable_all_sources(self):
+        for src_name in self._sources:
+            self._sources[src_name]['active'] = True
+        self.rewrite_csv()
+        
+    def add_website(self, url):
+        name = url_tld(url)
+        sitemap_url = urljoin(url, 'sitemap.xml')
+        source = {'name': name, 'language': self.langcode, 'home_url': url,
+                      'sitemap_url': sitemap_url}
+        self.add_source(source)
