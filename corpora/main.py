@@ -37,7 +37,7 @@ def fetch_sources():
 @click.option('--lang', required=True)
 @click.option('--srange', default=None)
 @click.option('--timeout', default=0)
-@click.option('--download-delay', default=0.05)
+@click.option('--download-delay', default=0.02)
 @click.option('--verbose/--no-verbose', default=False)
 def download_news(lang, srange, timeout, download_delay, verbose):
     # prepare list of sources
