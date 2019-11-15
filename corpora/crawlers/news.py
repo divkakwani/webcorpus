@@ -108,6 +108,8 @@ class BaseNewsSpider(scrapy.Spider):
 
         components = tldextract.extract(source['home_url'])
         domain = components.domain + '.' + components.suffix
+        if components.subdomain:
+            domain = components.subdomain + '.' + domain
         self.allowed_domains = [domain]
 
         super().__init__(source['name'])
