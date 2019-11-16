@@ -43,20 +43,21 @@ def _select_blueprint(source):
     # check for the sitemap spider
     if url_validate(source['sitemap_url']):
         try:
-            response = requests.get(source['sitemap_url'])
+            response = requests.get(source['sitemap_url'], timeout=15)
             if response.status_code == 200:
                 return NewsSitemapSpider
-        except requests.exceptions.ConnectionError:
+        except requests.exceptions.RequestException as e:
             pass
 
     # check for recursive spider
     try:
-        response = requests.get(source['home_url'])
+        response = requests.get(source['home_url'], timeout=15)
         if response.status_code == 200 or response.status_code == 406:
             return RecursiveSpider
-    except requests.exceptions.ConnectionError:
+    except requests.exceptions.RequestException as e:
         pass
 
+    print('%s is dead...' % source['home_url'])
     return None
 
 
@@ -124,6 +125,8 @@ class BaseNewsSpider(scrapy.Spider):
         Extracts the article content from the response body and prepares
         the article object
         """
+        if not response.body:
+            return None
         text = self.extract_article_content(response.body)
         if self._is_article(text):
             article = {
@@ -161,6 +164,8 @@ class BaseNewsSpider(scrapy.Spider):
         writes articles to disk
         """
         fpath = os.path.join(self.disk_path, article['name'])
+        if os.path.isfile(fpath): # Handle name collisions
+            print('WARNING: Replacing existing article in %s for URL %s' % (article['name'], article['source']))
         with open(fpath, 'w', encoding='utf-8') as fp:
             json.dump(article, fp, indent=4, ensure_ascii=False)
 

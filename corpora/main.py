@@ -88,7 +88,9 @@ def detect_inactives(lang, threshold):
 @click.option('--lang')
 @click.option('--fmt', default='json')
 def process_datasets(corpuspath, lang, fmt):
-    op_path = os.path.join(DATASTORE_PATH, 'processed', lang)
+    op_path = os.path.join(DATASTORE_PATH, 'processed')
+    os.makedirs(op_path, exist_ok=True)
+    op_path = os.path.join(op_path, lang)
     processor = CorpusProcessor(corpuspath, lang, fmt, op_path)
     processor.process()
 

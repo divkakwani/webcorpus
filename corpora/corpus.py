@@ -44,10 +44,11 @@ class CorpusReader:
         if os.path.isfile(corpus_path):
             self.files = [{'path': corpus_path}]
         else:
+            file_extn = '.' + fmt
             for (dirpath, _, fnames) in os.walk(corpus_path):
                 self.files += [{'publisher': os.path.basename(dirpath),
                                 'path': os.path.join(dirpath, file)}
-                               for file in fnames]
+                               for file in fnames if file.endswith(file_extn)]
 
     def _get_content(self, fpath):
         if self.fmt != 'json':
