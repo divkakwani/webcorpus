@@ -178,6 +178,6 @@ class CorpusProcessor:
         if len(sent) < 10:
             return False
         for c in sent:
-            if not in_script(c, self.script):
+            if c != '।' and not in_script(c, self.script):
                 return False
         return True
