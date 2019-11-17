@@ -51,11 +51,11 @@ class CorpusReader:
 
     def _get_content(self, fpath):
         if self.fmt != 'json':
-            with open(fpath) as fp:
+            with open(fpath, 'r', encoding='utf-8', errors='replace') as fp:
                 content = fp.read()
         else:
             # interpret as json
-            with open(fpath) as fp:
+            with open(fpath, 'r', encoding='utf-8', errors='replace') as fp:
                 try:
                     art = json.load(fp)
                     return art['content']

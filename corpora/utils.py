@@ -2,6 +2,7 @@ import string
 import unicodedata as ud
 import re
 import tldextract
+from urllib.parse import urlparse
 
 
 ############################
@@ -38,7 +39,8 @@ scripts = [
     ('or', 'oriya'),
     ('bn', 'bengali'),
     ('ml', 'malayalam'),
-    ('pa', 'gurmukhi')
+    ('pa', 'gurmukhi'),
+    ('as', 'bengali')
 ]
 
 
@@ -125,6 +127,24 @@ def page_name(url):
     name = re.search(r'[^\./]*(?!.*/)', url).group(0)
     return name
 
+def flatten_url_path(url):
+    """Given an URL, returns the flattened path from the URL.
+    
+    Examples:
+        >>> flatten_url_path('http://abc.com/news.php;national?article=123#fragment')
+        news-national--article=123
+    
+    Todo:
+        - Implement using regex if slow.
+    """
+    
+    url = urlparse(url)
+    path = url.path[1:].rsplit('.', 1)[0]
+    if url.params:
+        path += '-' + url.params
+    if url.query:
+        path += '--' + url.query
+    return path.replace('/', '-')[:255] if path else url.hostname
 
 def url_tld(url):
     ext = tldextract.extract(url)

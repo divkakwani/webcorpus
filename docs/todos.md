@@ -6,3 +6,7 @@
 - Separate category pages and post pages
 - use unicodedata to check the correct language
 
+#### References
+
+- [Using custom middleware for URL filtering](https://stackoverflow.com/questions/12553117/how-to-filter-duplicate-requests-based-on-url-in-scrapy)  
+- [Pausing and Resuming in Scrapy](https://doc.scrapy.org/en/latest/topics/jobs.html)

@@ -23,7 +23,7 @@ import sys
 import inspect
 
 from boilerpipe.extract import Extractor
-from ..utils import url_validate, extract_links, page_name
+from ..utils import url_validate, extract_links, flatten_url_path
 from ..utils import langcode2name, langcode2script, in_script
 from scrapy.linkextractors import LinkExtractor
 from scrapy.selector import Selector
@@ -78,17 +78,23 @@ def makecrawler(source, **settings):
         spidercls.custom_settings = {}
     spidercls.custom_settings.update(settings)
 
+    # Custom settings for sites
+    if source['name'] == 'anupambharatonline':
+        spidercls.custom_settings.update({'DUPEFILTER_CLASS': 'scrapy.dupefilters.BaseDupeFilter'})
+
     return spidercls
 
 
 class BaseNewsSpider(scrapy.Spider):
 
     custom_settings = {
-        'DOWNLOAD_DELAY': 0.05,
+        #'DOWNLOAD_DELAY': 0.05,
         'LOG_ENABLED': True,
         'CONCURRENT_REQUESTS': 64,
         'AUTOTHROTTLE_ENABLED': True,
-        'scrapy.spidermiddlewares.offsite.OffsiteMiddleware': None,
+        #'scrapy.spidermiddlewares.offsite.OffsiteMiddleware': None, #To Disable Offsite Duplicate filtering
+        'TELNETCONSOLE_ENABLED': False,
+        #'TELNETCONSOLE_PORT': None,
     }
 
     def __init__(self, source, datadir):
@@ -119,7 +125,7 @@ class BaseNewsSpider(scrapy.Spider):
         text = self.extract_article_content(response.body)
         if self._is_article(text):
             article = {
-                'name': page_name(response.url),
+                'name': flatten_url_path(response.url),
                 'content': text,
                 'source': response.request.url
             }

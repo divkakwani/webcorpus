@@ -23,7 +23,7 @@ if DATASTORE_PATH is None:
 @click.group()
 @click.option('--debug/--no-debug', default=False)
 def cli(debug):
-    click.echo('Debug mode is %s' % ('on' if debug else 'off'))
+    if debug: click.echo('Debug mode is ON')
 
 
 @cli.command(name='fetch-sources')
@@ -37,7 +37,9 @@ def fetch_sources():
 @click.option('--lang', required=True)
 @click.option('--srange', default=None)
 @click.option('--timeout', default=0)
-def download_news(lang, srange, timeout):
+@click.option('--download-delay', default=0.02)
+@click.option('--verbose/--no-verbose', default=False)
+def download_news(lang, srange, timeout, download_delay, verbose):
     # prepare list of sources
     source_list = SourceList(lang)
     sources = [source for source in source_list]
@@ -46,6 +48,7 @@ def download_news(lang, srange, timeout):
         start, end = list(map(int, srange.split(',')))
         sources = sources[start:end]
     sources = list(filter(lambda s: s['active'], sources))
+    if verbose: print('<<< RUNNING IN VERBOSE MODE >>>')
     print("Crawling sources: ", sources)
 
     # create job directories
@@ -61,11 +64,24 @@ def download_news(lang, srange, timeout):
         'USER_AGENT': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.131 Safari/537.36'
     })
     for source in sources:
-        crawler = makecrawler(source, JOBDIR=jobdirs[source['name']])
+        crawler = makecrawler(source, JOBDIR=jobdirs[source['name']],
+                              DUPEFILTER_DEBUG=verbose, DOWNLOAD_DELAY=download_delay)
         if crawler:
             process.crawl(crawler, source=source, datadir=DATASTORE_PATH)
     process.start()  # block until all crawling jobs are finished
+    return
 
+@cli.command(name='detect-inactives')
+@click.option('--lang', required=True)
+@click.option('--threshold', required=True)
+def detect_inactives(lang, threshold):
+    """After crawling raw data for say an hr, disable all the sources with `data_count < threshold`
+    
+    Recommended threshold: atleast 50 (if you ran for an hour)
+    """
+    src_list = SourceList(lang)
+    src_list.disable_inactives(DATASTORE_PATH, int(threshold))
+    return
 
 @cli.command(name='process-news')
 @click.option('--corpuspath')
