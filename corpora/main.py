@@ -2,6 +2,7 @@ import click
 import logging
 import os
 import warnings
+import csv
 
 warnings.filterwarnings("ignore")
 logging.getLogger("urllib3").setLevel(logging.ERROR)
@@ -10,8 +11,9 @@ logging.getLogger("tldextract").setLevel(logging.ERROR)
 from scrapy.crawler import CrawlerProcess
 from .crawlers import W3NewsPaperSpider
 from .crawlers import makecrawler
-from .corpus import CorpusProcessor
+from .corpus import CorpusProcessor, CorpusReader
 from .sources import SourceList
+from .utils import decant_txt
 
 
 DATASTORE_PATH = os.environ.get('DATASTORE')
@@ -91,6 +93,31 @@ def process_datasets(corpuspath, lang, fmt):
     op_path = os.path.join(DATASTORE_PATH, 'processed', lang)
     processor = CorpusProcessor(corpuspath, lang, fmt, op_path)
     processor.process()
+
+
+@cli.command(name='cdata')
+@click.option('--corpuspath')
+@click.option('--lang')
+@click.option('--maxsamples')
+@click.option('--classes')
+def classification_dataset(corpuspath, lang, maxsamples, classes):
+    maxsamples = int(maxsamples)
+    classes = classes.split(',')
+    samples_seen = {c: 0 for c in classes}
+    op_path = os.path.join(DATASTORE_PATH, 'cdata', lang)
+    reader = CorpusReader(corpuspath, lang)
+    with open(op_path, 'w') as csvfile:
+        writer = csv.writer(csvfile, delimiter=',',
+                            quotechar='|', quoting=csv.QUOTE_MINIMAL)
+        for art in reader.articles():
+            print("Name: ", art['name'])
+            clas = next((c for c in classes
+                         if '/{}/'.format(c) in art['source']), None)
+            if clas and samples_seen[clas] < maxsamples:
+                txt = decant_txt(art['content'], lang)
+                if txt:
+                    samples_seen[clas] += 1
+                    writer.writerow([clas, txt])
 
 
 if __name__ == "__main__":

@@ -149,3 +149,22 @@ def flatten_url_path(url):
 def url_tld(url):
     ext = tldextract.extract(url)
     return ext.domain
+
+
+def decant_txt(content, lang):
+    """
+    Extract a window of (500, 700) characters such that all
+    the characters belong to that language
+    """
+    min_win, max_win = 500, 700
+    script = langcode2script(lang)
+    start = 0
+    while start < len(content) - min_win:
+        end = start
+        while end < len(content) and in_script(content[end], script) \
+                and end-start < max_win:
+            end += 1
+        if end - start > min_win:
+            return content[start:end]
+        start = end + 1
+    return None
