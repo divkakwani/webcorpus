@@ -99,41 +99,39 @@ def process_datasets(corpuspath, lang, fmt):
 @click.option('--corpuspath')
 @click.option('--lang')
 @click.option('--maxsamples')
-def classification_dataset(corpuspath, lang, maxsamples):
-    taggroups = [['entertainment', 'cinema', 'bollywood', 'film', 'tv',
-                  'cinema-news'],
-                 ['politics'],
-                 ['business', 'business-news', 'kannada-business-news'],
-                 ['crime', 'crime-news'],
-                 ['technology', 'tech'],
-                 ['astrology', 'astro', 'astro-news'],
-                 ['sports', 'cricket', 'football'],
-                 ['lifestyle', 'life-style', 'health']]
+@click.option('--classes')
+def classification_dataset(corpuspath, lang, maxsamples, classes):
+    classes = classes.split(',')
+    taggroups = {
+        'entertainment': ['entertainment', 'cinema', 'bollywood', 'film', 'tv', 'cinema-news'],
+        'politics': ['politics'],
+        'business':  ['business', 'business-news', 'kannada-business-news'],
+        'crime': ['crime', 'crime-news'],
+        'technology': ['technology', 'tech'],
+        'astrology':  ['astrology', 'astro', 'astro-news'],
+        'sports':   ['sports', 'cricket', 'football'],
+        'lifestyle': ['lifestyle', 'life-style', 'health']
+    }
     maxsamples = int(maxsamples)
-    samples_seen = {tg[0]: 0 for tg in taggroups}
+    samples_seen = {c: 0 for c in classes}
     op_path = os.path.join(DATASTORE_PATH, 'cdata', lang)
     reader = CorpusReader(corpuspath, lang)
     rows = []
     with open(op_path, 'w') as csvfile:
         writer = csv.writer(csvfile)
         for art in reader.articles():
-            print("Name: ", art['name'])
             tag = None
-            for tg in taggroups:
-                for t in tg:
+            for clas in classes:
+                for t in taggroups[clas]:
                     if '/{}/'.format(t) in art['source']:
-                        tag = tg[0]
+                        tag = clas
                         break
 
             if tag and samples_seen[tag] < maxsamples:
                 txt = decant_txt(art['content'], lang)
                 if txt:
                     samples_seen[tag] += 1
-                    rows.append([tag, txt])
-
-        for row in rows:
-            if samples_seen[row[0]] == maxsamples:
-                writer.writerow([tag, txt])
+                    writer.writerow([tag, txt])
 
 
 if __name__ == "__main__":
