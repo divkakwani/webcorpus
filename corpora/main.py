@@ -113,6 +113,7 @@ def classification_dataset(corpuspath, lang, maxsamples):
     samples_seen = {tg[0]: 0 for tg in taggroups}
     op_path = os.path.join(DATASTORE_PATH, 'cdata', lang)
     reader = CorpusReader(corpuspath, lang)
+    rows = []
     with open(op_path, 'w') as csvfile:
         writer = csv.writer(csvfile)
         for art in reader.articles():
@@ -128,7 +129,11 @@ def classification_dataset(corpuspath, lang, maxsamples):
                 txt = decant_txt(art['content'], lang)
                 if txt:
                     samples_seen[tag] += 1
-                    writer.writerow([tag, txt])
+                    rows.append([tag, txt])
+
+        for row in rows:
+            if samples_seen[row[0]] == maxsamples:
+                writer.writerow([tag, txt])
 
 
 if __name__ == "__main__":
