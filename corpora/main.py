@@ -99,25 +99,36 @@ def process_datasets(corpuspath, lang, fmt):
 @click.option('--corpuspath')
 @click.option('--lang')
 @click.option('--maxsamples')
-@click.option('--classes')
 def classification_dataset(corpuspath, lang, maxsamples, classes):
+    taggroups = [['entertainment', 'cinema', 'bollywood', 'film', 'tv',
+                  'cinema-news'],
+                 ['politics'],
+                 ['business', 'business-news'],
+                 ['crime', 'crime-news']
+                 ['technology', 'tech'],
+                 ['astrology', 'astro', 'astro-news'],
+                 ['sports', 'cricket', 'football'],
+                 ['lifestyle', 'life-style', 'health']]
     maxsamples = int(maxsamples)
-    classes = classes.split(',')
-    samples_seen = {c: 0 for c in classes}
+    samples_seen = {tg[0]: 0 for tg in taggroups}
     op_path = os.path.join(DATASTORE_PATH, 'cdata', lang)
     reader = CorpusReader(corpuspath, lang)
     with open(op_path, 'w') as csvfile:
-        writer = csv.writer(csvfile, delimiter=',',
-                            quotechar='|', quoting=csv.QUOTE_MINIMAL)
+        writer = csv.writer(csvfile)
         for art in reader.articles():
             print("Name: ", art['name'])
-            clas = next((c for c in classes
-                         if '/{}/'.format(c) in art['source']), None)
-            if clas and samples_seen[clas] < maxsamples:
+            tag = None
+            for tg in taggroups:
+                for t in tg:
+                    if '/{}/'.format(t) in art['source']:
+                        tag = tg[0]
+                        break
+
+            if tag and samples_seen[tag] < maxsamples:
                 txt = decant_txt(art['content'], lang)
                 if txt:
-                    samples_seen[clas] += 1
-                    writer.writerow([clas, txt])
+                    samples_seen[tag] += 1
+                    writer.writerow([tag, txt])
 
 
 if __name__ == "__main__":
