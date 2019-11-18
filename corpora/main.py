@@ -99,12 +99,12 @@ def process_datasets(corpuspath, lang, fmt):
 @click.option('--corpuspath')
 @click.option('--lang')
 @click.option('--maxsamples')
-def classification_dataset(corpuspath, lang, maxsamples, classes):
+def classification_dataset(corpuspath, lang, maxsamples):
     taggroups = [['entertainment', 'cinema', 'bollywood', 'film', 'tv',
                   'cinema-news'],
                  ['politics'],
-                 ['business', 'business-news'],
-                 ['crime', 'crime-news']
+                 ['business', 'business-news', 'kannada-business-news'],
+                 ['crime', 'crime-news'],
                  ['technology', 'tech'],
                  ['astrology', 'astro', 'astro-news'],
                  ['sports', 'cricket', 'football'],
