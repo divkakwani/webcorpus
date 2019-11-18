@@ -86,7 +86,7 @@ def langcode2script(iso_code):
 
 
 def in_script(c, script_name):
-    if c.isspace() or c in string.punctuation:
+    if c == '।' or c.isspace() or c in string.punctuation:
         return True
     try:
         if script_name not in ud.name(c).lower():
