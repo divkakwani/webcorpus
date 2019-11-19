@@ -181,3 +181,33 @@ class CorpusProcessor:
             if c != '।' and not in_script(c, self.script):
                 return False
         return True
+
+
+class ArticleProcessor:
+
+    def __init__(self, lang):
+        normalizer_factory = indic_normalize.IndicNormalizerFactory()
+        self.normalizer = normalizer_factory.get_normalizer(lang)
+
+    def process(self, content):
+        sents = sentence_tokenize.sentence_split(content, self.lang)
+        psents = [self._process_sent(sent) for sent in sents]
+        psents = [psent for psent in psents if self._sent_filter(psent)]
+
+    def _process_sent(self, sent):
+        newline_removed = sent.replace('\n', ' ')
+        normalized = self.normalizer.normalize(newline_removed)
+        num_masked = re.sub(r'[0-9]+', '#', normalized)
+        native_digits = get_digits(self.script)
+        num_masked = re.sub(r'[{}]+'.format(native_digits), '#', num_masked)
+        spaced = ' '.join(indic_tokenize.trivial_tokenize(num_masked,
+                                                          self.lang))
+        return spaced
+
+    def _sent_filter(self, sent):
+        if len(sent) < 10:
+            return False
+        for c in sent:
+            if c != '।' and not in_script(c, self.script):
+                return False
+        return True

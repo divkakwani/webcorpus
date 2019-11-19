@@ -11,7 +11,7 @@ logging.getLogger("tldextract").setLevel(logging.ERROR)
 from scrapy.crawler import CrawlerProcess
 from .crawlers import W3NewsPaperSpider
 from .crawlers import makecrawler
-from .corpus import CorpusProcessor, CorpusReader
+from .corpus import CorpusProcessor, CorpusReader, ArticleProcessor
 from .sources import SourceList
 from .utils import decant_txt
 
@@ -119,7 +119,7 @@ def classification_dataset(corpuspath, lang, maxsamples, classes):
     samples_seen = {c: 0 for c in classes}
     op_path = os.path.join(DATASTORE_PATH, 'cdata', lang)
     reader = CorpusReader(corpuspath, lang)
-    rows = []
+    processor = ArticleProcessor(lang)
     with open(op_path, 'w') as csvfile:
         writer = csv.writer(csvfile)
         for art in reader.articles():
@@ -131,8 +131,9 @@ def classification_dataset(corpuspath, lang, maxsamples, classes):
                         break
 
             if tag and samples_seen[tag] < maxsamples:
-                txt = decant_txt(art['content'], lang)
-                if txt:
+                sents = processor.process(art['content'])
+                if len(sents) >= 10:
+                    txt = ' '.join(sents[:10])
                     samples_seen[tag] += 1
                     writer.writerow([tag, txt])
 
