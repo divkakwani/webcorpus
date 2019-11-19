@@ -55,7 +55,7 @@ def download_news(lang, srange, timeout, download_delay, verbose):
     jobdirs = {}
     for source in sources:
         name = source['name']
-        jobdir = os.path.join(DATASTORE_PATH, 'jobs/current', name)
+        jobdir = os.path.join(DATASTORE_PATH, 'jobs/current', lang, name)
         jobdirs[name] = jobdir
         os.makedirs(jobdir, exist_ok=True)
 
