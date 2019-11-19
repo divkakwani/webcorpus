@@ -161,7 +161,8 @@ def decant_txt(content, lang):
     start = 0
     while start < len(content) - min_win:
         end = start
-        while end < len(content) and in_script(content[end], script) \
+        while end < len(content) \
+                and (in_script(content[end], script) or content[end].isdigit() \
                 and end-start < max_win:
             end += 1
         if end - start > min_win:
