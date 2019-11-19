@@ -99,9 +99,8 @@ def process_datasets(corpuspath, lang, fmt):
 @click.option('--corpuspath')
 @click.option('--lang')
 @click.option('--maxsamples')
-@click.option('--classes')
+@click.option('--classes', default=None)
 def classification_dataset(corpuspath, lang, maxsamples, classes):
-    classes = classes.split(',')
     taggroups = {
         'entertainment': ['entertainment', 'cinema', 'bollywood', 'film', 'tv', 'cinema-news'],
         'politics': ['politics'],
@@ -112,6 +111,10 @@ def classification_dataset(corpuspath, lang, maxsamples, classes):
         'sports':   ['sports', 'cricket', 'football'],
         'lifestyle': ['lifestyle', 'life-style', 'health']
     }
+    if classes:
+        classes = classes.split(',')
+    else:
+        classes = taggroups.keys()
     maxsamples = int(maxsamples)
     samples_seen = {c: 0 for c in classes}
     op_path = os.path.join(DATASTORE_PATH, 'cdata', lang)
