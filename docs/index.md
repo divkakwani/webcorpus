@@ -1,3 +1,8 @@
+---
+layout: page
+title: Indic Corpora
+---
+
 
 #### Monolingual Corpora
 
