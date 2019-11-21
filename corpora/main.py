@@ -9,6 +9,7 @@ logging.getLogger("urllib3").setLevel(logging.ERROR)
 logging.getLogger("tldextract").setLevel(logging.ERROR)
 
 from scrapy.crawler import CrawlerProcess
+from tqdm import tqdm
 from .crawlers import W3NewsPaperSpider
 from .crawlers import makecrawler
 from .corpus import CorpusProcessor, CorpusReader, ArticleProcessor
@@ -125,7 +126,7 @@ def classification_dataset(corpuspath, lang, maxsamples, classes):
     for tag in classes:
         os.mkdir(os.path.join(op_path, tag))
     reader = CorpusReader(corpuspath, lang)
-    for art in reader.articles():
+    for art in tqdm(reader.articles()):
         tag = None
         for clas in classes:
             for t in taggroups[clas]:
