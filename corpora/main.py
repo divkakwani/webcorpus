@@ -101,6 +101,9 @@ def process_datasets(corpuspath, lang, fmt):
 @click.option('--maxsamples')
 @click.option('--classes', default=None)
 def classification_dataset(corpuspath, lang, maxsamples, classes):
+    """
+    create dataset in the BBC News dataset format
+    """
     taggroups = {
         'entertainment': ['entertainment', 'cinema', 'bollywood', 'film', 'tv', 'cinema-news'],
         'politics': ['politics'],
@@ -118,24 +121,25 @@ def classification_dataset(corpuspath, lang, maxsamples, classes):
     maxsamples = int(maxsamples)
     samples_seen = {c: 0 for c in classes}
     op_path = os.path.join(DATASTORE_PATH, 'cdata', lang)
+    os.mkdir(op_path)
+    for tag in classes:
+        os.mkdir(os.path.join(op_path, tag))
     reader = CorpusReader(corpuspath, lang)
-    processor = ArticleProcessor(lang)
-    with open(op_path, 'w') as csvfile:
-        writer = csv.writer(csvfile)
-        for art in reader.articles():
-            tag = None
-            for clas in classes:
-                for t in taggroups[clas]:
-                    if '/{}/'.format(t) in art['source']:
-                        tag = clas
-                        break
+    for art in reader.articles():
+        tag = None
+        for clas in classes:
+            for t in taggroups[clas]:
+                if '/{}/'.format(t) in art['source']:
+                    tag = clas
+                    break
 
-            if tag and samples_seen[tag] < maxsamples:
-                sents = processor.process(art['content'])
-                if len(sents) >= 10:
-                    txt = ' '.join(sents[:10])
-                    samples_seen[tag] += 1
-                    writer.writerow([tag, txt])
+        if tag:
+            txt = art['content']
+            if len(txt) >= 300:
+                samples_seen[tag] += 1
+                path = os.path.join(op_path, tag, samples_seen[tag])
+                with open(path, 'w') as fp:
+                    fp.write(txt)
 
 
 if __name__ == "__main__":
