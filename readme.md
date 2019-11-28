@@ -17,7 +17,7 @@ A tool to generate large textual corpora by crawling the web.
 * Crawls articles from sources building a raw corpus:
 
   ```bash
-  webcorpus fetch --lang <language code> --srcdir <path> [--part <int>] --jobdir-root <path>  --output <path> 
+  webcorpus fetch --lang <language code> --srcdir <path> --jobdir_root <path>  --output <path> 
   ```
 
 * Generate processed dataset from a corpus:
