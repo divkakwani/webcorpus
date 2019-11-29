@@ -1,14 +1,14 @@
 ---
 title: Trained Embeddings
 layout: default
-nav_order: 2
+nav_order: 3
 ---
 
 
 
 
 
-#### Trained Embeddings
+## Trained Embeddings
 
 
 

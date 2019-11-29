@@ -1,4 +1,6 @@
-title: "Indian Language Resources"
-remote_theme: pmarsceill/just-the-docs
+title: "webcorpus"
 # remote_theme: pmarsceill/just-the-docs
+remote_theme: pmarsceill/just-the-docs
+# theme: minimal-mistakes-jekyll
+# remote_theme: mmistakes/minimal-mistakes@4.17.2
 search_enabled: false

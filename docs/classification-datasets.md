@@ -1,11 +1,12 @@
 ---
 title: Classification Datasets
 layout: default
+nav_order: 2
 ---
 
 
 
-#### Topic Classification Dataset
+## Classification Datasets
 
 | Language | Classes | Docs per class | Download Link                                                |
 | -------- | ------- | -------------- | ------------------------------------------------------------ |
