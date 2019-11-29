@@ -2,6 +2,9 @@
 Copyright © Divyanshu Kakwani 2019, all rights reserved
 """
 
+import string
+import unicodedata as ud
+
 
 LC_NAME = {
     'as': 'assamese',
@@ -57,3 +60,22 @@ def name2code(lang):
         if v.lower() == lang.lower():
             return k
     return None
+
+
+def code2script(iso_code):
+    iso_code = iso_code.lower()
+    for c, s in LC_SCRIPT:
+        if c == iso_code:
+            return s.lower()
+    return None
+
+
+def in_script(char, script_name):
+    if char == '।' or char.isspace() or char in string.punctuation:
+        return True
+    try:
+        if script_name not in ud.name(char).lower():
+            return False
+    except:
+        return False
+    return True

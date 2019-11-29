@@ -5,7 +5,7 @@ Crawls w3newspaper and builds a list of all newspaper URLs
 import scrapy
 
 from urllib.parse import urljoin
-from ..utils.web import validate_url
+from ..utils import validate_url
 
 
 class W3NewsPaperSpider(scrapy.Spider):

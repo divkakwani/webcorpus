@@ -26,8 +26,8 @@ import importlib
 from boilerpipe.extract import Extractor
 from scrapy.linkextractors import LinkExtractor
 from ..corpus import CatCorpus, Article
-from ..utils import url_validate
-from ..utils import langcode2script, in_script
+from ..language import code2script, in_script
+from ..utils import validate_url
 
 
 def _select_baseclass(source):
@@ -42,7 +42,7 @@ def _select_baseclass(source):
             return clas
 
     # check for the sitemap spider
-    if url_validate(source["sitemap_url"]):
+    if validate_url(source["sitemap_url"]):
         try:
             response = requests.get(source["sitemap_url"])
             if response.status_code == 200:
@@ -96,7 +96,7 @@ class BaseNewsSpider(scrapy.Spider):
 
     def __init__(self, source, corpus_path):
         self.lang = source["lang"]
-        self.script = langcode2script(self.lang)
+        self.script = code2script(self.lang)
         self.name = source["name"]
 
         os.makedirs(self.corpus_path, exist_ok=True)

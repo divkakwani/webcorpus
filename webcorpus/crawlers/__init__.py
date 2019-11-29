@@ -1,5 +1,5 @@
 import os
-import shutils
+import shutil
 
 from scrapy import signals
 from scrapy.crawler import CrawlerProcess
@@ -7,7 +7,7 @@ from .w3newspaper import W3NewsPaperSpider
 from .news import makecrawler
 from ..sources import Sources
 from ..language import name2code
-from ..utils.web import extract_domain
+from ..utils import extract_domain
 from urllib.parse import urljoin
 from datetime import datetime
 
@@ -60,4 +60,4 @@ def fetch_corpus(lang, output_path, srcdir, jobdir_root, **crawler_settings):
         print('Creating Checkpoint...')
         chkpt_id = datetime.now().strftime('%H%M_%d%m')
         path = os.path.join(jobdir_root, 'ckp_{}_{}'.format(lang, chkpt_id))
-        shutils.copytree(lang_root, path)
+        shutil.copytree(lang_root, path)
