@@ -1,53 +1,62 @@
+"""
+Copyright © Divyanshu Kakwani 2019, all rights reserved.
+
+Create a sentence file from an article corpus
+
+"""
+import re
+import json
 
 from tqdm import tqdm
+from ..corpus.io import CatCorpus, SentCorpus
+from ..language.normalize import IndicNormalizerFactory
+from ..language.tokenize import trivial_tokenize
+from ..language.sentence_tokenize import sentence_split
+from ..language import code2script, SCRIPT_DIGITS, in_script
 
 
+class SentProcessor:
 
-
-
-
-def gen_dataset(*args, **kwargs):
-    """
-    Applies the following pre-processing steps:
-        * Remove sentences that contain one or more words not in the
-          desired language
-        * Remove short sentences
-        * Treat punctuation marks as words. Insert spaces around them
-        * Lowercase all the letters (in case of English)
-        * Replace every number by # token
-    """
-
-    def __init__(self, ip_corpus_path, lang, corpus_fmt, op_corpus_path):
+    def __init__(self, lang, input_path, output_path):
         self.lang = lang
-        self.script = langcode2script(lang)
-        self.corpus_path = ip_corpus_path
-        self.corpus_reader = CorpusReader(ip_corpus_path, lang, corpus_fmt)
-        normalizer_factory = indic_normalize.IndicNormalizerFactory()
-        self.normalizer = normalizer_factory.get_normalizer(lang)
-        # self.stop_sents = self._stop_sents()
-        self.stop_sents = set()
-        self.corpus_writer = CorpusWriter(op_corpus_path)
+        self.script = code2script(lang)
+        self.input_corpus = CatCorpus(input_path)
+        self.output_corpus = SentCorpus(output_path)
+        normalizer_factory = IndicNormalizerFactory()
+        self.normalizer = normalizer_factory.get_normalizer(self.lang)
 
-    def _process_sent(self, sent):
+    def process_sent(self, sent):
+        """
+        Applies the following pre-processing steps:
+            * normalize and tokenize the sentence
+            * Replace every number by # token
+        """
         newline_removed = sent.replace('\n', ' ')
         normalized = self.normalizer.normalize(newline_removed)
         num_masked = re.sub(r'[0-9]+', '#', normalized)
-        native_digits = get_digits(self.script)
+        native_digits = SCRIPT_DIGITS[self.script]
         num_masked = re.sub(r'[{}]+'.format(native_digits), '#', num_masked)
-        spaced = ' '.join(indic_tokenize.trivial_tokenize(num_masked,
-                                                          self.lang))
+        spaced = ' '.join(trivial_tokenize(num_masked, self.lang))
         return spaced
 
-    def process(self):
-        for sent in tqdm(self.corpus_reader.sents()):
-            sent = self._process_sent(sent)
-            if self._sent_filter(sent):
-                self.corpus_writer.add_sents(sent)
-
-    def _sent_filter(self, sent):
+    def check_sent(self, sent):
+        """
+        * Check sentences that contain one or more words not in the
+          desired language
+        * Check short sentences
+        """
         if len(sent) < 10:
             return False
         for c in sent:
             if c != '।' and not in_script(c, self.script):
                 return False
         return True
+
+    def gen_dataset(self):
+        for payload in tqdm(self.input_corpus.files()):
+            article = json.loads(payload)
+            content = article['content']
+            sents = sentence_split(content, self.lang)
+            sents = [self.process_sent(sent) for sent in sents]
+            sents = [sent for sent in sents if self.check_sent(sent)]
+            self.output_corpus.add_sents(sents)
