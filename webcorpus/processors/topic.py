@@ -1,22 +1,36 @@
+"""
+Copyright © Divyanshu Kakwani 2019, all rights reserved.
 
+Creates text classification dataset from a news article corpus
+
+"""
 import json
 
 from tqdm import tqdm
 from ..corpus import CatCorpus
 
 
+# TODO: use wor2word
+
 topic_synsets = {
     'entertainment': ['entertainment', 'cinema', 'bollywood', 'film', 'tv',
-                      'cinema-news'],
-    'politics': ['politics'],
+                      'cinema-news', 'movies', 'manoranjan',
+                      'manoranjan-news'],
+    'politics': ['politics', 'election'],
     'business':  ['business', 'business-news', 'kannada-business-news',
-                  'stockmarket'],
+                  'stockmarket', 'money'],
     'crime': ['crime', 'crime-news'],
-    'technology': ['technology', 'tech'],
-    'astrology':  ['astrology', 'astro', 'astro-news'],
-    'sports':   ['sports', 'cricket', 'football'],
-    'lifestyle': ['lifestyle', 'life-style', 'health']
+    'technology': ['technology', 'tech', 'gadgets'],
+    'astrology':  ['astrology', 'astro', 'astro-news', 'astrology-news',
+                   'horoscope'],
+    'sports':   ['sports', 'cricket', 'football', 'krida', 'krida-news',
+                 'krida-cricket'],
+    'lifestyle': ['lifestyle', 'life-style', 'health', 'health-tips',
+                  'lifestyle-news'],
+    'auto': ['auto', 'automobile'],
+    'agriculture': ['agriculture', 'agro']
 }
+min_len = 200
 
 
 def gen_dataset(*args, **kwargs):
@@ -47,6 +61,6 @@ def gen_dataset(*args, **kwargs):
 
         if topic:
             txt = article['content']
-            if len(txt) >= 300 and samples_seen[topic] < max_samples:
+            if len(txt) >= min_len and samples_seen[topic] < max_samples:
                 samples_seen[topic] += 1
                 out_corpus.add_file(topic, samples_seen[topic], txt)
