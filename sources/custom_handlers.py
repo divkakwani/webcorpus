@@ -1,9 +1,16 @@
 
 import scrapy
+import requests
+import re
 
 from scrapy.linkextractors import LinkExtractor
 from scrapy.selector import Selector
-from webcrawl.crawlers import RecursiveSpider, SitemapSpider
+from webcorpus.crawlers.news import BaseNewsSpider
+from webcorpus.crawlers.news import RecursiveSpider, SitemapSpider
+
+
+def extract_links(text):
+    return re.findall(r'(https?://[^\s"\\<>]+)', text)
 
 
 class SanjevaniSpider(RecursiveSpider):
@@ -25,8 +32,8 @@ class BalkaniNewsSpider(SitemapSpider):
     where the complete article exists
     """
 
-    def __init__(self, source, datadir):
-        super().__init__(source, datadir)
+    def __init__(self, source, corpus_path):
+        super().__init__(source, corpus_path)
         self.link_extractor = LinkExtractor()
 
     def parse(self, response):
@@ -45,12 +52,12 @@ class SahilOnlineSpider(BaseNewsSpider):
     using scrapy's LinkExtractor
     """
 
-    def __init__(self, source, datadir):
+    def __init__(self, source, corpus_path):
         response = requests.get(source['sitemap_url'])
         urls = extract_links(str(response.content))
         urls = list(filter(lambda u: not u.lower().endswith('jpg'), urls))
         self.start_urls = urls
-        super().__init__(source, datadir)
+        super().__init__(source, corpus_path)
 
     def parse(self, response):
         article = self.parse_article(response)
