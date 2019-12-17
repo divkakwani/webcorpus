@@ -14,6 +14,7 @@ class Sources:
     """
 
     def __init__(self, srcdir, lang):
+        self.lang = lang
         self.fpath = os.path.join(srcdir, '{}.csv'.format(lang))
         self.fields = ['name', 'home_url', 'sitemap_url',
                        'use_sitemap', 'active']
@@ -26,6 +27,7 @@ class Sources:
             for source in reader:
                 source['active'] = (source['active'] == 'True')
                 source['use_sitemap'] = (source['use_sitemap'] == 'True')
+                source['lang'] = self.lang
                 _sources[source['name']] = dict(source)
         return _sources
 

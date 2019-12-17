@@ -1,6 +1,8 @@
 import click
+import logging
 
 from .corpus.stats import print_stats
+from .crawlers.processes import fetch_corpus
 
 
 @click.group()
@@ -22,13 +24,13 @@ def get_sources(lang, srcdir):
 @click.option('--srcdir', required=True)
 @click.option('--jobdir_root', required=True)
 @click.option('--output', required=True)
-@click.option('--chkp_period', default=21600)
-@click.option('--output', required=True)
-@click.option('--output', required=True)
-@click.option('--verbose/--no-verbose', default=False)
-def fetch(lang, srcdir, jobdir_root, timeout, output, chkp_period,
-          download_delay, verbose):
-    pass
+@click.option('--logfile', default=None)
+def fetch(lang, srcdir, jobdir_root, output, logfile):
+    if logfile:
+        logging.basicConfig(filename=logfile)
+    else:
+        logging.basicConfig(level=logging.WARN)
+    fetch_corpus(lang, output, srcdir, jobdir_root)
 
 
 @cli.command(name='stats')

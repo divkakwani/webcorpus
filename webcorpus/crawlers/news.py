@@ -25,9 +25,10 @@ import importlib
 
 from boilerpipe.extract import Extractor
 from scrapy.linkextractors import LinkExtractor
-from ..corpus import CatCorpus, Article
+from ..corpus.io import CatCorpus
 from ..language import code2script, in_script
 from ..utils import validate_url
+from datetime import datetime
 
 
 def _select_baseclass(source):
@@ -42,9 +43,9 @@ def _select_baseclass(source):
             return clas
 
     # check for the sitemap spider
-    if validate_url(source["sitemap_url"]):
+    if source['use_sitemap'] and validate_url(source['sitemap_url']):
         try:
-            response = requests.get(source["sitemap_url"])
+            response = requests.get(source['sitemap_url'])
             if response.status_code == 200:
                 return SitemapSpider
         except requests.exceptions.ConnectionError:
@@ -52,7 +53,7 @@ def _select_baseclass(source):
 
     # check for recursive spider
     try:
-        response = requests.get(source["home_url"])
+        response = requests.get(source['home_url'], timeout=60)
         if response.status_code == 200 or response.status_code == 406:
             return RecursiveSpider
     except requests.exceptions.ConnectionError:
@@ -73,7 +74,7 @@ def makecrawler(source, srcdir, **settings):
     if baseclass is None:
         return None
 
-    # clone the blueprint
+    # clone the base class
     spidername = source['name'].capitalize() + 'Final' + 'Spider'
     spidercls = type(spidername, (baseclass,), {})
 
@@ -89,15 +90,17 @@ class BaseNewsSpider(scrapy.Spider):
 
     custom_settings = {
         "DOWNLOAD_DELAY": 0.05,
-        "LOG_ENABLED": False,
+        "LOG_ENABLED": True,
         "CONCURRENT_REQUESTS": 64,
         "AUTOTHROTTLE_ENABLED": True,
     }
 
-    def __init__(self, source, corpus_path):
-        self.lang = source["lang"]
+    def __init__(self, source, corpus_path, html_path=None):
+        self.lang = source['lang']
         self.script = code2script(self.lang)
-        self.name = source["name"]
+        self.name = source['name']
+        self.corpus_path = corpus_path
+        self.arts_collected = 0
 
         os.makedirs(self.corpus_path, exist_ok=True)
 
@@ -106,6 +109,8 @@ class BaseNewsSpider(scrapy.Spider):
         self.allowed_domains = [domain]
 
         self.corpus = CatCorpus(self.corpus_path)
+        if html_path:
+            self.html_corpus = CatCorpus(html_path)
 
         super().__init__(self.name)
 
@@ -121,12 +126,13 @@ class BaseNewsSpider(scrapy.Spider):
         """
         text = self.extract_article_content(response.body)
         if self._is_article(text):
-            article = Article(
-                content=text,
-                source=self.name,
-                url=response.request.url,
-                raw_html=response.body,
-            )
+            article = {
+                'content': text,
+                'source': self.name,
+                'url': response.request.url,
+                'raw_html': response.body.decode(response.encoding),
+                'timestamp': datetime.now().strftime('%d/%m/%y %H:%M')
+            }
             return article
         return None
 
@@ -154,7 +160,8 @@ class BaseNewsSpider(scrapy.Spider):
         return False
 
     def write_article(self, article):
-        dump = json.dumps(article, indent=4)
+        dump = json.dumps(article, indent=4, ensure_ascii=False)
+        self.arts_collected += 1
         self.corpus.add_file(article["source"], article["url"], dump)
 
     def parse(self, response):
@@ -162,8 +169,8 @@ class BaseNewsSpider(scrapy.Spider):
 
 
 class SitemapSpider(BaseNewsSpider, scrapy.spiders.SitemapSpider):
-    def __init__(self, source, datadir):
-        super().__init__(source, datadir)
+    def __init__(self, source, corpus_path):
+        super().__init__(source, corpus_path)
         self.sitemap_urls = [source['sitemap_url']]
 
     def parse(self, response):
@@ -173,10 +180,10 @@ class SitemapSpider(BaseNewsSpider, scrapy.spiders.SitemapSpider):
 
 
 class RecursiveSpider(BaseNewsSpider):
-    def __init__(self, source, datadir):
+    def __init__(self, source, corpus_path):
         self.start_urls = [source['home_url']]
         self.link_extractor = LinkExtractor()
-        super().__init__(source, datadir)
+        super().__init__(source, corpus_path)
 
     def parse(self, response):
         article = self.parse_article(response)

@@ -64,7 +64,7 @@ def name2code(lang):
 
 def code2script(iso_code):
     iso_code = iso_code.lower()
-    for c, s in LC_SCRIPT:
+    for c, s in LC_SCRIPT.items():
         if c == iso_code:
             return s.lower()
     return None

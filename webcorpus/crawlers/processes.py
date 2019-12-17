@@ -1,6 +1,8 @@
 
 import os
 import shutil
+import logging
+import threading
 
 from scrapy import signals
 from scrapy.crawler import CrawlerProcess
@@ -11,6 +13,10 @@ from ..language import name2code
 from ..utils import extract_domain
 from urllib.parse import urljoin
 from datetime import datetime
+
+
+logging.getLogger('scrapy').propagate = False
+logging.getLogger('urllib3').propagate = False
 
 
 def get_sources(srcdir, languages):
@@ -55,8 +61,29 @@ def fetch_corpus(lang, output_path, srcdir, jobdir_root, **crawler_settings):
             crawler = makecrawler(source, srcdir, JOBDIR=jobdirs[name])
             if crawler:
                 process.crawl(crawler, source=source, corpus_path=output_path)
+        stats = ScrapingStats(process.crawlers)
+        stats.print_stats()
         process.start()  # block until all crawling jobs are finished
         print('Creating Checkpoint...')
         chkpt_id = datetime.now().strftime('%H%M_%d%m')
         path = os.path.join(jobdir_root, 'ckp_{}_{}'.format(lang, chkpt_id))
         shutil.copytree(lang_root, path)
+
+
+class ScrapingStats:
+    """
+    Display scraping stats
+    """
+
+    def __init__(self, crawlers):
+        self.crawlers = crawlers
+
+    def print_stats(self):
+        os.system('cls' if os.name == 'nt' else 'clear')
+        print('Stats: ')
+        for crawler in self.crawlers:
+            spider = crawler.spider
+            if hasattr(spider, 'name') and hasattr(spider, 'arts_collected'):
+                print('{}: {} articles'.format(spider.name,
+                                               spider.arts_collected))
+        threading.Timer(15.0, self.print_stats).start()
