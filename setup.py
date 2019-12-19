@@ -15,14 +15,14 @@ with open(path.join(here, 'readme.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='corpora',
+    name='webcorpus',
     version='1.0',
 
-    description='Language-agnositc web crawler and corpora processor',
+    description='Generate large textual corpora for almost any language by crawling the web',
     long_description=long_description,
     long_description_content_type='text/markdown',
 
-    url='https://github.com/divkakwani/indian-corpora',
+    url='https://github.com/divkakwani/webcorpus',
     author='Divyanshu Kakwani',
     author_email='divkakwani@gmail.com',
 
@@ -101,7 +101,7 @@ setup(
     # executes the function `main` from this package when invoked:
     entry_points={  # Optional
         'console_scripts': [
-            'corpora=corpora:cli',
+            'webcorpus=webcorpus:cli',
         ],
     },
 
@@ -115,8 +115,8 @@ setup(
     # maintainers, and where to support the project financially. The key is
     # what's used to render the link text on PyPI.
     project_urls={  # Optional
-        'Bug Reports': 'https://github.com/divkakwani/indian-corpora/issues',
-        'Source': 'https://github.com/divkakwani/indian-corpora',
+        'Bug Reports': 'https://github.com/divkakwani/webcorpus/issues',
+        'Source': 'https://github.com/divkakwani/webcorpus',
     },
 )
 
