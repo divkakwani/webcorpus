@@ -46,8 +46,15 @@ A tool to generate large textual corpora by crawling the web.
 
 #### Crawled Datasets
 
-Checkout [this page](https://divkakwani.github.io/indian-corpora/) to download the crawled datasets
+Checkout the [docs](https://github.com/divkakwani/webcorpus/tree/master/docs) directory to download the crawled datasets and other resources derived from the datasets.
 
+
+
+#### Similar Projects
+
+* [news-please](https://github.com/fhamborg/news-please)
+* [newspaper3k](https://github.com/codelucas/newspaper)
+* [lazynlp](https://github.com/chiphuyen/lazynlp)
 
 
 
