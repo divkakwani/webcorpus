@@ -16,6 +16,7 @@ echoofindia,http://epaper.echoofindia.com/,http://epaper.echoofindia.com/sitemap
 epaperhimalayadarpan,http://epaperhimalayadarpan.com/,http://epaperhimalayadarpan.com/sitemap.xml,False,True
 epaperlokmat,http://epaperlokmat.in/lokmattimes/,http://epaperlokmat.in/lokmattimes/sitemap.xml,False,True
 financialexpress,https://www.financialexpress.com/,https://www.financialexpress.com/sitemap.xml,False,True
+firstpost,https://www.firstpost.com/,,False,True
 freepressjournal,https://www.freepressjournal.in/,https://www.freepressjournal.in/sitemap.xml,False,True
 glpublications,http://net.glpublications.in/,http://net.glpublications.in/sitemap.xml,False,True
 greaterkashmir,https://www.greaterkashmir.com/,https://www.greaterkashmir.com/sitemap.xml,False,True
@@ -24,6 +25,7 @@ impressivetimes,http://www.impressivetimes.com/,http://www.impressivetimes.com/s
 indianexpress,https://indianexpress.com/,https://indianexpress.com/sitemap.xml,False,True
 indianhorizon,http://indianhorizon.org/,http://indianhorizon.org/sitemap.xml,False,True
 indiatimes,https://mumbaimirror.indiatimes.com/,https://mumbaimirror.indiatimes.com/sitemap.xml,False,True
+indiatoday,https://www.indiatoday.in/,,False,True
 jehlumpost,http://www.jehlumpost.com/,http://www.jehlumpost.com/sitemap.xml,False,True
 kashmirobserver,https://kashmirobserver.net/,https://kashmirobserver.net/sitemap.xml,False,True
 kashmirtimes,http://www.kashmirtimes.com/,http://www.kashmirtimes.com/sitemap.xml,False,True
@@ -36,9 +38,11 @@ morungexpress,http://morungexpress.com/,http://morungexpress.com/sitemap.xml,Fal
 nagalandpage,https://nagalandpage.com/,https://nagalandpage.com/sitemap.xml,False,True
 nagalandpost,http://www.nagalandpost.com/,http://www.nagalandpost.com/sitemap.xml,False,True
 navhindtimes,http://www.navhindtimes.in/,http://www.navhindtimes.in/sitemap.xml,False,True
+ndtv,https://www.ndtv.com/,,False,True
 newindianexpress,https://www.newindianexpress.com/,https://www.newindianexpress.com/sitemap.xml,False,True
 newstodaynet,https://newstodaynet.com/,https://newstodaynet.com/sitemap.xml,False,True
 nongsain,http://www.nongsain.com/,http://www.nongsain.com/sitemap.xml,False,True
+oneindia,https://www.oneindia.com/,,False,True
 organiser,https://www.organiser.org/,https://www.organiser.org/sitemap.xml,False,True
 orissapost,https://www.orissapost.com/,https://www.orissapost.com/sitemap.xml,False,True
 peoplesdemocracy,https://peoplesdemocracy.in/,https://peoplesdemocracy.in/sitemap.xml,False,True
@@ -57,4 +61,5 @@ thehitavada,https://www.thehitavada.com/,https://www.thehitavada.com/sitemap.xml
 theshillongtimes,https://theshillongtimes.com/,https://theshillongtimes.com/sitemap.xml,False,True
 thestatesman,https://www.thestatesman.com/,https://www.thestatesman.com/sitemap.xml,False,True
 timesofassam,https://www.timesofassam.com/,https://www.timesofassam.com/sitemap.xml,False,True
+timesofindia,https://timesofindia.indiatimes.com/,,False,True
 tribuneindia,https://www.tribuneindia.com/,https://www.tribuneindia.com/sitemap.xml,False,True
