@@ -1,8 +1,10 @@
 import click
 import logging
 
+from scrapy.crawler import CrawlerProcess
 from .corpus.stats import print_stats
 from .crawlers.processes import fetch_corpus
+from .crawlers.w3newspaper import W3NewsPaperSpider
 
 
 @click.group()
@@ -13,10 +15,13 @@ def cli(debug):
 
 
 @cli.command(name='getsources')
-@click.option('--lang', required=True)
+@click.option('--langs', required=True)
 @click.option('--srcdir', required=True)
-def get_sources(lang, srcdir):
-    pass
+def get_sources(langs, srcdir):
+    langs = langs.split(',')
+    process = CrawlerProcess()
+    process.crawl(W3NewsPaperSpider, srcdir=srcdir, languages=langs)
+    process.start()
 
 
 @cli.command(name='fetch')
