@@ -7,18 +7,30 @@ import os
 
 
 class Sources:
-    """
-    interface to i/o from source csv files
+    """A set of news sources backed by a disk file
 
-    supports the following methods: get, add, update, delete
+    In addition to iteration, it supports the following methods:
+        get, add, update, delete
     """
 
-    def __init__(self, srcdir, lang):
+    def __init__(self, lang, file_path):
         self.lang = lang
-        self.fpath = os.path.join(srcdir, '{}.csv'.format(lang))
-        self.fields = ['name', 'home_url', 'sitemap_url',
-                       'use_sitemap', 'active']
+        self.fpath = file_path
+        self.fields = ['name', 'home_url', 'sitemap_url', 'use_sitemap',
+                       'active']
         self._sources = self._load() if os.path.isfile(self.fpath) else {}
+
+    def __iter__(self):
+        self.idx = 0
+        self._sources_list = list(self._sources.values())
+        return self
+
+    def __next__(self):
+        if self.idx >= len(self._sources_list):
+            raise StopIteration
+        source = self._sources_list[self.idx]
+        self.idx += 1
+        return source
 
     def _load(self):
         _sources = {}
