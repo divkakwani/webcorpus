@@ -27,10 +27,11 @@ import re
 from boilerpipe.extract import Extractor
 from scrapy.linkextractors import LinkExtractor
 from scrapy.linkextractors import Selector
+from datetime import datetime
 from ..corpus.io import CatCorpus
 from ..language import code2script, in_script
 from ..utils import validate_url
-from datetime import datetime
+from ..remote import RemoteChannel
 
 
 def _select_baseclass(source):
@@ -100,6 +101,7 @@ class BaseNewsSpider(scrapy.Spider):
         self.name = source['name']
         self.arts_path = arts_path
         self.html_path = html_path
+        self.remote_channel = RemoteChannel(self.name)
         self.arts_collected = 0
 
         os.makedirs(self.arts_path, exist_ok=True)
@@ -163,6 +165,10 @@ class BaseNewsSpider(scrapy.Spider):
     def write_article(self, article):
         dump = json.dumps(article, indent=4, ensure_ascii=False)
         self.arts_collected += 1
+        if self.arts_colleced % 100 == 0:
+            event = {'type': 'arts-count', 'lang': self.lang,
+                     'source': self.name, 'count': self.arts_collected}
+            self.remote_channel.send_event(event)
         self.arts_corpus.add_file(article['source'], article['url'], dump)
 
     def write_html(self, response):
