@@ -67,7 +67,7 @@ class CrawlManager:
         num_procs = multiprocessing.cpu_count()
 
         sys_procs = []
-        quo = math.ceil(self.sources / num_procs)
+        quo = math.ceil(len(self.sources) / num_procs)
         for pid in range(num_procs):
             s, e = pid * quo, (pid+1) * quo
             sys_proc = multiprocessing.Process(target=self.start_crawl_proc,
@@ -105,7 +105,7 @@ class CrawlManager:
         self.bkp_lock.release()
 
     def start_crawl(self, **crawler_settings):
-        procs = self.start_processes(crawler_settings)
+        procs = self.start_procs(crawler_settings)
         for proc in procs:
             proc.join()
 

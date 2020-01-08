@@ -30,6 +30,8 @@ class Sources:
             raise StopIteration
         source = self._sources_list[self.idx]
         self.idx += 1
+        if not source['active']:
+            return self.__next__()
         return source
 
     def _load(self):

@@ -90,7 +90,7 @@ class BaseNewsSpider(scrapy.Spider):
     custom_settings = {
         'DOWNLOAD_DELAY': 0.05,
         'LOG_ENABLED': True,
-        'CONCURRENT_REQUESTS': 512,
+        'CONCURRENT_REQUESTS': 128,
         'AUTOTHROTTLE_ENABLED': True,
     }
 
@@ -127,7 +127,7 @@ class BaseNewsSpider(scrapy.Spider):
         the article object
         """
         content = self.extract_article_content(response.body)
-        if self._is_article(content.body):
+        if self._is_article(content['body']):
             article = {
                 'title': content['title'],
                 'body': content['body'],
