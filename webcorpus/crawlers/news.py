@@ -177,6 +177,9 @@ class BaseNewsSpider(scrapy.Spider):
     def parse(self, response):
         raise NotImplementedError
 
+    def closed(self, reason):
+        print('Closing spider. Name: ', self.name, ' Reason: ', reason)
+
 
 class SitemapSpider(BaseNewsSpider, scrapy.spiders.SitemapSpider):
     def __init__(self, source, arts_path, html_path):
@@ -224,25 +227,25 @@ class SanjevaniSpider(RecursiveSpider):
         return text
 
 
-class BalkaniNewsSpider(SitemapSpider):
-    """
-    The urls contained in the sitemap do not directly link to the page
-    where the complete article exists
-    """
+# class BalkaniNewsSpider(SitemapSpider):
+#     """
+#     The urls contained in the sitemap do not directly link to the page
+#     where the complete article exists
+#     """
 
-    def __init__(self, source, arts_path, html_path):
-        super().__init__(source, arts_path, html_path)
-        self.link_extractor = LinkExtractor()
+#     def __init__(self, source, arts_path, html_path):
+#         super().__init__(source, arts_path, html_path)
+#         self.link_extractor = LinkExtractor()
 
-    def parse(self, response):
-        article = self.parse_article(response)
-        if article:
-            self.write_article(article)
-        self.write_html(response)
+#     def parse(self, response):
+#         article = self.parse_article(response)
+#         if article:
+#             self.write_article(article)
+#         self.write_html(response)
 
-        links = self.link_extractor.extract_links(response)
-        for link in links:
-            yield scrapy.Request(link.url)
+#         links = self.link_extractor.extract_links(response)
+#         for link in links:
+#             yield scrapy.Request(link.url)
 
 
 class AnupambharatonlineSpider(RecursiveSpider):
@@ -251,21 +254,21 @@ class AnupambharatonlineSpider(RecursiveSpider):
     }
 
 
-class SahilOnlineSpider(BaseNewsSpider):
-    """
-    The sitemap is broken, invalid xml. But we can still extract the urls
-    using scrapy's LinkExtractor
-    """
+# class SahilOnlineSpider(BaseNewsSpider):
+#     """
+#     The sitemap is broken, invalid xml. But we can still extract the urls
+#     using scrapy's LinkExtractor
+#     """
 
-    def __init__(self, source, arts_path, html_path):
-        response = requests.get(source['sitemap_url'])
-        urls = extract_links(str(response.content))
-        urls = list(filter(lambda u: not u.lower().endswith('jpg'), urls))
-        self.start_urls = urls
-        super().__init__(source, arts_path, html_path)
+#     def __init__(self, source, arts_path, html_path):
+#         response = requests.get(source['sitemap_url'])
+#         urls = extract_links(str(response.content))
+#         urls = list(filter(lambda u: not u.lower().endswith('jpg'), urls))
+#         self.start_urls = urls
+#         super().__init__(source, arts_path, html_path)
 
-    def parse(self, response):
-        article = self.parse_article(response)
-        if article:
-            self.write_article(article)
-        self.write_html(response)
+#     def parse(self, response):
+#         article = self.parse_article(response)
+#         if article:
+#             self.write_article(article)
+#         self.write_html(response)

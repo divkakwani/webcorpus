@@ -72,6 +72,7 @@ class CrawlManager:
             s, e = pid * quo, (pid+1) * quo
             sys_proc = multiprocessing.Process(target=self.start_crawl_proc,
                                                args=(crawler_settings, s, e))
+            sys_proc.daemon = True
             sys_proc.start()
             sys_procs.append(sys_proc)
         return sys_procs
