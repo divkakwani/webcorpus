@@ -10,6 +10,7 @@ LC_NAME = {
     'as': 'assamese',
     'bn': 'bengali',
     'bh': 'bihari',
+    'en': 'english',
     'gu': 'gujarati',
     'hi': 'hindi',
     'kn': 'kannada',

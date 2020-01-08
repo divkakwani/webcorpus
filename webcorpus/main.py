@@ -3,7 +3,6 @@ import logging
 
 from scrapy.crawler import CrawlerProcess
 from .corpus.stats import print_stats
-from .crawlers.processes import fetch_corpus
 from .crawlers.w3newspaper import W3NewsPaperSpider
 
 

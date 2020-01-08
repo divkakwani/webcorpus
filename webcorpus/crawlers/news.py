@@ -21,12 +21,11 @@ import requests
 import tldextract
 import sys
 import inspect
-import importlib
 import re
 
 from boilerpipe.extract import Extractor
 from scrapy.linkextractors import LinkExtractor
-from scrapy.linkextractors import Selector
+from scrapy.selector import Selector
 from datetime import datetime
 from ..corpus.io import CatCorpus
 from ..language import code2script, in_script
@@ -91,7 +90,7 @@ class BaseNewsSpider(scrapy.Spider):
     custom_settings = {
         'DOWNLOAD_DELAY': 0.05,
         'LOG_ENABLED': True,
-        'CONCURRENT_REQUESTS': 1024,
+        'CONCURRENT_REQUESTS': 512,
         'AUTOTHROTTLE_ENABLED': True,
     }
 
@@ -180,8 +179,8 @@ class BaseNewsSpider(scrapy.Spider):
 
 
 class SitemapSpider(BaseNewsSpider, scrapy.spiders.SitemapSpider):
-    def __init__(self, source, corpus_path):
-        super().__init__(source, corpus_path)
+    def __init__(self, source, arts_path, html_path):
+        super().__init__(source, arts_path, html_path)
         self.sitemap_urls = [source['sitemap_url']]
 
     def parse(self, response):
@@ -192,10 +191,10 @@ class SitemapSpider(BaseNewsSpider, scrapy.spiders.SitemapSpider):
 
 
 class RecursiveSpider(BaseNewsSpider):
-    def __init__(self, source, corpus_path):
+    def __init__(self, source, arts_path, html_path):
         self.start_urls = [source['home_url']]
         self.link_extractor = LinkExtractor()
-        super().__init__(source, corpus_path)
+        super().__init__(source, arts_path, html_path)
 
     def parse(self, response):
         article = self.parse_article(response)
@@ -231,8 +230,8 @@ class BalkaniNewsSpider(SitemapSpider):
     where the complete article exists
     """
 
-    def __init__(self, source, corpus_path):
-        super().__init__(source, corpus_path)
+    def __init__(self, source, arts_path, html_path):
+        super().__init__(source, arts_path, html_path)
         self.link_extractor = LinkExtractor()
 
     def parse(self, response):
@@ -258,12 +257,12 @@ class SahilOnlineSpider(BaseNewsSpider):
     using scrapy's LinkExtractor
     """
 
-    def __init__(self, source, corpus_path):
+    def __init__(self, source, arts_path, html_path):
         response = requests.get(source['sitemap_url'])
         urls = extract_links(str(response.content))
         urls = list(filter(lambda u: not u.lower().endswith('jpg'), urls))
         self.start_urls = urls
-        super().__init__(source, corpus_path)
+        super().__init__(source, arts_path, html_path)
 
     def parse(self, response):
         article = self.parse_article(response)
