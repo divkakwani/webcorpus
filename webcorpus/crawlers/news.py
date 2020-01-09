@@ -3,13 +3,13 @@ Copyright © Divyanshu Kakwani 2019, all rights reserved
 
 Defines general spiders for news sources
 
-There are two general spiders: RecursiveSpider and NewsSitemapSpider. The
+There are two general spiders: RecursiveSpider and SitemapSpider. The
 former starts at the home page and recursively follows all the links. The
 latter extracts all the urls from the sitemap and then simply pulls those urls
 without following further links found in the page.
 
 Custom spiders are needed to handle irregular news sources. A custom spider
-should have a name in the format <Source Name>Spider. e.g. SahilOnlineSpider
+should have a name in the format <Source Name>Spider. e.g. SahilonlineSpider
 and it should inherit from one of the general spider and override whatever
 functionality it wants to override
 
@@ -17,11 +17,7 @@ functionality it wants to override
 import scrapy
 import json
 import os
-import requests
 import tldextract
-import sys
-import inspect
-import re
 
 from boilerpipe.extract import Extractor
 from scrapy.linkextractors import LinkExtractor
@@ -29,84 +25,25 @@ from scrapy.selector import Selector
 from datetime import datetime
 from ..corpus.io import CatCorpus
 from ..language import code2script, in_script
-from ..utils import validate_url
-from ..remote import RemoteChannel
-
-
-def _select_baseclass(source):
-    """
-    dynamically selects spider class based on the source
-    """
-    # check for a custom spider
-    classes = inspect.getmembers(sys.modules[__name__], inspect.isclass)
-    mangled_name = (source['name'] + 'spider').lower()
-    for cls_name, clas in classes:
-        if mangled_name == cls_name.lower():
-            return clas
-
-    # check for the sitemap spider
-    if source['use_sitemap'] and validate_url(source['sitemap_url']):
-        try:
-            response = requests.get(source['sitemap_url'])
-            if response.status_code == 200:
-                return SitemapSpider
-        except requests.exceptions.ConnectionError:
-            pass
-
-    # check for recursive spider
-    try:
-        response = requests.get(source['home_url'], timeout=60)
-        if response.status_code == 200 or response.status_code == 406:
-            return RecursiveSpider
-    except requests.exceptions.ConnectionError:
-        pass
-
-    return None
-
-
-def makecrawler(source, **settings):
-    """
-    creates a new spider class by cloning one of the base classes
-    and then populating the custom settings appropriately
-    """
-    baseclass = _select_baseclass(source)
-    if baseclass is None:
-        return None
-
-    # clone the base class
-    spidername = source['name'].capitalize() + 'Final' + 'Spider'
-    spidercls = type(spidername, (baseclass,), {})
-
-    # populate class variables
-    if spidercls.custom_settings is None:
-        spidercls.custom_settings = {}
-    spidercls.custom_settings.update(settings)
-
-    return spidercls
 
 
 class BaseNewsSpider(scrapy.Spider):
 
-    custom_settings = {
-        'DOWNLOAD_DELAY': 0.05,
-        'LOG_ENABLED': True,
-        'CONCURRENT_REQUESTS': 128,
-        'AUTOTHROTTLE_ENABLED': True,
-    }
+    name = 'base-news-spider'
 
-    def __init__(self, source, arts_path, html_path):
-        self.lang = source['lang']
+    def __init__(self, *args, **kwargs):
+        self.lang = kwargs['lang']
         self.script = code2script(self.lang)
-        self.name = source['name']
-        self.arts_path = arts_path
-        self.html_path = html_path
-        self.remote_channel = RemoteChannel(self.name)
+        self.name = kwargs['source_name']
+        self.arts_path = kwargs['arts_path']
+        self.html_path = kwargs['html_path']
+        self.home_url = kwargs['home_url']
         self.arts_collected = 0
 
         os.makedirs(self.arts_path, exist_ok=True)
         os.makedirs(self.html_path, exist_ok=True)
 
-        parts = tldextract.extract(source['home_url'])
+        parts = tldextract.extract(self.home_url)
         domain = '{}.{}.{}'.format(parts.subdomain, parts.domain, parts.suffix)
         self.allowed_domains = [domain]
 
@@ -164,7 +101,7 @@ class BaseNewsSpider(scrapy.Spider):
     def write_article(self, article):
         dump = json.dumps(article, indent=4, ensure_ascii=False)
         self.arts_collected += 1
-        if self.arts_colleced % 100 == 0:
+        if self.arts_collected % 100 == 0:
             event = {'type': 'arts-count', 'lang': self.lang,
                      'source': self.name, 'count': self.arts_collected}
             self.remote_channel.send_event(event)
@@ -182,9 +119,12 @@ class BaseNewsSpider(scrapy.Spider):
 
 
 class SitemapSpider(BaseNewsSpider, scrapy.spiders.SitemapSpider):
-    def __init__(self, source, arts_path, html_path):
-        super().__init__(source, arts_path, html_path)
-        self.sitemap_urls = [source['sitemap_url']]
+
+    name = 'sitemap-spider'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.sitemap_urls = [kwargs['sitemap_url']]
 
     def parse(self, response):
         article = self.parse_article(response)
@@ -194,10 +134,13 @@ class SitemapSpider(BaseNewsSpider, scrapy.spiders.SitemapSpider):
 
 
 class RecursiveSpider(BaseNewsSpider):
-    def __init__(self, source, arts_path, html_path):
-        self.start_urls = [source['home_url']]
+
+    name = 'recursive-spider'
+
+    def __init__(self, *args, **kwargs):
+        self.start_urls = [kwargs['home_url']]
         self.link_extractor = LinkExtractor()
-        super().__init__(source, arts_path, html_path)
+        super().__init__(*args, **kwargs)
 
     def parse(self, response):
         article = self.parse_article(response)
@@ -210,14 +153,12 @@ class RecursiveSpider(BaseNewsSpider):
             yield scrapy.Request(link.url)
 
 
-def extract_links(text):
-    return re.findall(r'(https?://[^\s"\\<>]+)', text)
-
-
 class SanjevaniSpider(RecursiveSpider):
     """
     Boilerpipe does not work for this news source
     """
+
+    name = 'sanjevani-spider'
 
     def extract_article_content(self, html):
         sel = Selector(text=html)
@@ -227,48 +168,10 @@ class SanjevaniSpider(RecursiveSpider):
         return text
 
 
-# class BalkaniNewsSpider(SitemapSpider):
-#     """
-#     The urls contained in the sitemap do not directly link to the page
-#     where the complete article exists
-#     """
-
-#     def __init__(self, source, arts_path, html_path):
-#         super().__init__(source, arts_path, html_path)
-#         self.link_extractor = LinkExtractor()
-
-#     def parse(self, response):
-#         article = self.parse_article(response)
-#         if article:
-#             self.write_article(article)
-#         self.write_html(response)
-
-#         links = self.link_extractor.extract_links(response)
-#         for link in links:
-#             yield scrapy.Request(link.url)
-
-
 class AnupambharatonlineSpider(RecursiveSpider):
+
+    name = 'anupambharatonline'
+
     custom_settings = {
         'DUPEFILTER_CLASS': 'scrapy.dupefilters.BaseDupeFilter'
     }
-
-
-# class SahilOnlineSpider(BaseNewsSpider):
-#     """
-#     The sitemap is broken, invalid xml. But we can still extract the urls
-#     using scrapy's LinkExtractor
-#     """
-
-#     def __init__(self, source, arts_path, html_path):
-#         response = requests.get(source['sitemap_url'])
-#         urls = extract_links(str(response.content))
-#         urls = list(filter(lambda u: not u.lower().endswith('jpg'), urls))
-#         self.start_urls = urls
-#         super().__init__(source, arts_path, html_path)
-
-#     def parse(self, response):
-#         article = self.parse_article(response)
-#         if article:
-#             self.write_article(article)
-#         self.write_html(response)
