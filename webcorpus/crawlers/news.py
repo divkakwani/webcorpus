@@ -23,6 +23,7 @@ from boilerpipe.extract import Extractor
 from scrapy.linkextractors import LinkExtractor
 from scrapy.selector import Selector
 from datetime import datetime
+from twisted.internet import task
 from ..corpus.io import CatCorpus
 from ..language import code2script, in_script
 
@@ -38,7 +39,10 @@ class BaseNewsSpider(scrapy.Spider):
         self.arts_path = kwargs['arts_path']
         self.html_path = kwargs['html_path']
         self.home_url = kwargs['home_url']
+        self.log_path = kwargs['log_path']
+        self.extract_arts = kwargs.get('extract_article', False)
         self.arts_collected = 0
+        self.pages_crawled = 0
 
         os.makedirs(self.arts_path, exist_ok=True)
         os.makedirs(self.html_path, exist_ok=True)
@@ -52,64 +56,26 @@ class BaseNewsSpider(scrapy.Spider):
 
         super().__init__(self.name)
 
-    def extract_article_content(self, html):
-        extractor = Extractor(extractor='ArticleExtractor', html=html)
-        body = extractor.getText()
-        title = extractor.source.title
-        return {'title': title, 'body': body}
+        self.log_file = os.path.join(self.log_path, 'stats', kwargs['_job'])
+        call = task.LoopingCall(self.log_stats)
+        call.start(300)  # call every 5 mins
 
-    def parse_article(self, response):
-        """
-        Extracts the article content from the response body and prepares
-        the article object
-        """
-        content = self.extract_article_content(response.body)
-        if self._is_article(content['body']):
-            article = {
-                'title': content['title'],
-                'body': content['body'],
-                'source': self.name,
-                'url': response.request.url,
-                'timestamp': datetime.now().strftime('%d/%m/%y %H:%M')
-            }
-            return article
-        return None
-
-    def _is_article(self, text, win_sz=250, thres=200):
-        """
-        It performs two tests on the text to determine if the text represents
-        a valid news article or not:
-        1. Has length greater than `win_sz`
-        2. Contains a continuous subtext of atleast length `win_sz` having
-           atleast `thres` characters in the required language
-        """
-        txt_sz = len(text)
-        if txt_sz < win_sz:
-            return False
-
-        chr_valid = [in_script(c, self.script) for c in text]
-        subarr_sum = chr_valid.copy()
-        for cur_sz in range(2, win_sz):
-            subarr_sum = [
-                chr_valid[i] + subarr_sum[i + 1] for i in range(txt_sz - cur_sz)
-            ]
-        if max(subarr_sum) >= thres:
-            return True
-
-        return False
-
-    def write_article(self, article):
-        dump = json.dumps(article, indent=4, ensure_ascii=False)
-        self.arts_collected += 1
-        if self.arts_collected % 100 == 0:
-            event = {'type': 'arts-count', 'lang': self.lang,
-                     'source': self.name, 'count': self.arts_collected}
-            self.remote_channel.send_event(event)
-        self.arts_corpus.add_file(article['source'], article['url'], dump)
+    def log_stats(self):
+        stats = {'lang': self.lang, 'source': self.name,
+                 'pages_crawled': self.pages_crawled}
+        with open(self.log_file, 'w') as fp:
+            json.dump(stats, fp)
 
     def write_html(self, response):
         html = response.body.decode(response.encoding)
-        self.html_corpus.add_file(self.name, response.request.url, html)
+        html_page = {
+            'html': html,
+            'source': self.name,
+            'url': response.request.url,
+            'timestamp': datetime.now().strftime('%d/%m/%y %H:%M')
+        }
+        json_data = json.dumps(html_page)
+        self.html_corpus.add_file(self.name, response.request.url, json_data)
 
     def parse(self, response):
         raise NotImplementedError
@@ -127,9 +93,6 @@ class SitemapSpider(BaseNewsSpider, scrapy.spiders.SitemapSpider):
         self.sitemap_urls = [kwargs['sitemap_url']]
 
     def parse(self, response):
-        article = self.parse_article(response)
-        if article:
-            self.write_article(article)
         self.write_html(response)
 
 
@@ -143,9 +106,6 @@ class RecursiveSpider(BaseNewsSpider):
         super().__init__(*args, **kwargs)
 
     def parse(self, response):
-        article = self.parse_article(response)
-        if article:
-            self.write_article(article)
         self.write_html(response)
 
         links = self.link_extractor.extract_links(response)
