@@ -17,13 +17,13 @@ class CatCorpus:
     def __init__(self, corpus_path):
         self.corpus_path = corpus_path
 
-        for (dirpath, _, fnames) in os.walk(self.corpus_path):
-            self.fpaths = [os.path.join(dirpath, fname) for fname in fnames]
-
     def files(self):
-        for i, fpath in enumerate(self.fpaths):
-            with open(fpath, encoding='utf-8') as fp:
-                yield fp.read()
+        for (dirpath, _, fnames) in os.walk(self.corpus_path):
+            cat = os.path.basename(dirpath)
+            for fname in fnames:
+                fpath = os.path.join(dirpath, fname)
+                with open(fpath, encoding='utf-8') as fp:
+                    yield (cat, fname, fp.read())
 
     def add_file(self, cat, iden, data):
         fname = sha1(iden.encode('utf-8')).hexdigest()
