@@ -76,6 +76,7 @@ class BaseNewsSpider(scrapy.Spider):
         }
         json_data = json.dumps(html_page)
         self.html_corpus.add_file(self.name, response.request.url, json_data)
+        self.pages_crawled += 1
 
     def parse(self, response):
         raise NotImplementedError
