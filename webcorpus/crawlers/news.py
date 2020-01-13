@@ -67,14 +67,14 @@ class BaseNewsSpider(scrapy.Spider):
             json.dump(stats, fp)
 
     def write_html(self, response):
-        html = response.body.decode(response.encoding)
+        html = response.text
         html_page = {
             'html': html,
             'source': self.name,
             'url': response.request.url,
             'timestamp': datetime.now().strftime('%d/%m/%y %H:%M')
         }
-        json_data = json.dumps(html_page)
+        json_data = json.dumps(html_page, ensure_ascii=False)
         self.html_corpus.add_file(self.name, response.request.url, json_data)
         self.pages_crawled += 1
 

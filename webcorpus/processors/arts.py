@@ -65,5 +65,6 @@ class ArtsProcessor:
         for cat, iden, data in tqdm(self.input_corpus.files()):
             html_page = json.loads(data)
             article = self.extract_article(html_page)
-            article_json = json.dumps(article)
-            self.output_corpus.add_file(cat, iden, article_json)
+            if article:
+                article_json = json.dumps(article, ensure_ascii=False)
+                self.output_corpus.add_file(cat, iden, article_json)

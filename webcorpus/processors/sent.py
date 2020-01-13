@@ -53,9 +53,9 @@ class SentProcessor:
         return True
 
     def gen_dataset(self):
-        for payload in tqdm(self.input_corpus.files()):
+        for cat, iden, payload in tqdm(self.input_corpus.files()):
             article = json.loads(payload)
-            content = article['content']
+            content = article['body']
             sents = sentence_split(content, self.lang)
             sents = [self.process_sent(sent) for sent in sents]
             sents = [sent for sent in sents if self.check_sent(sent)]
