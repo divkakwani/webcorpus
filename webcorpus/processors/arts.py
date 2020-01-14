@@ -33,7 +33,7 @@ class ArtsProcessor:
                 'body': body,
                 'source': html_page['source'],
                 'url': html_page['url'],
-                'timestamp': datetime.now().strftime('%d/%m/%y %H:%M')
+                'timestamp': html_page['timestamp']
             }
             return article
         return None
