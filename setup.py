@@ -103,6 +103,7 @@ setup(
         'console_scripts': [
             'webcorpus=webcorpus:cli',
         ],
+        'scrapy': ['settings = webcorpus.crawlers.settings'],
     },
 
     # List additional URLs that are relevant to your project as a dict.
