@@ -5,10 +5,10 @@ Create a sentence file from an article corpus
 
 """
 import json
+import multiprocessing as mp
 
 from tqdm import tqdm
 from boilerpipe.extract import Extractor
-from datetime import datetime
 from ..corpus.io import CatCorpus
 from ..language import code2script, in_script
 
@@ -61,10 +61,16 @@ class ArtsProcessor:
 
         return False
 
+    def process_file(self, tpl):
+        cat, iden, data = tpl
+        html_page = json.loads(data)
+        article = self.extract_article(html_page)
+        if article:
+            article_json = json.dumps(article, ensure_ascii=False)
+            self.output_corpus.add_file(cat, iden, article_json)
+
     def gen_dataset(self):
-        for cat, iden, data in tqdm(self.input_corpus.files()):
-            html_page = json.loads(data)
-            article = self.extract_article(html_page)
-            if article:
-                article_json = json.dumps(article, ensure_ascii=False)
-                self.output_corpus.add_file(cat, iden, article_json)
+        p = mp.Pool(mp.cpu_count())
+        pit = p.imap_unordered(self.process_file, self.input_corpus.files())
+        for _ in tqdm.tqdm(pit, total=self.input_corpus.size()):
+            pass
