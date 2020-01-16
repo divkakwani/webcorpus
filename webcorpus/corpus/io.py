@@ -5,6 +5,7 @@ This file defines corpus io classes
 """
 
 import os
+import itertools as it
 
 from hashlib import sha1
 
@@ -18,7 +19,9 @@ class CatCorpus:
         self.corpus_path = corpus_path
 
     def size(self):
-        return len(os.walk(self.corpus_path))
+        fnames = it.chain.from_iterable(
+            map(lambda t: t[2], os.walk(self.corpus_path)))
+        return sum(1 for fn in fnames)
 
     def files(self):
         for (dirpath, _, fnames) in os.walk(self.corpus_path):

@@ -72,5 +72,5 @@ class ArtsProcessor:
     def gen_dataset(self):
         p = mp.Pool(mp.cpu_count())
         pit = p.imap_unordered(self.process_file, self.input_corpus.files())
-        for _ in tqdm.tqdm(pit, total=self.input_corpus.size()):
+        for _ in tqdm(pit, total=self.input_corpus.size()):
             pass
