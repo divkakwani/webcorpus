@@ -17,6 +17,9 @@ class CatCorpus:
     def __init__(self, corpus_path):
         self.corpus_path = corpus_path
 
+    def size(self):
+        return len(os.walk(self.corpus_path))
+
     def files(self):
         for (dirpath, _, fnames) in os.walk(self.corpus_path):
             cat = os.path.basename(dirpath)
