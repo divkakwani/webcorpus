@@ -64,5 +64,5 @@ class ArtsProcessor:
 
     def gen_dataset(self):
         proc_pool = mp.Pool(mp.cpu_count())
-        for _ in tqdm(proc_pool.imap_unordered(self.process_item, self.input_corpus.files())):
+        for _ in tqdm(proc_pool.imap_unordered(self.process_item, self.input_corpus.files(), 32)):
             pass
