@@ -1,14 +1,13 @@
 """
 Copyright © Divyanshu Kakwani 2019, all rights reserved.
 
-Create a sentence file from an article corpus
+Create a article corpus from html corpus
 
 """
 import json
 import multiprocessing as mp
 
 from tqdm import tqdm
-from boilerpipe.extract import Extractor
 from ..corpus.io import CatCorpus
 from ..language import code2script, in_script
 
@@ -20,23 +19,6 @@ class ArtsProcessor:
         self.script = code2script(lang)
         self.input_corpus = CatCorpus(input_path)
         self.output_corpus = CatCorpus(output_path)
-
-    def extract_article(self, html_page):
-        extractor = Extractor(extractor='ArticleExtractor',
-                              html=html_page['html'])
-        body = extractor.getText()
-        title = extractor.source.title
-
-        if self.art_ok(body):
-            article = {
-                'title': title,
-                'body': body,
-                'source': html_page['source'],
-                'url': html_page['url'],
-                'timestamp': html_page['timestamp']
-            }
-            return article
-        return None
 
     def art_ok(self, text, win_sz=250, thres=200):
         """
@@ -61,16 +43,26 @@ class ArtsProcessor:
 
         return False
 
-    def process_file(self, tpl):
+    def process_item(self, tpl):
         cat, iden, data = tpl
         html_page = json.loads(data)
-        article = self.extract_article(html_page)
-        if article:
-            article_json = json.dumps(article, ensure_ascii=False)
-            self.output_corpus.add_file(cat, iden, article_json)
+        from boilerpipe.extract import Extractor
+        extractor = Extractor(extractor='ArticleExtractor',
+                              html=html_page['html'])
+        body = extractor.getText()
+        title = extractor.source.title
+        art = {
+            'title': title,
+            'body': body,
+            'source': html_page['source'],
+            'url': html_page['url'],
+            'timestamp': html_page['timestamp']
+        }
+        if self.art_ok(art['body']):
+            art_json = json.dumps(art, ensure_ascii=False)
+            self.output_corpus.add_file(cat, iden, art_json)
 
     def gen_dataset(self):
-        p = mp.Pool(mp.cpu_count())
-        pit = p.imap_unordered(self.process_file, self.input_corpus.files())
-        for _ in tqdm(pit, total=self.input_corpus.size()):
+        proc_pool = mp.Pool(mp.cpu_count())
+        for _ in tqdm(proc_pool.imap_unordered(self.process_item, self.input_corpus.files())):
             pass
