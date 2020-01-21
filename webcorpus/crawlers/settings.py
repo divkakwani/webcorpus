@@ -23,4 +23,6 @@ LOG_LEVEL = 'DEBUG'
 USER_AGENT = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36'\
              '(KHTML, like Gecko) Chrome/34.0.1847.131 Safari/537.36'
 
-
+DEPTH_PRIORITY = 1
+CHEDULER_DISK_QUEUE = 'scrapy.squeues.PickleFifoDiskQueue'
+SCHEDULER_MEMORY_QUEUE = 'scrapy.squeues.FifoMemoryQueue'
