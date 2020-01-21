@@ -39,7 +39,7 @@ class GCP:
 
 
 gcp = GCP()
-# firestore = Firestore()
+fsclient = Firestore()
 
 
 def tmpfile_path():
@@ -53,9 +53,17 @@ class CatCorpusHandler:
     def __init__(self, lang, path, dtype):
         self.corpus = CatCorpus(path)
         self.path = path
+        self.lang = lang
 
     def push_stats(self):
-        pass
+        stats = self.corpus.stats()
+        doc_ref = fsclient.db.collections('datasets').document(self.lang)
+        doc = doc_ref.get
+        if doc.exists:
+            doc_ref.update({'{}.{}'.format(self.dtype, key): stats[key]
+                            for key in stats})
+        else:
+            doc_ref.set({self.dtype: stats})
 
     def push(self, root_path):
         cats = os.listdir(self.path)
@@ -65,7 +73,7 @@ class CatCorpusHandler:
             print('Archiving {} to {}'.format(cat_path, tmp_path))
             shutil.make_archive(tmp_path, 'xztar', cat_path)
             blob_path = os.path.join(root_path, cat)
-            gcp.push(blob_path, tmp_path)
+            gcp.push(blob_path, tmp_path + '.tar.xz')
 
 
 class SentCorpusHandler:
