@@ -36,7 +36,6 @@ class BaseNewsSpider(scrapy.Spider):
         self.lang = kwargs['lang']
         self.script = code2script(self.lang)
         self.name = kwargs['source_name']
-        self.arts_path = kwargs['arts_path']
         self.html_path = kwargs['html_path']
         self.home_url = kwargs['home_url']
         self.log_path = kwargs['log_path']
@@ -46,14 +45,12 @@ class BaseNewsSpider(scrapy.Spider):
         self.cleaner = Cleaner(comments=True, meta=True,
                                scripts=True, style=True)
 
-        os.makedirs(self.arts_path, exist_ok=True)
         os.makedirs(self.html_path, exist_ok=True)
 
         parts = tldextract.extract(self.home_url)
         domain = '{}.{}.{}'.format(parts.subdomain, parts.domain, parts.suffix)
         self.allowed_domains = [domain]
 
-        self.arts_corpus = CatCorpus(self.arts_path)
         self.html_corpus = CatCorpus(self.html_path)
 
         super().__init__(self.name)
