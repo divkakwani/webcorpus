@@ -19,7 +19,7 @@ import json
 import os
 import tldextract
 
-from boilerpipe.extract import Extractor
+from lxml.html.clean import Cleaner
 from scrapy.linkextractors import LinkExtractor
 from scrapy.selector import Selector
 from datetime import datetime
@@ -40,9 +40,11 @@ class BaseNewsSpider(scrapy.Spider):
         self.html_path = kwargs['html_path']
         self.home_url = kwargs['home_url']
         self.log_path = kwargs['log_path']
-        self.extract_arts = kwargs.get('extract_article', False)
-        self.arts_collected = 0
         self.pages_crawled = 0
+        self.recent_pgcnt = 0
+        self.recent_pgcnts = [0, 0, 0, 0, 0, 0]
+        self.cleaner = Cleaner(comments=True, meta=True,
+                               scripts=True, style=True)
 
         os.makedirs(self.arts_path, exist_ok=True)
         os.makedirs(self.html_path, exist_ok=True)
@@ -61,13 +63,17 @@ class BaseNewsSpider(scrapy.Spider):
         call.start(300)  # call every 5 mins
 
     def log_stats(self):
+        del self.recent_pgcnts[0]
+        self.recent_pgcnts.append(self.recent_pgcnt)
+        self.recent_pgcnt = 0
         stats = {'lang': self.lang, 'source': self.name,
-                 'pages_crawled': self.pages_crawled}
+                 'pages_crawled': self.pages_crawled,
+                 'recent_pgcnts': self.recent_pgcnts}
         with open(self.log_file, 'w') as fp:
             json.dump(stats, fp)
 
     def write_html(self, response):
-        html = response.text
+        html = self.cleaner.clean_html(response.text)
         html_page = {
             'html': html,
             'source': self.name,
@@ -77,6 +83,8 @@ class BaseNewsSpider(scrapy.Spider):
         json_data = json.dumps(html_page, ensure_ascii=False)
         self.html_corpus.add_file(self.name, response.request.url, json_data)
         self.pages_crawled += 1
+        self.recent_pgcnt += 1
+        return html
 
     def parse(self, response):
         raise NotImplementedError
@@ -107,7 +115,15 @@ class RecursiveSpider(BaseNewsSpider):
         super().__init__(*args, **kwargs)
 
     def parse(self, response):
-        self.write_html(response)
+        clean_html = self.write_html(response)
+
+        num_native_ch = sum(in_script(c, self.lang) for c in clean_html)
+        if num_native_ch < 100:
+            # too few native character means that the page is not in native
+            # language. So we don't follow links. This heuristic is useful
+            # to restrict crawls to self.lang in case of multilingual news
+            # sources
+            return
 
         links = self.link_extractor.extract_links(response)
         for link in links:
