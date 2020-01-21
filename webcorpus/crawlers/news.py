@@ -48,7 +48,11 @@ class BaseNewsSpider(scrapy.Spider):
         os.makedirs(self.html_path, exist_ok=True)
 
         parts = tldextract.extract(self.home_url)
-        domain = '{}.{}.{}'.format(parts.subdomain, parts.domain, parts.suffix)
+        domain = '{}.{}'.format(parts.domain, parts.suffix)
+
+        if len(parts.subdomain) > 0:
+            domain = '{}.{}'.format(parts.subdomain, domain)
+
         self.allowed_domains = [domain]
 
         self.html_corpus = CatCorpus(self.html_path)
