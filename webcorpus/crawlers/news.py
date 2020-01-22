@@ -42,8 +42,8 @@ class BaseNewsSpider(scrapy.Spider):
         self.pages_crawled = 0
         self.recent_pgcnt = 0
         self.recent_pgcnts = [0, 0, 0, 0, 0, 0]
-        self.cleaner = Cleaner(comments=True, meta=True,
-                               scripts=True, style=True)
+        self.cleaner = Cleaner(comments=True, scripts=True,
+                               frames=True, style=True)
 
         os.makedirs(self.html_path, exist_ok=True)
 
