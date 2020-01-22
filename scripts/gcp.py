@@ -72,20 +72,34 @@ class CatCorpusHandler:
             tmp_path = tmpfile_path()
             print('Archiving {} to {}'.format(cat_path, tmp_path))
             shutil.make_archive(tmp_path, 'xztar', cat_path)
-            blob_path = os.path.join(root_path, cat)
+            blob_path = os.path.join(root_path, cat + '.tar.xz')
             gcp.push(blob_path, tmp_path + '.tar.xz')
 
 
 class SentCorpusHandler:
 
-    def __init__(self, lang, path, dtype):
+    def __init__(self, lang, path, dtype, source):
         self.corpus = SentCorpus(path)
+        self.path = path
+        self.lang = lang
+        self.source = source
 
     def push_stats(self):
-        pass
+        stats = self.corpus.stats()
+        doc_ref = fsclient.db.collections('datasets').document(self.lang)
+        doc = doc_ref.get
+        if doc.exists:
+            doc_ref.update({'{}.{}'.format(self.dtype, key): stats[key]
+                            for key in stats})
+        else:
+            doc_ref.set({self.dtype: stats})
 
-    def push(self):
-        pass
+    def push(self, root_path):
+        tmp_path = tmpfile_path()
+        print('Archiving {} to {}'.format(self.path, tmp_path))
+        shutil.make_archive(tmp_path, 'xztar', self.path)
+        blob_path = os.path.join(root_path, self.source + '.tar.xz')
+        gcp.push(blob_path, tmp_path + '.tar.xz')
 
 
 def make_root_path(lang, dtype):
@@ -102,11 +116,12 @@ def cli():
 @click.option('--path', required=True)
 @click.option('--dtype', metavar='type',
               type=click.Choice(['arts', 'html', 'sent']), required=True)
-def upload(lang, path, dtype):
+@click.option('--source', required=False)
+def upload(lang, path, dtype, source=None):
     if dtype in ('arts', 'html'):
         handler = CatCorpusHandler(lang, path, dtype)
     elif dtype == 'sent':
-        handler = SentCorpusHandler(lang, path, dtype)
+        handler = SentCorpusHandler(lang, path, dtype, source)
     else:
         raise 'Invalid '
 
