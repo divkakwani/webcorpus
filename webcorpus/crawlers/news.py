@@ -116,17 +116,11 @@ class RecursiveSpider(BaseNewsSpider):
         super().__init__(*args, **kwargs)
 
     def parse(self, response):
-        clean_html = self.write_html(response)
-
-        num_native_ch = sum(in_script(c, self.lang) for c in clean_html)
-        if num_native_ch < 100:
-            # too few native character means that the page is not in native
-            # language. So we don't follow links. This heuristic is useful
-            # to restrict crawls to self.lang in case of multilingual news
-            # sources
-            return
+        self.write_html(response)
 
         links = self.link_extractor.extract_links(response)
+        links = filter(lambda l: l.startswith(self.home_url), links)
+
         for link in links:
             yield scrapy.Request(link.url)
 
