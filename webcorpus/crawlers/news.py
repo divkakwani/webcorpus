@@ -119,7 +119,7 @@ class RecursiveSpider(BaseNewsSpider):
         self.write_html(response)
 
         links = self.link_extractor.extract_links(response)
-        links = filter(lambda l: l.startswith(self.home_url), links)
+        links = filter(lambda l: l.url.startswith(self.home_url), links)
 
         for link in links:
             yield scrapy.Request(link.url)
