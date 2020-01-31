@@ -54,11 +54,12 @@ class CatCorpusHandler:
         self.corpus = CatCorpus(path)
         self.path = path
         self.lang = lang
+        self.dtype = dtype
 
     def push_stats(self):
         stats = self.corpus.stats()
-        doc_ref = fsclient.db.collections('datasets').document(self.lang)
-        doc = doc_ref.get
+        doc_ref = fsclient.db.collection('datasets').document(self.lang)
+        doc = doc_ref.get()
         if doc.exists:
             doc_ref.update({'{}.{}'.format(self.dtype, key): stats[key]
                             for key in stats})
