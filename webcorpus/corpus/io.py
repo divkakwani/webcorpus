@@ -95,24 +95,24 @@ class SentCorpus:
 
     def stats(self):
         cmd_lines = 'wc -l {} | cut -d" " -f1'.format(self.corpus_path)
-        cmd_uniqlines = 'awk "!($0 in a) {{a[$0];print}}" "{}" | wc -l'\
-                        '| cut -f1'.format(self.corpus_path)
+        # cmd_uniqlines = 'awk "!($0 in a) {{a[$0];print}}" "{}" | wc -l'\
+        #                 '| cut -f1'.format(self.corpus_path)
         cmd_tokens = 'tr " " "\n" < "{}" | wc -l | cut -f1'\
                      .format(self.corpus_path)
-        cmd_uniqtokens = 'tr " " "\n" < "{}" | awk "!($0 in a)'\
-                         '{{a[$0];print}}" | wc -l | cut -f1'\
-                         .format(self.corpus_path)
+        # cmd_uniqtokens = 'tr " " "\n" < "{}" | awk "!($0 in a)'\
+        #                  '{{a[$0];print}}" | wc -l | cut -f1'\
+        #                  .format(self.corpus_path)
 
         _, lines, e1 = _exec_cmd(cmd_lines)
-        _, uniq_lines, e2 = _exec_cmd(cmd_uniqlines)
+        # _, uniq_lines, e2 = _exec_cmd(cmd_uniqlines)
         _, tokens, e3 = _exec_cmd(cmd_tokens)
-        _, uniq_tokens, e4 = _exec_cmd(cmd_uniqtokens)
+        # _, uniq_tokens, e4 = _exec_cmd(cmd_uniqtokens)
 
         return {
             'lines': int(lines),
-            'uniq_lines': int(uniq_lines),
-            'tokens': int(tokens),
-            'uniq_tokens': int(uniq_tokens)
+            # 'uniq_lines': int(uniq_lines),
+            'tokens': int(tokens)
+            # 'uniq_tokens': int(uniq_tokens)
         }
 
     def add_sents(self, sents):

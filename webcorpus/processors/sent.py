@@ -12,7 +12,7 @@ from ..corpus.io import CatCorpus, SentCorpus
 from ..language.normalize import IndicNormalizerFactory
 from ..language.tokenize import trivial_tokenize
 from ..language.sentence_tokenize import sentence_split
-from ..language import code2script, SCRIPT_DIGITS, in_script
+from ..language import code2script, in_script
 
 
 class SentProcessor:
@@ -33,10 +33,10 @@ class SentProcessor:
         """
         newline_removed = sent.replace('\n', ' ')
         normalized = self.normalizer.normalize(newline_removed)
-        num_masked = re.sub(r'[0-9]+', '#', normalized)
-        native_digits = SCRIPT_DIGITS[self.script]
-        num_masked = re.sub(r'[{}]+'.format(native_digits), '#', num_masked)
-        spaced = ' '.join(trivial_tokenize(num_masked, self.lang))
+        # num_masked = re.sub(r'[0-9]+', '#', normalized)
+        # native_digits = SCRIPT_DIGITS[self.script]
+        # num_masked = re.sub(r'[{}]+'.format(native_digits), '#', num_masked)
+        spaced = ' '.join(trivial_tokenize(normalized, self.lang))
         return spaced
 
     def check_sent(self, sent):
