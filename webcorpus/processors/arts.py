@@ -45,22 +45,25 @@ class ArtsProcessor:
 
     def process_item(self, tpl):
         cat, iden, data = tpl
-        html_page = json.loads(data)
-        from boilerpipe.extract import Extractor
-        extractor = Extractor(extractor='ArticleExtractor',
-                              html=html_page['html'])
-        body = extractor.getText()
-        title = extractor.source.title
-        art = {
-            'title': title,
-            'body': body,
-            'source': html_page['source'],
-            'url': html_page['url'],
-            'timestamp': html_page['timestamp']
-        }
-        if self.art_ok(art['body']):
-            art_json = json.dumps(art, ensure_ascii=False)
-            self.output_corpus.add_file(cat, iden, art_json)
+        try:
+            html_page = json.loads(data)
+            from boilerpipe.extract import Extractor
+            extractor = Extractor(extractor='ArticleExtractor',
+                                  html=html_page['html'])
+            body = extractor.getText()
+            title = extractor.source.title
+            art = {
+                'title': title,
+                'body': body,
+                'source': html_page['source'],
+                'url': html_page['url'],
+                'timestamp': html_page['timestamp']
+            }
+            if self.art_ok(art['body']):
+                art_json = json.dumps(art, ensure_ascii=False)
+                self.output_corpus.add_file(cat, iden, art_json)
+        except Exception as e:
+            pass
 
     def gen_dataset(self):
         proc_pool = mp.Pool(mp.cpu_count())
