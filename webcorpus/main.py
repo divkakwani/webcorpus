@@ -4,6 +4,7 @@ import logging
 from scrapy.crawler import CrawlerProcess
 from .corpus.stats import print_stats
 from .crawlers.w3newspaper import W3NewsPaperSpider
+from .crawlers.news import RecursiveSpider
 from .processors.arts import ArtsProcessor
 from .processors.sent import SentProcessor
 
@@ -25,18 +26,17 @@ def get_sources(langs, srcdir):
     process.start()
 
 
-# @cli.command(name='fetch')
-# @click.option('--lang', required=True)
-# @click.option('--srcdir', required=True)
-# @click.option('--jobdir_root', required=True)
-# @click.option('--output', required=True)
-# @click.option('--logfile', default=None)
-# def fetch(lang, srcdir, jobdir_root, output, logfile):
-#     if logfile:
-#         logging.basicConfig(filename=logfile)
-#     else:
-#         logging.basicConfig(level=logging.WARN)
-#     fetch_corpus(lang, output, srcdir, jobdir_root)
+@cli.command(name='fetch')
+@click.option('--lang', required=True)
+@click.option('--source_name', required=True)
+@click.option('--html_path', required=True)
+@click.option('--home_url', required=True)
+@click.option('--log_path', required=True)
+def fetch(lang, source_name, html_path, home_url, log_path):
+    process = CrawlerProcess()
+    process.crawl(RecursiveSpider, lang=lang, source_name=source_name,
+                  html_path=html_path, home_url=home_url, log_path=log_path)
+    process.start()
 
 
 @cli.command(name='process')

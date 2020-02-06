@@ -25,7 +25,7 @@ from scrapy.selector import Selector
 from datetime import datetime
 from twisted.internet import task
 from ..corpus.io import CatCorpus
-from ..language import code2script, in_script
+from ..language import code2script
 
 
 class BaseNewsSpider(scrapy.Spider):
@@ -42,8 +42,10 @@ class BaseNewsSpider(scrapy.Spider):
         self.pages_crawled = 0
         self.recent_pgcnt = 0
         self.recent_pgcnts = [0, 0, 0, 0, 0, 0]
-        self.cleaner = Cleaner(comments=True, scripts=True,
-                               frames=True, style=True)
+        self.cleaner = Cleaner(scripts=True, javascript=True, style=True,
+                               comments=True, links=False, meta=False,
+                               page_structure=False, embedded=True,
+                               frames=True, forms=False, annoying_tags=False)
 
         os.makedirs(self.html_path, exist_ok=True)
 
@@ -59,7 +61,10 @@ class BaseNewsSpider(scrapy.Spider):
 
         super().__init__(self.name)
 
-        self.log_file = os.path.join(self.log_path, 'stats', kwargs['_job'])
+        job_id = kwargs.get('_job', self.name)
+        os.makedirs(os.path.join(self.log_path, 'stats'), exist_ok=True)
+        self.log_file = os.path.join(self.log_path, 'stats', job_id)
+
         call = task.LoopingCall(self.log_stats)
         call.start(300)  # call every 5 mins
 
@@ -119,6 +124,7 @@ class RecursiveSpider(BaseNewsSpider):
         self.write_html(response)
 
         links = self.link_extractor.extract_links(response)
+
         links = filter(lambda l: l.url.startswith(self.home_url), links)
 
         for link in links:
