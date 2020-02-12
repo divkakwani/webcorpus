@@ -47,10 +47,10 @@ class SentProcessor:
         """
         if len(sent) < 10:
             return False
-        for c in sent:
-            if c != '।' and not in_script(c, self.script):
-                return False
-        return True
+        cval = map(lambda c: in_script(c, self.script) or c.isdigit(), sent)
+        if sum(cval) >= 0.9*len(sent):
+            return True
+        return False
 
     def gen_dataset(self):
         for cat, iden, payload in tqdm(self.input_corpus.files()):
