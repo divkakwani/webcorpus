@@ -1,4 +1,5 @@
 name,home_url,sitemap_url,use_sitemap,active
+4guj,http://4guj.com/,,False,True
 4masti,http://4masti.com/,,False,True
 aajkaaldaily,https://www.aajkaaldaily.com/,https://www.aajkaaldaily.com/sitemap.xml,False,True
 aapdujunagadh,https://aapdujunagadh.com,,False,True
@@ -22,13 +23,17 @@ charotarsandesh,https://www.charotarsandesh.com/,,False,True
 chitralekha,https://chitralekha.com/,,False,True
 cocktailzindagi,https://guj.cocktailzindagi.com/,,False,True
 criclove,https://www.cricklove.com/,,False,True
+cybersafar,https://cybersafar.com/,,False,True
+dainikgujarat,https://www.dainikgujarat.com/,,False,True
 delachieve,https://gu.delachieve.com,,False,True
 dhabkar,http://www.dhabkar.in/,http://www.dhabkar.in/sitemap.xml,False,True
+digitalallnews,https://www.digitalallnews.com/,,False,True
 divyabhaskar,https://www.divyabhaskar.co.in/,https://www.divyabhaskar.co.in/sitemap.xml,False,True
 eaglenews,https://eaglenews.in/,https://eaglenews.in/sitemap.xml,False,True
 egujarati,http://egujarati.com/,,False,True
 factcrescendo,https://gujarati.factcrescendo.com/,,False,True
 faktgujarati,http://www.faktgujarati.com/,,False,True
+fearlessvoice,https://fearlessvoice.in/,,False,True
 feelingsmultimedia,https://www.feelingsmultimedia.com/,,False,True
 flownews,https://flow-news.com/,,False,True
 funngyan,http://funngyan.com,,False,True
@@ -48,6 +53,7 @@ gujaratiparivaro,http://mojemastram.gujaratiparivaro.com,,False,True
 gujaratirecipes,http://www.gujaratirecipes.in/,,False,True
 gujaratmirror,https://gujaratmirror.in/,,False,True
 gujaratmitra,http://www.gujaratmitra.in/,http://www.gujaratmitra.in/sitemap.xml,False,True
+gujaratmitra2,https://gujaratmitra.co.in/,,False,True
 gujaratsamachar,https://www.gujaratsamachar.com/,https://www.gujaratsamachar.com/sitemap.xml,False,True
 gujarattimesusa,http://gujarattimesusa.com/,http://gujarattimesusa.com/sitemap.xml,False,True
 gujarattoday,http://www.gujarattoday.in/,http://www.gujarattoday.in/sitemap.xml,False,True
@@ -77,6 +83,7 @@ lokmijaj,http://lokmijaj.com/,http://lokmijaj.com/sitemap.xml,False,True
 loksansar,http://www.loksansar.in/,http://www.loksansar.in/sitemap.xml,False,True
 loksattanews,https://www.loksattanews.co.in/,,False,True
 meranews,https://www.meranews.com/,,False,True
+mojemoj,http://www.mojemoj.com,,False,True
 morbiupdate,http://morbiupdate.com/,,False,True
 motiontoday,https://www.gujarati.motiontoday.com/,,False,True
 navgujaratsamay,https://www.navgujaratsamay.com/,https://www.navgujaratsamay.com/sitemap.xml,False,True
@@ -117,7 +124,7 @@ vandeindia,http://www.vandeindia.com,,False,True
 vtvgujarati,https://www.vtvgujarati.com/,,False,True
 vyaaparsamachar,https://www.vyaapaarsamachar.com/,,False,True
 webdunia,https://gujarati.webdunia.com/,https://gujarati.webdunia.com/sitemap.xml,False,True
-westerntimes,http://www.westerntimes.co.in/,http://www.westerntimes.co.in/sitemap.xml,False,True
+westerntimesnews,https://westerntimesnews.in/,,False,True
 wordpress,https://muslimsandesh.wordpress.com/,https://muslimsandesh.wordpress.com/sitemap.xml,False,True
 yashagathagujaratni,https://yashagathagujaratni.com,,False,True
 yashpaljadeja,http://www.yashpaljadeja.com,,False,True
