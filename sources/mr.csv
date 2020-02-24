@@ -1,6 +1,7 @@
 name,home_url,sitemap_url,use_sitemap,active
 aamhimarathi,http://aamhimarathi.in,,False,True
 aarogyaupchar,http://marathi.aarogyaupchar.com,,False,True
+abplive,https://marathi.abplive.com/,,False,True
 agrowon,https://www.agrowon.com/,https://www.agrowon.com/sitemap.xml,False,True
 beedreporter,https://beedreporter.net/,https://beedreporter.net/sitemap.xml,False,True
 bhaskar,https://divyamarathi.bhaskar.com/,https://divyamarathi.bhaskar.com/sitemap.xml,False,True
@@ -34,7 +35,9 @@ lokmat_news18,https://lokmat.news18.com/,,False,True
 lokprashna,http://www.lokprashna.com/,http://www.lokprashna.com/sitemap.xml,False,True
 loksatta,https://www.loksatta.com/,https://www.loksatta.com/sitemap.xml,False,True
 madhurasrecipe,http://www.madhurasrecipe.com,,False,True
+mahanmk,https://www.mahanmk.com/,,False,True
 maharashtramajha,http://www.maharashtramajha.com,,False,True
+majhapaper,https://www.majhapaper.com/,,False,True
 marathiasmita,http://www.marathiasmita.com/,,False,True
 marathiboli,http://marathiboli.in,,False,True
 marathiinfopedia,https://marathiinfopedia.co.in,,False,True
@@ -58,7 +61,9 @@ shivner,http://www.shivner.com/,http://www.shivner.com/sitemap.xml,False,True
 smartdost,http://www.smartdost.in/,,False,True
 tarunbharat,https://www.tarunbharat.com/,https://www.tarunbharat.com/sitemap.xml,False,True
 techvarta,http://www.techvarta.com/,,False,True
+timesnowmarathi,https://www.timesnowmarathi.com/,,False,True
 thinknonsense,http://www.thinknonsense.com/,,False,True
+tv9marathi,https://www.tv9marathi.com/,,False,True
 vaibhavbhosale,http://www.vaibhavbhosale.com,,False,True
 webduina,https://marathi.webdunia.com/,,False,True
 wordpress,http://mitraho.wordpress.com,,False,True
