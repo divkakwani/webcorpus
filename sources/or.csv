@@ -1,5 +1,6 @@
 name,home_url,sitemap_url,use_sitemap,active
 anupambharatonline,http://www.anupambharatonline.com/,http://www.anupambharatonline.com/sitemap.xml,False,True
+blogspot,http://pran-oriya-recipies.blogspot.com/,,False,True
 dharitri,http://www.dharitri.com/,http://www.dharitri.com/sitemap.xml,False,True
 enewsodia,https://enewsodia.com/,https://enewsodia.com/sitemap.xml,False,True
 eodishasamachar,http://eodishasamachar.com/,http://eodishasamachar.com/sitemap.xml,False,True
@@ -8,8 +9,8 @@ khabarodisha,https://khabarodisha.com,,False,True
 mbctv,http://www.mbctv.co.in/,http://www.mbctv.co.in/sitemap.xml,False,False
 news18,https://odia.news18.com/,,False,True
 odiapua,https://odiapua.com/,https://odiapua.com/sitemap.xml,False,True
-odishabhaskar,http://odishabhaskar.com/,http://odishabhaskar.com/sitemap.xml,False,True
 odisha,http://www.odisha.com/,http://www.odisha.com/sitemap.xml,False,True
+odishabhaskar,http://odishabhaskar.com/,http://odishabhaskar.com/sitemap.xml,False,True
 odishainfocus,https://www.odishainfocus.com/,https://www.odishainfocus.com/sitemap.xml,False,True
 odishanewsinsight,https://odishanewsinsight.com/odia/,,False,True
 odishareporter,https://odishareporter.in/,https://odishareporter.in/sitemap.xml,False,True
