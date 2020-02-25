@@ -56,13 +56,16 @@ def build_search_terms(lang):
 
 
 def extract_urls(lang):
-    terms = build_search_terms(lang)[:1]
+    terms = build_search_terms(lang)
     urls = set()
     for term in terms:
         # print('Searching term: ', term)
-        next_urls = list(search(term, stop=10))
-        urls.update(map(lambda u: urlparse(u).scheme + '://' + urlparse(u).netloc, next_urls))
-        time.sleep(1)
+        try:
+            next_urls = list(search(term, stop=100))
+            urls.update(map(lambda u: urlparse(u).scheme + '://' + urlparse(u).netloc, next_urls))
+            time.sleep(1)
+        except:
+            pass
 
     urls = list(urls)
     print(urls)
@@ -79,4 +82,4 @@ def extract_urls(lang):
             pass
 
 
-extract_urls('kn')
+extract_urls('gu')
