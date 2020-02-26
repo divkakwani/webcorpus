@@ -153,3 +153,12 @@ class AnupambharatonlineSpider(RecursiveSpider):
     custom_settings = {
         'DUPEFILTER_CLASS': 'scrapy.dupefilters.BaseDupeFilter'
     }
+
+
+class PanjuMagazineSpider(RecursiveSpider):
+
+    name = 'anupambharatonline'
+
+    custom_settings = {
+        'DUPEFILTER_CLASS': 'scrapy.dupefilters.BaseDupeFilter'
+    }
