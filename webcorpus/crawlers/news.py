@@ -26,6 +26,7 @@ from datetime import datetime
 from twisted.internet import task
 from ..corpus.io import CatCorpus
 from ..language import code2script
+from datetime import date, timedelta
 
 
 class BaseNewsSpider(scrapy.Spider):
@@ -157,8 +158,26 @@ class AnupambharatonlineSpider(RecursiveSpider):
 
 class PanjuMagazineSpider(RecursiveSpider):
 
-    name = 'anupambharatonline'
+    name = 'panjumagazine'
 
     custom_settings = {
         'DUPEFILTER_CLASS': 'scrapy.dupefilters.BaseDupeFilter'
     }
+
+
+class AjitjalandharSpider(RecursiveSpider):
+
+    name = 'ajitjalandhar'
+
+    def __init__(self, *args, **kwargs):
+        self.start_urls = [kwargs['home_url'], ]
+        start_date = date(2017, 1, 1)
+        end_date = date(2020, 2, 29)
+        delta = timedelta(days=1)
+        while start_date <= end_date:
+            url = start_date.strftime("http://beta.ajitjalandhar.com/edition/%Y%m%d.cms")
+            self.start_urls.append(url)
+            start_date += delta
+
+        self.link_extractor = LinkExtractor()
+        super().__init__(*args, **kwargs)
