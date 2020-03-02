@@ -1,4 +1,5 @@
 name,home_url,sitemap_url,use_sitemap,active
+ameodia,http://www.ameodia.com/,,False,True
 anupambharatonline,http://www.anupambharatonline.com/,http://www.anupambharatonline.com/sitemap.xml,False,True
 blogspot,http://pran-oriya-recipies.blogspot.com/,,False,True
 dharitri,http://www.dharitri.com/,http://www.dharitri.com/sitemap.xml,False,True
@@ -10,12 +11,16 @@ khabarodisha,https://khabarodisha.com,,False,True
 mbctv,http://www.mbctv.co.in/,http://www.mbctv.co.in/sitemap.xml,False,False
 news18,https://odia.news18.com/,,False,True
 odiapua,https://odiapua.com/,https://odiapua.com/sitemap.xml,False,True
+odiasahitya,http://www.odiasahitya.com,,False,True
+odiascraps,https://www.odiascraps.info/,,False,True
 odisha,http://www.odisha.com/,http://www.odisha.com/sitemap.xml,False,True
 odishabhaskar,http://odishabhaskar.com/,http://odishabhaskar.com/sitemap.xml,False,True
 odishainfocus,https://www.odishainfocus.com/,https://www.odishainfocus.com/sitemap.xml,False,True
 odishanewsinsight,https://odishanewsinsight.com/odia/,,False,True
 odishareporter,https://odishareporter.in/,https://odishareporter.in/sitemap.xml,False,True
+odishasambad,https://odishasambad.in/,,False,True
 odishatv,https://khabar.odishatv.in/,,False,True
+prameyanews7,http://www.prameyanews7.com/,,False,True
 pratilipi,https://odia.pratilipi.com,,False,True
 samajalive,https://www.samajalive.in/,,False,True
 sambad,http://sambad.in/,http://sambad.in/sitemap.xml,False,True
