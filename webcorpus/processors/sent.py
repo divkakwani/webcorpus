@@ -4,15 +4,19 @@ Copyright © Divyanshu Kakwani 2019, all rights reserved.
 Create a sentence file from an article corpus
 
 """
-import re
 import json
+import nltk
 
+from nltk.tokenize import sent_tokenize, word_tokenize
 from tqdm import tqdm
 from ..corpus.io import CatCorpus, SentCorpus
 from ..language.normalize import IndicNormalizerFactory
 from ..language.tokenize import trivial_tokenize
 from ..language.sentence_tokenize import sentence_split
 from ..language import code2script, in_script
+
+
+nltk.download('punkt')
 
 
 class SentProcessor:
@@ -32,6 +36,9 @@ class SentProcessor:
             * Replace every number by # token
         """
         newline_removed = sent.replace('\n', ' ')
+        if self.lang == 'en':
+            return ' '.join(word_tokenize(newline_removed))
+
         normalized = self.normalizer.normalize(newline_removed)
         # num_masked = re.sub(r'[0-9]+', '#', normalized)
         # native_digits = SCRIPT_DIGITS[self.script]
@@ -56,7 +63,10 @@ class SentProcessor:
         for cat, iden, payload in tqdm(self.input_corpus.files()):
             article = json.loads(payload)
             content = article['body']
-            sents = sentence_split(content, self.lang)
+            if self.lang == 'en':
+                sents = sent_tokenize(content)
+            else:
+                sents = sentence_split(content, self.lang)
             sents = [self.process_sent(sent) for sent in sents]
             sents = [sent for sent in sents if self.check_sent(sent)]
             self.output_corpus.add_sents(sents)

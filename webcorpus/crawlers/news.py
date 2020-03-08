@@ -170,7 +170,7 @@ class AjitjalandharSpider(RecursiveSpider):
     name = 'ajitjalandhar'
 
     def __init__(self, *args, **kwargs):
-        self.start_urls = [kwargs['home_url'], ]
+        self.start_urls = [kwargs['home_url']]
         start_date = date(2017, 1, 1)
         end_date = date(2020, 2, 29)
         delta = timedelta(days=1)

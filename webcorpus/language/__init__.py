@@ -39,7 +39,8 @@ LC_SCRIPT = {
     'bn': 'bengali',
     'ml': 'malayalam',
     'pa': 'gurmukhi',
-    'as': 'bengali'
+    'as': 'bengali',
+    'en': 'latin'
 }
 
 
@@ -52,7 +53,8 @@ SCRIPT_DIGITS = {
     'tamil': '௦௧௨௩௪௫௬௭௮௯௰',
     'kannada': '೦೧೨೩೪೫೬೭೮',
     'oriya': '୦୧୨୩୪୫୬୭୮୯',
-    'gurmukhi': '੦੧੨੩੪੫੬੭੮੯'
+    'gurmukhi': '੦੧੨੩੪੫੬੭੮੯',
+    'latin': '0123456789'
 }
 
 
