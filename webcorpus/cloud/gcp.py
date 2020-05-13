@@ -11,7 +11,7 @@ import os
 import tempfile
 
 from google.cloud import storage
-from webcorpus.corpus.io import CatCorpus, SentCorpus
+from ..corpus.io import CatCorpus, SentCorpus
 from firebase_admin import credentials, firestore, initialize_app
 
 
