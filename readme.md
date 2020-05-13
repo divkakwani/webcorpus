@@ -1,6 +1,6 @@
 ## webcorpus
 
-
+![pypi badge](https://badge.fury.io/py/webcorpus.svg)
 
 A tool to generate large textual corpora by crawling the web.
 
