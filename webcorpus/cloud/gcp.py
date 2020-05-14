@@ -9,6 +9,7 @@ import click
 import shutil
 import os
 import tempfile
+import tarfile
 
 from google.cloud import storage
 from ..corpus.io import CatCorpus, SentCorpus
@@ -39,7 +40,7 @@ class CloudStore:
         blob.upload_from_filename(filename=filename)
 
     def download(self, remote_path, download_path):
-        blobs = storage_client.list_blobs(
+        blobs = self.client.list_blobs(
             self.bucket_name, prefix=remote_path, delimiter=None
         )
         filenames = []
@@ -52,7 +53,8 @@ class CloudStore:
         for filename in filenames:
             ufname = filename.replace('.tar.xz', '')
             tar = tarfile.open(filename, mode='r:xz')
-            tar.extractall(path='.')
+            os.makedirs(ufname)
+            tar.extractall(path=ufname)
 
     def upload(self):
         pass
@@ -121,3 +123,7 @@ class SentCorpusHandler:
 
 def make_root_path(lang, dtype):
     return os.path.join('indicnlp-crawls', lang, dtype)
+
+
+store = CloudStore(bucketstore_key='/media/divkakwani/drive/collate/ai4b-gcp-key.json', firestore_key='/media/divkakwani/drive/collate/ai4b-gcp-key.json', bucket_name='nlp-corpora--ai4bharat')
+store.download('indicnlp-crawls/kn/arts', '/media/divkakwani/drive/kn-articles')
