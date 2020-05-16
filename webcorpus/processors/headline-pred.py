@@ -5,16 +5,20 @@ Create a sentence file from an article corpus
 
 """
 import json
+import os
 import string
-import asyncio
-import aiohttp
 import shelve
+import sys
+import copy
+import regex
 import random
+import unicodedata as ud
 
 from threading import Thread
 from requests import get
 from time import sleep
 from functools import reduce
+from itertools import filterfalse
 from tqdm import tqdm
 from urllib.parse import quote
 from ..corpus.io import CatCorpus, SentCorpus
@@ -51,13 +55,18 @@ def multi_get(uris, timeout=2.0):
 class WikiEntities:
 
     def __init__(self, lang):
-        self.cache = shelve.open('entity_cache', writeback=True)
-        if 'words' not in self.cache:
-            self.cache['words'] = {}
-            self.cache.sync()
+        # Load cache
+        self.cache_fname = '{}-words.json'.format(lang)
+        if os.path.exists(self.cache_fname):
+            with open(self.cache_fname) as fp:
+                self.cache = json.load(fp)
+        else:
+            self.cache = {'words': {}}
+
         self.URL = 'https://www.wikidata.org/w/api.php?action=wbsearchentities'\
                           '&search={}&language={}&format=json'
         self.num_http_calls = 0
+        self.last_sync = 0
         self.cache_hits = 0
         self.lang = lang
 
@@ -92,32 +101,42 @@ class WikiEntities:
             if is_ent:
                 entities.add(word)
 
-        self.cache.sync()
+        if self.num_http_calls - self.last_sync > 1000:
+            with open(self.cache_fname, 'w') as fp:
+                json.dump(self.cache, fp, ensure_ascii=False, indent=4)
+            self.last_sync = self.num_http_calls
 
         return entities
 
 
-class HeadlinesProcessor:
-
-    def __init__(self, lang, input_path, output_path):
+class ArticlesDatabase:
+    
+    def __init__(self, lang):
         self.lang = lang
-        self.script = code2script(lang)
-        self.input_corpus = CatCorpus(input_path)
+        self.wikient = WikiEntities(self.lang)
         normalizer_factory = IndicNormalizerFactory()
         self.normalizer = normalizer_factory.get_normalizer(self.lang)
-        self.wikient = WikiEntities(self.lang)
+        self.articles = []
+        self.ent_sets = []
+        self.minhashes = []
+        self.lsh = MinHashLSH(threshold=0.5, num_perm=128)
 
-    def _strip_title(self, txt):
-        txt = txt.strip()
-        neg_letter = string.ascii_letters + '| '
-        s, e = 0, len(txt) - 1
-        if self.lang != 'en':
-            while txt[s] in neg_letter:
-                s += 1
-            while txt[e] in neg_letter:
-                e -= 1
-        return txt[s:e]
+    def __getitem__(self, key):
+        return self.articles[key]
 
+    def __len__(self):
+        return len(self.articles)
+
+    def __iter__(self):
+        self.it_idx = 0
+        return self
+
+    def __next__(self):
+        self.it_idx += 1
+        if self.it_idx > len(self.articles):
+            raise StopIteration
+        return self.articles[self.it_idx-1]
+    
     def extract_words(self, txt):
         sents = sentence_split(txt, self.lang)
         words = []
@@ -127,75 +146,166 @@ class HeadlinesProcessor:
             words += trivial_tokenize(normalized, self.lang)
         return words
 
-    def gen_dataset(self):
-        articles = []
-        for cat, iden, payload in tqdm(self.input_corpus.files()):
-            article = json.loads(payload)
-            articles.append(json.loads(payload))
+    def add(self, article):
+        index = len(self.articles)
+        minhash = self.compute_hash(article)
 
-            if len(articles) == 10000:
-                break
-
-        articles = articles[:200]
-        ent_sets = []
-
-        for i, art in enumerate(articles):
-            words = self.extract_words(art['body'])
-            eset = self.wikient.extract_entities(words)
-            ent_sets.append(eset)
+        if (index+1) % 1000 == 0:
             print('Processed {} articles. Wikidata API calls: {}, Cache hits: {}'\
-                  .format(i + 1, self.wikient.num_http_calls, self.wikient.cache_hits))
+                  .format(index + 1, self.wikient.num_http_calls, self.wikient.cache_hits))
 
-        minhashes = [MinHash(num_perm=128) for i in range(len(articles))]
+        self.articles.append(article)
+        self.minhashes.append(minhash)
 
-        for i, eset in enumerate(ent_sets):
-            for elm in eset:
-                minhashes[i].update(elm.encode('utf-8'))
+        self.lsh.insert(index, minhash)
 
-        lsh = MinHashLSH(threshold=0.4, num_perm=128)
-        for i, minhash in enumerate(minhashes):
-            lsh.insert(i, minhash)
+    def count(self):
+        return len(self.titles)
+
+    def compute_hash(self, article):
+        words = self.extract_words(article['title'] + ' ' + article['body'])
+        eset = self.wikient.extract_entities(words)
+        minhash = MinHash(num_perm=128)
+        for elm in eset:
+            minhash.update(elm.encode('utf-8'))
+        return minhash
+
+    def query_similar(self, art, nmax=3):
+        """
+        returns a list of indices that correspond to similar articles
+        The following conditions are maintained:
+        * the retuned list does not contain the original article
+        * No two articles in the list have the same title
+        * For any two articles x, y in the list, the similarity is within (0.5, 0.8)
+        """
+        title_set = set(art['title'])
+        minhash = self.compute_hash(art)
+        indices = self.lsh.query(minhash)
+        results = []
+
+        for midx in indices:
+            if len(results) >= nmax:
+                break
+            # make sure title does not repeat
+            if art['title'] in title_set:
+                continue
+
+            # make sure the article is not too similar to any other article
+            # in fresutls
+            is_similar = False
+            if minhash.jaccard(self.minhashes[midx]) > 0.8:
+                is_similar = True
+            for art_idx in results:
+                if self.minhashes[art_idx].jaccard(self.minhashes[midx]) > 0.8:
+                    is_similar = True
+            if is_similar:
+                continue
+
+            results.append(midx)
+
+        matched_arts = map(lambda i: self.articles[i], results)
+        matched_arts = list(matched_arts)
+        return matched_arts
+
+
+class HeadlinesProcessor:
+
+    def __init__(self, lang, input_path, output_path):
+        self.lang = lang
+        self.script = code2script(lang)
+        self.input_corpus = CatCorpus(input_path)
+        self.artdb = ArticlesDatabase(self.lang)
+
+    def _strip_txt(self, txt):
+        txt = txt.strip()
+        neg_letter = string.digits + string.ascii_letters + string.punctuation + ' '
+        s, e = 0, len(txt) - 1
+        if self.lang != 'en':
+            while s < len(txt) and txt[s] in neg_letter:
+                s += 1
+            while e >= 0 and txt[e] in neg_letter:
+                e -= 1
+        return txt[s:e+1]
+
+    def clean_article(self, art):
+        titles = art['title'].split('|')
+        art['title'] = max(titles, key=len)
+            
+        # remove title from the body content
+        pattern = regex.compile('({}){{e<=5}}'.format(regex.escape(art['title'])))
+
+        match = pattern.search(art['body'])
+        if match:
+            end_idx = match.span()[1]
+            art['body'] = art['body'][end_idx:]
+
+        for s in range(len(art['body'])):
+            try:
+                if self.script in ud.name(art['body'][s]).lower():
+                    break
+            except:
+                pass
+
+        art['body'] = art['body'][s:]
+        art['title'] = self._strip_txt(art['title']) 
+        art['body'] = self._strip_txt(art['body']) 
+
+        return art
+
+
+    def gen_dataset(self):
+        for cat, iden, payload in tqdm(self.input_corpus.files()):
+            art = json.loads(payload)
+
+            if not art['title']:
+                continue
+
+            art = self.clean_article(art)
+
+            if len(art['title']) > 20 and len(art['body']) in range(200, 2000):
+                self.artdb.add(art)
+
+            if len(self.artdb) == 125000:
+                break
 
         instances = []
-        for i in range(len(articles)):
-            results = lsh.query(minhashes[i])
-            correct_title = (i, self._strip_title(articles[i]['title']))
-            if len(correct_title[1]) == 0:
-                break
-            if len(results) >= 4:
-                cand_titles = [(rid, self._strip_title(articles[rid]['title'])) for rid in results]
-                cand_titles = list(filter(lambda x: len(x[1]) > 0, cand_titles))
-                new_cand_titles = [correct_title]
-                id1 = correct_title[0]
-                for id2, title in cand_titles:
-                    if minhashes[id1].jaccard(minhashes[id2]) <= 0.7:
-                        new_cand_titles.append((id2, title))
-                cand_titles = new_cand_titles
-                if len(cand_titles) < 4:
-                    continue
-                cand_titles = cand_titles[:4]
-                random.shuffle(cand_titles)
-                correct_option = chr(ord('A') + cand_titles.index(correct_title))
 
-                instance = {
-                    'content': articles[correct_title[0]]['body'],
-                    'correctOption': correct_option,
-                    'optionA': cand_titles[0][1],
-                    'optionB': cand_titles[1][1],
-                    'optionC': cand_titles[2][1],
-                    'optionD': cand_titles[3][1]
-                }
-                instances.append(instance)
+        for art in self.artdb:
+            similar = self.artdb.query_similar(art)
+
+            if len(similar) < 3:
+                continue
+
+            cand_titles = [art['title']] + list(map(lambda a: a['title'], similar[:3]))
+            random.shuffle(cand_titles)
+            correct_option = chr(ord('A') + cand_titles.index(art['title']))
+
+            instance = {
+                'content': art['body'],
+                'correctOption': correct_option,
+                'articleURL': art['url'],
+                'optionA': cand_titles[0],
+                'optionB': cand_titles[1],
+                'optionC': cand_titles[2],
+                'optionD': cand_titles[3]
+            }
+            instances.append(instance)
+
+            n = len(instances)
+            if n % 100 == 0:
+                print('Generated {} instances'.format(n))
+
         random.shuffle(instances)
+        instances = instances[:100000]
         n = len(instances)
         s1, s2 = int(0.8*n), int(0.9*n)
         train = instances[:s1]
         valid = instances[s1:s2]
         test = instances[s2:]
-        json.dump(instances, open('train.json', 'w'), ensure_ascii=False, indent=4, sort_keys=True)
-        json.dump(instances, open('valid.json', 'w'), ensure_ascii=False, indent=4, sort_keys=True)
-        json.dump(instances, open('test.json', 'w'), ensure_ascii=False, indent=4, sort_keys=True)
+        json.dump(train, open('{}-train.json'.format(self.lang), 'w'), ensure_ascii=False, indent=4, sort_keys=True)
+        json.dump(valid, open('{}-valid.json'.format(self.lang), 'w'), ensure_ascii=False, indent=4, sort_keys=True)
+        json.dump(test, open('{}-test.json'.format(self.lang), 'w'), ensure_ascii=False, indent=4, sort_keys=True)
 
 
-p = HeadlinesProcessor('kn', '/home/divkakwani/Downloads/sanmarg', '/home/divkakwani/temp')
+p = HeadlinesProcessor('ml', '/media/divkakwani/drive/ml-articles', '/home/divkakwani/temp')
 p.gen_dataset()
