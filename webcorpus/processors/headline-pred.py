@@ -218,7 +218,7 @@ class HeadlinesProcessor:
 
     def _strip_txt(self, txt):
         txt = txt.strip()
-        neg_letter = string.digits + string.ascii_letters + string.punctuation + ' '
+        neg_letter = string.digits + string.ascii_letters + string.punctuation + string.whitespace
         s, e = 0, len(txt) - 1
         if self.lang != 'en':
             while s < len(txt) and txt[s] in neg_letter:
@@ -228,25 +228,18 @@ class HeadlinesProcessor:
         return txt[s:e+1]
 
     def clean_article(self, art):
+        # remove unneccesary fields in the title like newspaper name etc.
         titles = art['title'].split('|')
         art['title'] = max(titles, key=len)
             
         # remove title from the body content
+        # boilerpipe tends to include the title also in the body content
         pattern = regex.compile('({}){{e<=5}}'.format(regex.escape(art['title'])))
-
         match = pattern.search(art['body'])
         if match:
             end_idx = match.span()[1]
             art['body'] = art['body'][end_idx:]
 
-        for s in range(len(art['body'])):
-            try:
-                if self.script in ud.name(art['body'][s]).lower():
-                    break
-            except:
-                pass
-
-        art['body'] = art['body'][s:]
         art['title'] = self._strip_txt(art['title']) 
         art['body'] = self._strip_txt(art['body']) 
 
@@ -265,7 +258,7 @@ class HeadlinesProcessor:
             if len(art['title']) > 20 and len(art['body']) in range(200, 2000):
                 self.artdb.add(art)
 
-            if len(self.artdb) == 125000:
+            if len(self.artdb) == 200000:
                 break
 
         instances = []
@@ -307,5 +300,7 @@ class HeadlinesProcessor:
         json.dump(test, open('{}-test.json'.format(self.lang), 'w'), ensure_ascii=False, indent=4, sort_keys=True)
 
 
-p = HeadlinesProcessor('ml', '/media/divkakwani/drive/ml-articles', '/home/divkakwani/temp')
+lang = sys.argv[1]
+print('Processing lang: ', lang)
+p = HeadlinesProcessor(lang, '/media/divkakwani/drive/{}-articles'.format(lang), '/home/divkakwani/temp')
 p.gen_dataset()
