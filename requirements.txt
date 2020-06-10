@@ -1,0 +1,7 @@
+morfessor
+tldextract
+click
+scrapy
+tqdm
+pandas
+nltk
