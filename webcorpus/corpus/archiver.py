@@ -3,6 +3,7 @@ import shutil
 import os
 import tempfile
 import tarfile
+from pathlib import Path
 
 
 def tmpfile_path():
@@ -34,4 +35,10 @@ class SFArchiver(Archiver):
 class MFArchiver(Archiver):
 
     def archive(self):
-        pass
+        basename = os.path.basename(self.corpus.root_path)
+        archive_path = os.path.join('/tmp', basename + '.tar.xz')
+        print('Archiving {} to {}'.format(self.corpus.root_path, archive_path))
+        tar = tarfile.open(archive_path, 'w:xz')
+        tar.add(self.corpus.root_path, arcname=basename)
+        tar.close()
+        return archive_path

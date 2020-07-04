@@ -10,6 +10,22 @@ from tqdm import tqdm
 from ..corpus import CatCorpus
 
 
+
+class GenreProcessor:
+
+    def __init__(self, lang, input_path, output_path):
+        self.lang = lang
+        self.script = code2script(lang)
+        self.input_corpus = CatCorpus(input_path)
+        self.output_corpus = SentCorpus(output_path)
+        normalizer_factory = IndicNormalizerFactory()
+        self.normalizer = normalizer_factory.get_normalizer(self.lang)
+
+    def gen_dataset(self):
+        for cat, iden, payload in tqdm(self.input_corpus.files()):
+            article = json.loads(payload)
+            txt = ''
+            self.output_corpus.add_sents(sents)
 # TODO: use wor2word
 
 topic_synsets = {

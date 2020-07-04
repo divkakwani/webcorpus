@@ -8,7 +8,7 @@ import json
 import multiprocessing as mp
 
 from tqdm import tqdm
-from ..corpus.io import CatCorpus
+from ..corpus import NewsCorpus
 from ..language import code2script, in_script
 
 

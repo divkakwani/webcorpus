@@ -5,14 +5,10 @@ Interface to the cloud storage. It internally manages compression
 and decompression of files. It also maintains statistics of the
 files in firestore
 """
-import click
-import shutil
 import os
-import tempfile
 import tarfile
 
 from google.cloud import storage
-from ..corpus.io import CatCorpus, SentCorpus
 from firebase_admin import credentials, firestore, initialize_app
 
 
@@ -25,14 +21,14 @@ class CloudStore:
         self.bucketstore_key = kwargs['bucketstore_key']
         self.firestore_key = kwargs['firestore_key']
         self.bucket_name = kwargs['bucket_name']
-        
+
         # Initialize Firestore DB
         cred = credentials.Certificate(self.firestore_key)
         self.default_app = initialize_app(cred)
-        self.db = firestore.client()
+        self.fsclient = firestore.client()
 
         self.client = storage.Client\
-                      .from_service_account_json(self.bucketstore_key)
+                             .from_service_account_json(self.bucketstore_key)
         self.bucket = self.client.get_bucket(self.bucket_name)
 
     def _push(self, remote_path, filename):
@@ -56,74 +52,20 @@ class CloudStore:
             os.makedirs(ufname)
             tar.extractall(path=ufname)
 
-    def upload(self):
-        pass
-
-
-def tmpfile_path():
-    tmp_name = next(tempfile._get_candidate_names())
-    tmp_dir = tempfile._get_default_tempdir()
-    return os.path.join(tmp_dir, tmp_name)
-
-
-class CatCorpusHandler:
-
-    def __init__(self, lang, path, dtype):
-        self.corpus = CatCorpus(path)
-        self.path = path
-        self.lang = lang
-        self.dtype = dtype
-
-    def push_stats(self):
-        stats = self.corpus.stats()
-        doc_ref = fsclient.db.collection('datasets').document(self.lang)
+    def upload_stats(self, corpus, form):
+        stats = self.corpus.get_stats()
+        doc_ref = self.fsclient.db.collection('datasets').document(corpus.lang)
         doc = doc_ref.get()
         if doc.exists:
-            doc_ref.update({'{}.{}'.format(self.dtype, key): stats[key]
+            doc_ref.update({'{}.{}'.format(form, key): stats[key]
                             for key in stats})
         else:
             doc_ref.set({self.dtype: stats})
 
-    def push(self, root_path):
-        cats = os.listdir(self.path)
-        for cat in cats:
-            cat_path = os.path.join(self.path, cat)
-            tmp_path = tmpfile_path()
-            print('Archiving {} to {}'.format(cat_path, tmp_path))
-            shutil.make_archive(tmp_path, 'xztar', cat_path)
-            blob_path = os.path.join(root_path, cat + '.tar.xz')
-            gcp.push(blob_path, tmp_path + '.tar.xz')
-
-
-class SentCorpusHandler:
-
-    def __init__(self, lang, path, dtype, source):
-        self.corpus = SentCorpus(path)
-        self.path = path
-        self.lang = lang
-        self.source = source
-
-    def push_stats(self):
-        stats = self.corpus.stats()
-        doc_ref = fsclient.db.collections('datasets').document(self.lang)
-        doc = doc_ref.get
-        if doc.exists:
-            doc_ref.update({'{}.{}'.format(self.dtype, key): stats[key]
-                            for key in stats})
-        else:
-            doc_ref.set({self.dtype: stats})
-
-    def push(self, root_path):
-        tmp_path = tmpfile_path()
-        print('Archiving {} to {}'.format(self.path, tmp_path))
-        shutil.make_archive(tmp_path, 'xztar', self.path)
-        blob_path = os.path.join(root_path, self.source + '.tar.xz')
-        gcp.push(blob_path, tmp_path + '.tar.xz')
-
-
-def make_root_path(lang, dtype):
-    return os.path.join('indicnlp-crawls', lang, dtype)
-
-
-store = CloudStore(bucketstore_key='/media/divkakwani/drive/collate/ai4b-gcp-key.json', firestore_key='/media/divkakwani/drive/collate/ai4b-gcp-key.json', bucket_name='nlp-corpora--ai4bharat')
-store.download('indicnlp-crawls/kn/arts', '/media/divkakwani/drive/kn-articles')
+    def upload(self, corpus, form):
+        path = corpus.archive()
+        root_path = os.path.join('indicnlp-crawls', corpus.lang, form)
+        blob_path = os.path.join(root_path, os.path.basename(path))
+        self._push(blob_path, path)
+        self.upload_stats(corpus, form)
+        os.remove(path)

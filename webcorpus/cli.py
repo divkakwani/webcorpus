@@ -2,7 +2,6 @@ import click
 import logging
 
 from scrapy.crawler import CrawlerProcess
-from .corpus.stats import print_stats
 from .crawlers.w3newspaper import W3NewsPaperSpider
 from .crawlers.news import RecursiveSpider
 from .processors.arts import ArtsProcessor
@@ -50,12 +49,6 @@ def process(lang, dtype, input, output):
     elif dtype == 'sent':
         processor = SentProcessor(lang, input, output)
     processor.gen_dataset()
-
-
-@cli.command(name='stats')
-@click.option('--corpus', required=True)
-def stats(corpus):
-    print_stats(corpus)
 
 
 if __name__ == "__main__":

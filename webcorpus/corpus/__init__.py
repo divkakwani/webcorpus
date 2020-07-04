@@ -8,9 +8,9 @@ import os
 from hashlib import sha1
 from types import FunctionType
 
-from storage import SFStorage, MFStorage, JsonStorage, CsvStorage
-from stats import PlainCorpusStats
-from archiver import SFArchiver, MFArchiver
+from .storage import SFStorage, MFStorage, JsonStorage, CsvStorage
+from .stats import PlainCorpusStats
+from .archiver import SFArchiver, MFArchiver
 
 
 def get_fmt_class(fmt):
@@ -77,6 +77,7 @@ class BasicCorpus(metaclass=Mixinator):
     def __init__(self, *args, **kwargs):
         # initialize mixins
         kwargs['corpus'] = self
+        self.lang = kwargs['lang']
         for mixin in self.__class__._mixins:
             mixin.__init__(self, **kwargs)
 
@@ -85,8 +86,8 @@ class SentCorpus(BasicCorpus):
 
     _meta_args = {'store_in': 'single', 'fmt': 'plain'}
 
-    def __init__(self, path):
-        BasicCorpus.__init__(self, path=path)
+    def __init__(self, lang, path):
+        BasicCorpus.__init__(self, lang=lang, path=path)
 
     def add_sent(self, sent):
         self.add_instance(sent)
@@ -95,16 +96,15 @@ class SentCorpus(BasicCorpus):
         return self.instances()
 
 
-class CatCorpus(BasicCorpus):
+class NewsCorpus(BasicCorpus):
 
     _meta_args = {'store_in': 'separate', 'fmt': 'json'}
 
-    def __init__(self, path):
-        BasicCorpus.__init__(self, path=path)
+    def __init__(self, lang, path):
+        self.path = path
+        BasicCorpus.__init__(self, lang=lang, path=path)
 
     def get_path(self, instance):
         iden = instance['url']
-        cat = instance['source']
         fname = sha1(iden.encode('utf-8')).hexdigest()
-        fpath = os.path.join(cat, fname)
-        return fpath
+        return fname

@@ -9,14 +9,14 @@ import nltk
 
 from nltk.tokenize import sent_tokenize, word_tokenize
 from tqdm import tqdm
-from ..corpus.io import CatCorpus, SentCorpus
+from ..corpus import NewsCorpus, SentCorpus
 from ..language.normalize import IndicNormalizerFactory
 from ..language.tokenize import trivial_tokenize
 from ..language.sentence_tokenize import sentence_split
 from ..language import code2script, in_script
 
 
-nltk.download('punkt')
+# nltk.download('punkt')
 
 
 class SentProcessor:

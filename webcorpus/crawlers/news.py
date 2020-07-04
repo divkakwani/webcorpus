@@ -24,8 +24,9 @@ from scrapy.linkextractors import LinkExtractor
 from scrapy.selector import Selector
 from datetime import datetime
 from twisted.internet import task
-from ..corpus.io import CatCorpus
+from ..corpus import NewsCorpus
 from ..language import code2script
+from ..cloud.gcp import CloudStore
 from datetime import date, timedelta
 
 
@@ -47,6 +48,9 @@ class BaseNewsSpider(scrapy.Spider):
                                comments=True, links=False, meta=False,
                                page_structure=False, embedded=True,
                                frames=True, forms=False, annoying_tags=False)
+        self.store = CloudStore(bucketstore_key='keys/ai4b-gcp-key.json',
+                                firestore_key='keys/ai4b-gcp-key.json',
+                                bucket_name='nlp-corpora--ai4bharat')
 
         os.makedirs(self.html_path, exist_ok=True)
 
@@ -58,7 +62,8 @@ class BaseNewsSpider(scrapy.Spider):
 
         self.allowed_domains = [domain]
 
-        self.html_corpus = CatCorpus(self.html_path)
+        corpus_path = os.path.join(self.html_path, self.name)
+        self.html_corpus = NewsCorpus(corpus_path)
 
         super().__init__(self.name)
 
@@ -88,7 +93,7 @@ class BaseNewsSpider(scrapy.Spider):
             'timestamp': datetime.now().strftime('%d/%m/%y %H:%M')
         }
         json_data = json.dumps(html_page, ensure_ascii=False)
-        self.html_corpus.add_file(self.name, response.request.url, json_data)
+        self.html_corpus.add_instance(json_data)
         self.pages_crawled += 1
         self.recent_pgcnt += 1
         return html
@@ -98,6 +103,7 @@ class BaseNewsSpider(scrapy.Spider):
 
     def closed(self, reason):
         print('Closing spider. Name: ', self.name, ' Reason: ', reason)
+        self.store.upload(self.html_corpus, 'html')
 
 
 class SitemapSpider(BaseNewsSpider, scrapy.spiders.SitemapSpider):
