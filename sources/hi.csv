@@ -8,10 +8,12 @@ alivenews,http://www.alivenews.co.in/,http://www.alivenews.co.in/sitemap.xml,Fal
 amarujala,https://www.amarujala.com/,https://www.amarujala.com/sitemap.xml,False,True
 apnlive,https://hindi.apnlive.com/,https://hindi.apnlive.com/sitemap.xml,False,True
 asianetnews,https://hindi.asianetnews.com/,,False,True
+aviralsamachar,https://aviralsamachar.com/,,False,True
 bbc,https://www.bbc.com/hindi,https://www.bbc.com/sitemap.xml,False,True
 bhadas4media,https://www.bhadas4media.com/,https://www.bhadas4media.com/sitemap.xml,False,True
 bharatkhabar,https://www.bharatkhabar.com/,https://www.bharatkhabar.com/sitemap.xml,False,True
 bhaskar,https://www.bhaskar.com/,https://www.bhaskar.com/sitemap.xml,False,True
+bhaskarhindi,https://www.bhaskarhindi.com/,,False,True
 bhopalsamachar,https://www.bhopalsamachar.com,https://www.bhopalsamachar.com/sitemap.xml,False,True
 business-standard,https://hindi.business-standard.com/,https://hindi.business-standard.com/sitemap.xml,False,True
 catchnews,http://hindi.catchnews.com/,,False,True
@@ -37,6 +39,7 @@ dw,https://www.dw.com/hi/%E0%A4%96%E0%A4%AC%E0%A4%B0%E0%A5%87%E0%A4%82/s-11931,h
 emalwa,http://emalwa.com/,http://emalwa.com/sitemap.xml,False,True
 emsindia,https://emsindia.com/,https://emsindia.com/sitemap.xml,False,True
 emstv,https://emstv.in/,https://emstv.in/sitemap.xml,False,True
+enavbharat,https://www.enavabharat.com/,,False,True
 epaperlokmat,http://epaperlokmat.in/lokmatsamachar/,http://epaperlokmat.in/lokmatsamachar/sitemap.xml,False,True
 epatrakar,http://epatrakar.com/,http://epatrakar.com/sitemap.xml,False,True
 garjachhattisgarhnews,https://garjachhattisgarhnews.com/,https://garjachhattisgarhnews.com/sitemap.xml,False,True
@@ -47,12 +50,15 @@ hamaramahanagar,https://www.hamaramahanagar.in/,https://www.hamaramahanagar.in/s
 haribhoomi,https://www.haribhoomi.com/,https://www.haribhoomi.com/sitemap.xml,False,True
 hastakshep,http://www.hastakshep.com/,http://www.hastakshep.com/sitemap.xml,False,True
 highwaychannel,http://highwaychannel.in/,http://highwaychannel.in/sitemap.xml,False,True
+hwnews,https://hindi.hwnews.in/,,False,True
 ianshindi,https://ianshindi.in/,https://ianshindi.in/sitemap.xml,False,True
+ibc24,https://www.ibc24.in/,,False,True
 india,https://zeenews.india.com/hindi/,https://zeenews.india.com/hindi/sitemap.xml,False,True
 indiatv,https://www.indiatv.in/,,False,True
 indiatimes,https://navbharattimes.indiatimes.com/,https://navbharattimes.indiatimes.com/sitemap.xml,False,True
 inextlive,https://www.inextlive.com/,https://www.inextlive.com/sitemap.xml,False,True
 inkhabar,https://www.inkhabar.com/,https://www.inkhabar.com/sitemap.xml,False,True
+insamachar,https://insamachar.com/,,False,True
 intoday,https://aajtak.intoday.in/,https://aajtak.intoday.in/sitemap.xml,False,True
 jagran,https://www.jagran.com/,https://www.jagran.com/sitemap.xml,False,True
 jagruktimes,http://jagruktimes.co.in/,http://jagruktimes.co.in/sitemap.xml,False,True
@@ -69,6 +75,7 @@ kohraam,https://kohraam.com/,https://kohraam.com/sitemap.xml,False,True
 krishakjagat,https://www.krishakjagat.org/,https://www.krishakjagat.org/sitemap.xml,False,True
 legendnews,http://legendnews.in/,http://legendnews.in/sitemap.xml,False,True
 livehindustan,https://www.livehindustan.com/,https://www.livehindustan.com/sitemap.xml,False,True
+lokmatnews,https://www.lokmatnews.in/,,False,True
 loktej,https://www.loktej.com/,https://www.loktej.com/sitemap.xml,False,True
 mediakhabar,https://mediakhabar.com/,https://mediakhabar.com/sitemap.xml,False,True
 mykhel,https://hindi.mykhel.com/,https://hindi.mykhel.com/sitemap.xml,False,True
@@ -110,6 +117,7 @@ raviwar,http://raviwar.com/,http://raviwar.com/sitemap.xml,False,True
 royalbulletin,http://www.royalbulletin.com/,http://www.royalbulletin.com/sitemap.xml,False,True
 sabguru,https://www.sabguru.com/,https://www.sabguru.com/sitemap.xml,False,True
 sachkaujala,https://sachkaujala.com/,https://sachkaujala.com/sitemap.xml,False,True
+sakshi,https://hindi.sakshi.com/,,False,True
 samachar,http://hindi.samachar.com/,,False,True
 samacharjagat,http://www.samacharjagat.com/,http://www.samacharjagat.com/sitemap.xml,False,True
 samaykhabar,http://samaykhabar.com/,http://samaykhabar.com/sitemap.xml,False,True
@@ -119,6 +127,7 @@ sanjeevnitoday,https://www.sanjeevnitoday.com/,https://www.sanjeevnitoday.com/si
 sanmarg,https://sanmarg.in/,https://sanmarg.in/sitemap.xml,False,True
 sarohabulletin,http://www.sarohabulletin.com/,http://www.sarohabulletin.com/sitemap.xml,False,True
 satyahindi,https://www.satyahindi.com/,,False,True
+scroll,https://satyagrah.scroll.in/,,False,True
 shahtimesnews,http://shahtimesnews.com/epaper/,http://shahtimesnews.com/epaper/sitemap.xml,False,True
 sportskeeda,https://hindi.sportskeeda.com/,https://hindi.sportskeeda.com/sitemap.xml,False,True
 swadesh,http://epaper.swadesh.in/,http://epaper.swadesh.in/sitemap.xml,False,True
@@ -129,9 +138,12 @@ tehelkahindi,http://tehelkahindi.com/,http://tehelkahindi.com/sitemap.xml,False,
 teznews,http://teznews.com/,http://teznews.com/sitemap.xml,False,True
 thehawk,http://epaper.thehawk.in/,http://epaper.thehawk.in/sitemap.xml,False,True
 theprint,https://hindi.theprint.in/,,False,True
+thewirehindi,https://thewirehindi.com/,,False,True
+timesnowhindi,https://www.timesnowhindi.com/,,False,True
 timesnownews,https://hindi.timesnownews.com/,,False,True
 tosnews,https://tosnews.com/,https://tosnews.com/sitemap.xml,False,True
 ujjawalprabhat,https://ujjawalprabhat.com/,https://ujjawalprabhat.com/sitemap.xml,False,True
+un,https://news.un.org/hi,,False,True
 univarta,http://www.univarta.com/,http://www.univarta.com/sitemap.xml,False,True
 uttamhindu,http://www.uttamhindu.com/,http://www.uttamhindu.com/sitemap.xml,False,True
 viraatvaibhav,http://epaper.viraatvaibhav.com/,http://epaper.viraatvaibhav.com/sitemap.xml,False,True

@@ -4,6 +4,7 @@ name,home_url,sitemap_url,use_sitemap,active
 4tamilcinema,https://4tamilcinema.com/,https://4tamilcinema.com/homepage/sitemap.xml,False,False
 4tamilmedia,http://www.4tamilmedia.com/,http://www.4tamilmedia.com/sitemap.xml,False,True
 a2ztamilnadu,http://www.a2ztamilnadu.com/,http://www.a2ztamilnadu.com/sitemap.xml,False,False
+aanmeegamalar,http://www.aanmeegamalar.com/,,False,True
 aanthaireporter,http://www.aanthaireporter.com/,http://www.aanthaireporter.com/sitemap.xml,False,True
 adaderana,http://tamil.adaderana.lk/,http://tamil.adaderana.lk/sitemap.xml,False,True
 amuttu,http://amuttu.net/,http://amuttu.net/sitemap.xml,False,True
@@ -14,6 +15,7 @@ athavannews,http://athavannews.com/,http://athavannews.com/sitemap.xml,False,Tru
 athirady,http://www.athirady.com/,http://www.athirady.com/sitemap.xml,False,False
 athirvu,https://athirvu.in/,https://athirvu.in/sitemap.xml,False,True
 bbc,https://www.bbc.com/tamil,https://www.bbc.com/sitemap.xml,False,True
+behindtalkies,https://tamil.behindtalkies.com/,,False,True
 cafekk,https://www.cafekk.com/,https://www.cafekk.com/sitemap.xml,False,True
 canadauthayan,http://canadauthayan.ca/,http://canadauthayan.ca/sitemap.xml,False,True
 capitalnews,http://capitalnews.lk/,http://capitalnews.lk/sitemap.xml,False,True
@@ -23,6 +25,7 @@ chennaionline,http://chennaionline.com/tamil/,http://chennaionline.com/tamil/sit
 chennaipatrika,http://www.chennaipatrika.com/,http://www.chennaipatrika.com/sitemap.xml,False,True
 chennaitodaynews,http://www.chennaitodaynews.com/,http://www.chennaitodaynews.com/sitemap.xml,False,True
 cineulagam,https://www.cineulagam.com/,https://www.cineulagam.com/sitemap.xml,False,True
+cinereporters,https://cinereporters.com/,,False,True
 coimbatoreonline,https://news.coimbatoreonline.in/,https://news.coimbatoreonline.in/sitemap.xml,False,False
 cri,http://tamil.cri.cn/,http://tamil.cri.cn/sitemap.xml,False,True
 dailythanthi,https://www.dailythanthi.com/,https://www.dailythanthi.com/sitemap.xml,False,True
@@ -35,6 +38,7 @@ dinasudar,http://dinasudar.co.in/,http://dinasudar.co.in/sitemap.xml,False,True
 eeladhesam,http://eeladhesam.com/,http://eeladhesam.com/sitemap.xml,False,True
 epdpnews,http://www.epdpnews.com/,http://www.epdpnews.com/sitemap.xml,False,True
 filmibeat,https://tamil.filmibeat.com/,https://tamil.filmibeat.com/sitemap.xml,False,True
+filmistreet,https://www.filmistreet.com/,,False,True
 geotamil,https://www.geotamil.com/,https://www.geotamil.com/sitemap.xml,False,True
 globaltamilnews,http://globaltamilnews.net/,http://globaltamilnews.net/sitemap.xml,False,True
 goldtamil,http://goldtamil.com/,http://goldtamil.com/sitemap.xml,False,True
@@ -47,9 +51,11 @@ hindutamil,https://www.hindutamil.in/,https://www.hindutamil.in/sitemap.xml,Fals
 ibctamil,https://www.ibctamil.com/,https://www.ibctamil.com/sitemap.xml,False,True
 ilankainet,http://www.ilankainet.com/,http://www.ilankainet.com/sitemap.xml,False,True
 in4net,https://in4net.com/,https://in4net.com/sitemap.xml,False,False
+inandoutcinema,http://www.inandoutcinema.com/,,False,True
 indianexpress,https://tamil.indianexpress.com/,https://tamil.indianexpress.com/sitemap.xml,False,True
 inioru,http://inioru.com/,http://inioru.com/sitemap.xml,False,True
 inneram,http://www.inneram.com/,http://www.inneram.com/sitemap.xml,False,True
+jayanewslive,http://www.jayanewslive.in/,,False,True
 jeyamohan,https://www.jeyamohan.in/,https://www.jeyamohan.in/sitemap.xml,False,True
 jvpnews,https://www.jvpnews.com/,https://www.jvpnews.com/sitemap.xml,False,True
 kalakkalcinema,https://kalakkalcinema.com/,https://kalakkalcinema.com/sitemap.xml,False,True
@@ -75,6 +81,7 @@ metronews,http://metronews.lk/,http://metronews.lk/sitemap.xml,False,True
 mrpuyal,https://mrpuyal.com/,https://mrpuyal.com/sitemap.xml,False,True
 murasoli,http://murasoli.in/,http://murasoli.in/sitemap.xml,False,True
 mysixer,http://www.mysixer.com/,http://www.mysixer.com/sitemap.xml,False,True
+nakkheeran,https://www.nakkheeran.in/,,False,True
 nerudal,http://nerudal.com/,http://nerudal.com/sitemap.xml,False,False
 newindianews,http://www.newindianews.com/,http://www.newindianews.com/sitemap.xml,False,False
 news18,https://tamil.news18.com,https://tamil.news18.com/sitemap.xml,False,True
@@ -135,6 +142,7 @@ telonews,http://www.telonews.com/,http://www.telonews.com/sitemap.xml,False,True
 thamaraifm,https://thamaraifm.com/,https://thamaraifm.com/sitemap.xml,False,True
 thamilkural,http://thamilkural.net/,http://thamilkural.net/sitemap.xml,False,True
 thamillanka,http://www.thamillanka.com/,http://www.thamillanka.com/sitemap.xml,False,True
+thantitv,https://www.thanthitv.com,,False,True
 tharavu,http://www.tharavu.com/,http://www.tharavu.com/sitemap.xml,False,False
 theekkathir,http://theekkathir.in/,http://theekkathir.in/sitemap.xml,False,True
 thehindu,http://tamil.thehindu.com/,http://tamil.thehindu.com/sitemap.xml,False,False
