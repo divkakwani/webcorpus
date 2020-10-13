@@ -4,53 +4,55 @@
 
 A tool to generate large textual corpora by crawling the web.
 
+### Installation
 
+```bash
+git clone https://github.com/divkakwani/webcorpus
+cd webcorpus
+sudo pip3 install .
+```
 
-#### Usage
+### Usage
 
+###### Running Crawls
 
-* Pull the latest source lists from various aggregators:
-  ```bash
-  webcorpus getsources --lang <language code> --srcdir <path>
-  ```
-
-* Crawls articles from sources building a raw corpus:
-
-  ```bash
-  webcorpus fetch --lang <language code> --srcdir <path> --jobdir_root <path>  --output <path> 
-  ```
-
-* Generate processed dataset from a corpus:
+* Start scrapyd server from project directory and deploy the spiders:
 
   ```bash
-  webcorpus gen-rawsent --lang <language code> --corpus <path> --output <path>
-  webcorpus gen-annotatedsent --lang <language code> --corpus <path> --output <path>
-  webcorpus gen-classification --lang <language code> --corpus <path> --output <path> \
-                              --minclasses <int> --maxsamples <int>
+  # current directory is webcorpus
+  sudo scrapyd
+  scrapy-deploy
   ```
 
-* Get statistics of a corpus:
+* Start a crawl
 
   ```bash
-  webcorpus stat --corpus <path>
+  # all paths must be absolute paths
+  curl http://localhost/schedule.json -d project=webcorpus -d spider=recursive-spider -d html_path=<html_path> -d source_name=<source_name> -d home_url=<home_url> -d lang=<iso code> -d log_path=<path_to_webcorpus>/logs
+  
   ```
 
+###### Processing corpus
 
 
-#### Features
+
+
+
+
+### Features
 
 * supports crawling and processing of 17 Indian languages
-* supports resuming crawls after failures
+* designed to run in distributed fashion
 
 
 
-#### Crawled Datasets
+### Crawled Datasets
 
 Checkout the [docs](https://github.com/divkakwani/webcorpus/tree/master/docs) directory to download the crawled datasets and other resources derived from the datasets.
 
 
 
-#### Similar Projects
+### Similar Projects
 
 * [news-please](https://github.com/fhamborg/news-please)
 * [newspaper3k](https://github.com/codelucas/newspaper)
