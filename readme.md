@@ -1,4 +1,4 @@
-## webcorpus
+# webcorpus
 
 ![pypi badge](https://badge.fury.io/py/webcorpus.svg)
 
