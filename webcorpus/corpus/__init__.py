@@ -79,7 +79,7 @@ class BasicCorpus(metaclass=Mixinator):
         kwargs['corpus'] = self
         self.lang = kwargs['lang']
         for mixin in self.__class__._mixins:
-            mixin.__init__(self, **kwargs)
+            mixin.__init__(self, *args, **kwargs)
 
 
 class SentCorpus(BasicCorpus):

@@ -95,7 +95,7 @@ class MFStorage(BaseStorage):
 class JsonStorage(BaseStorage):
 
     def _write_payload(self, fp, payload):
-        json.dump(payload, fp)
+        json.dump(payload, fp, ensure_ascii=False, indent=4)
 
 
 class CsvStorage(BaseStorage):
