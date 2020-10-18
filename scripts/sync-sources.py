@@ -8,10 +8,10 @@ from webcorpus.sources import Sources
 from firebase_admin import credentials, firestore, initialize_app
 
 
-if len(sys.argv) != 2:
+if len(sys.argv) != 3:
     print('Usage: ./sync-sources.py <src-dir> <firestore-key-path>')
 else:
-    srcdir, key_path = sys.argv[1], sys.argv[1]
+    srcdir, key_path = sys.argv[1], sys.argv[2]
 
 
 # Initialize Firestore DB

@@ -6,3 +6,4 @@ tqdm
 pandas
 nltk
 scrapyd
+scrapyd-client
