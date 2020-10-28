@@ -77,51 +77,48 @@ def get_job_list():
 
 def run_jobs(job_list):
     for job in job_list:
-        try:
-            doc_ref = fsclient.db.collection('datasets').document(job[0])
-            if job[2]:
-                print('Building article for source: ' + job[1])
-                gcp.pull(get_blob_path(job[0], 'html', job[1]),
-                         '/tmp/{}_html.tar.xz'.format(job[1]))
-                shutil.unpack_archive('/tmp/{}_html.tar.xz'.format(job[1]),
-                                      '/tmp/{}'.format(job[1]), 'xztar')
-                proc = ArtsProcessor(job[0], '/tmp/{}'.format(job[1]),
-                                     '/tmp/{}_arts'.format(job[1]))
-                proc.gen_dataset()
-                shutil.rmtree('/tmp/{}'.format(job[1]))
-                os.remove('/tmp/{}_html.tar.xz'.format(job[1]))
-                shutil.make_archive('/tmp/{}_arts'.format(job[1]), 'xztar',
-                                    '/tmp/{}_arts/{}'.format(job[1], job[1]))
-                gcp.push(get_blob_path(job[0], 'arts', job[1]),
-                         '/tmp/{}_arts.tar.xz'.format(job[1]))
-
-                num_arts = len(os.listdir('/tmp/{0}_arts/{0}'.format(job[1])))
-                doc_ref.update({'arts.{}'.format(job[1]): num_arts})
-            else:
-                gcp.pull(get_blob_path(job[0], 'arts', job[1]),
-                         '/tmp/{}_arts.tar.xz'.format(job[1]))
-                shutil.unpack_archive('/tmp/{}_arts.tar.xz'.format(job[1]),
-                                      '/tmp/{}_arts'.format(job[1]), 'xztar')
-
-            print('Building sent for source: ' + job[1])
-            if os.path.exists('/tmp/{}_sent'.format(job[1])):
-                os.remove('/tmp/{}_sent'.format(job[1]))
-            proc = SentProcessor(job[0], '/tmp/{}_arts'.format(job[1]),
-                                 '/tmp/{}_sent'.format(job[1]))
+        doc_ref = fsclient.db.collection('datasets').document(job[0])
+        if job[2]:
+            print('Building article for source: ' + job[1])
+            gcp.pull(get_blob_path(job[0], 'html', job[1]),
+                     '/tmp/{}_html.tar.xz'.format(job[1]))
+            shutil.unpack_archive('/tmp/{}_html.tar.xz'.format(job[1]),
+                                  '/tmp', 'xztar')
+            proc = ArtsProcessor(job[0], '/tmp/{}'.format(job[1]),
+                                 '/tmp/{}_arts/{}'.format(job[1], job[1]))
             proc.gen_dataset()
-            shutil.make_archive('/tmp/{}_sent'.format(job[1]), 'xztar', '/tmp',
-                                '{}_sent'.format(job[1]))
-            gcp.push(get_blob_path(job[0], 'sent', job[1]),
-                     '/tmp/{}_sent.tar.xz'.format(job[1]))
+            shutil.rmtree('/tmp/{}'.format(job[1]))
+            os.remove('/tmp/{}_html.tar.xz'.format(job[1]))
+            shutil.make_archive('/tmp/{}_arts'.format(job[1]), 'xztar',
+                                '/tmp/{}_arts/{}'.format(job[1], job[1]))
+            gcp.push(get_blob_path(job[0], 'arts', job[1]),
+                     '/tmp/{}_arts.tar.xz'.format(job[1]))
 
-            corpus = SentCorpus('/tmp/{}_sent'.format(job[1]))
-            doc_ref.update({'sent.{}'.format(job[1]): corpus.get_stats()['tokens']})
+            num_arts = len(os.listdir('/tmp/{0}_arts/{0}'.format(job[1])))
+            doc_ref.update({'arts.{}'.format(job[1]): num_arts})
+        else:
+            gcp.pull(get_blob_path(job[0], 'arts', job[1]),
+                     '/tmp/{}_arts.tar.xz'.format(job[1]))
+            shutil.unpack_archive('/tmp/{}_arts.tar.xz'.format(job[1]),
+                                  '/tmp/{}_arts'.format(job[1]), 'xztar')
+
+        print('Building sent for source: ' + job[1])
+        if os.path.exists('/tmp/{}_sent'.format(job[1])):
             os.remove('/tmp/{}_sent'.format(job[1]))
-            os.remove('/tmp/{}_sent.tar.xz'.format(job[1]))
-            os.remove('/tmp/{}_arts.tar.xz'.format(job[1]))
-            shutil.rmtree('/tmp/{}_arts'.format(job[1]))
-        except:
-            pass
+        proc = SentProcessor(job[0], '/tmp/{}_arts'.format(job[1]),
+                             '/tmp/{}_sent'.format(job[1]))
+        proc.gen_dataset()
+        shutil.make_archive('/tmp/{}_sent'.format(job[1]), 'xztar', '/tmp',
+                            '{}_sent'.format(job[1]))
+        gcp.push(get_blob_path(job[0], 'sent', job[1]),
+                 '/tmp/{}_sent.tar.xz'.format(job[1]))
+
+        corpus = SentCorpus('/tmp/{}_sent'.format(job[1]))
+        doc_ref.update({'sent.{}'.format(job[1]): corpus.get_stats()['tokens']})
+        os.remove('/tmp/{}_sent'.format(job[1]))
+        os.remove('/tmp/{}_sent.tar.xz'.format(job[1]))
+        os.remove('/tmp/{}_arts.tar.xz'.format(job[1]))
+        shutil.rmtree('/tmp/{}_arts'.format(job[1]))
 
 
 job_list = get_job_list()

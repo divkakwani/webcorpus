@@ -25,7 +25,7 @@ class SentProcessor:
         self.lang = lang
         self.script = code2script(lang)
         self.input_corpus = NewsCorpus(lang, input_path)
-        self.output_corpus = SentCorpus(output_path)
+        self.output_corpus = SentCorpus(lang, output_path)
         normalizer_factory = IndicNormalizerFactory()
         self.normalizer = normalizer_factory.get_normalizer(self.lang)
 
@@ -70,3 +70,4 @@ class SentProcessor:
             sents = [self.process_sent(sent) for sent in sents]
             sents = [sent for sent in sents if self.check_sent(sent)]
             self.output_corpus.add_sents(sents)
+        self.output_corpus.flush()

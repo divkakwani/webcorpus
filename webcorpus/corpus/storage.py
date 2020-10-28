@@ -13,7 +13,9 @@ class BaseStorage:
         self.root_path = kwargs['path']
 
     def _create_writer(self, filepath):
-        fp = open(filepath, 'w', encoding='utf-8', buffering=8192)
+        if not os.path.exists(filepath):
+            os.mknod(filepath)
+        fp = open(filepath, 'r+', encoding='utf-8', buffering=8192)
         return fp
 
     def _write_payload(self, fp, payload):

@@ -38,6 +38,7 @@ LC_SCRIPT = {
     'or': 'oriya',
     'bn': 'bengali',
     'ml': 'malayalam',
+    'ne': 'devanagari',
     'pa': 'gurmukhi',
     'as': 'bengali',
     'en': 'latin'

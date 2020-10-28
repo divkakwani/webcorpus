@@ -50,8 +50,8 @@ class ArtsProcessor:
             from boilerpipe.extract import Extractor
             extractor = Extractor(extractor='ArticleExtractor',
                                   html=html_page['html'])
-            body = extractor.getText()
-            title = extractor.source.title
+            body = str(extractor.getText())
+            title = str(extractor.source.getTitle())
             art = {
                 'title': title,
                 'body': body,
@@ -60,14 +60,15 @@ class ArtsProcessor:
                 'timestamp': html_page['timestamp']
             }
             if self.art_ok(art['body']):
-                art_json = json.dumps(art, ensure_ascii=False)
-                self.output_corpus.add_file(art_json)
+                self.output_corpus.add_file(art)
         except Exception as e:
             pass
 
     def gen_dataset(self):
         proc_pool = mp.Pool(mp.cpu_count())
-        for _ in tqdm(proc_pool.imap_unordered(self.process_item, self.input_corpus.files(), 32)):
-            pass
+        # for _ in tqdm(proc_pool.imap_unordered(self.process_item, self.input_corpus.instances(), 32)):
+        #     pass
+        for item in tqdm(self.input_corpus.instances()):
+            self.process_item(item)
         proc_pool.terminate()
         proc_pool.join()
