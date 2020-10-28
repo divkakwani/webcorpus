@@ -69,5 +69,6 @@ class SentProcessor:
                 sents = sentence_split(content, self.lang)
             sents = [self.process_sent(sent) for sent in sents]
             sents = [sent for sent in sents if self.check_sent(sent)]
-            self.output_corpus.add_sents(sents)
+            for sent in sents:
+                self.output_corpus.add_sent(sent)
         self.output_corpus.flush()
