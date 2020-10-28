@@ -113,7 +113,7 @@ def run_jobs(job_list):
         gcp.push(get_blob_path(job[0], 'sent', job[1]),
                  '/tmp/{}_sent.tar.xz'.format(job[1]))
 
-        corpus = SentCorpus('/tmp/{}_sent'.format(job[1]))
+        corpus = SentCorpus(job[0], '/tmp/{}_sent'.format(job[1]))
         doc_ref.update({'sent.{}'.format(job[1]): corpus.get_stats()['tokens']})
         os.remove('/tmp/{}_sent'.format(job[1]))
         os.remove('/tmp/{}_sent.tar.xz'.format(job[1]))
