@@ -60,7 +60,7 @@ class ArtsProcessor:
                 'timestamp': html_page['timestamp']
             }
             if self.art_ok(art['body']):
-                self.output_corpus.add_file(art)
+                self.output_corpus.add_instance(art)
         except Exception as e:
             pass
 
