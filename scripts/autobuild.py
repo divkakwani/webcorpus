@@ -6,7 +6,7 @@ import time
 from google.cloud import storage
 from webcorpus.processors.arts import ArtsProcessor
 from webcorpus.processors.sent import SentProcessor
-from webcorpus.corpus.io import SentCorpus
+from webcorpus.corpus import SentCorpus
 from firebase_admin import credentials, firestore, initialize_app
 
 
@@ -14,7 +14,7 @@ class Firestore:
 
     def __init__(self):
         # Initialize Firestore DB
-        cred = credentials.Certificate('firebase-key.json')
+        cred = credentials.Certificate('keys/firebase-key.json')
         self.default_app = initialize_app(cred)
         self.db = firestore.client()
 
@@ -23,7 +23,7 @@ class GCP:
 
     def __init__(self):
         self.client = storage.Client\
-                      .from_service_account_json('ai4b-gcp-key.json')
+                      .from_service_account_json('keys/ai4b-gcp-key.json')
         self.bucket = self.client.get_bucket('nlp-corpora--ai4bharat')
 
     def pull(self, blob_path, file_path):

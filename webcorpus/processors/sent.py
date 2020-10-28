@@ -24,7 +24,7 @@ class SentProcessor:
     def __init__(self, lang, input_path, output_path):
         self.lang = lang
         self.script = code2script(lang)
-        self.input_corpus = CatCorpus(input_path)
+        self.input_corpus = NewsCorpus(lang, input_path)
         self.output_corpus = SentCorpus(output_path)
         normalizer_factory = IndicNormalizerFactory()
         self.normalizer = normalizer_factory.get_normalizer(self.lang)
@@ -35,7 +35,7 @@ class SentProcessor:
             * normalize and tokenize the sentence
             * Replace every number by # token
         """
-        newline_removed = sent.replace('\n', ' ')
+        newline_removed = sent.replace('\n', '\n')
         if self.lang == 'en':
             return ' '.join(word_tokenize(newline_removed))
 
@@ -60,7 +60,7 @@ class SentProcessor:
         return False
 
     def gen_dataset(self):
-        for cat, iden, payload in tqdm(self.input_corpus.files()):
+        for fpath, payload in tqdm(self.input_corpus.instances()):
             article = json.loads(payload)
             content = article['body']
             if self.lang == 'en':

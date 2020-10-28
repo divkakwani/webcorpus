@@ -9,7 +9,7 @@ from hashlib import sha1
 from types import FunctionType
 
 from .storage import SFStorage, MFStorage, JsonStorage, CsvStorage
-from .stats import PlainCorpusStats
+from .stats import PlainCorpusStats, CorpusStats
 from .archiver import SFArchiver, MFArchiver
 
 
@@ -40,7 +40,7 @@ def get_stats_class(fmt):
     if fmt == 'plain':
         return PlainCorpusStats
     else:
-        return None
+        return CorpusStats
 
 
 def get_archive_class(store_in):

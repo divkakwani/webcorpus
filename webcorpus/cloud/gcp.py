@@ -53,12 +53,11 @@ class CloudStore:
             tar.extractall(path=ufname)
 
     def upload_stats(self, corpus, form):
-        stats = self.corpus.get_stats()
-        doc_ref = self.fsclient.db.collection('datasets').document(corpus.lang)
+        stats = corpus.get_stats()
+        doc_ref = self.fsclient.collection('datasets').document(corpus.lang)
         doc = doc_ref.get()
         if doc.exists:
-            doc_ref.update({'{}.{}'.format(form, key): stats[key]
-                            for key in stats})
+            doc_ref.update({'html.{}'.format(os.path.basename(corpus.path)): stats['num_files']})
         else:
             doc_ref.set({self.dtype: stats})
 

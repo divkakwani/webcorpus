@@ -29,9 +29,17 @@ class CorpusStats:
             raise 'Error'
         return int(out)
 
+    def num_files(self):
+        cmd = 'find {} -type f | wc -l'.format(self.corpus.root_path)
+        ret, out, errstr = exec_cmd(cmd)
+        if errstr:
+            raise 'Error'
+        return int(out)
+
     def get_stats(self):
         stats = {
-            'disk_size': self.disk_size()
+            'disk_size': self.disk_size(),
+            'num_files': self.num_files()
         }
         return stats
 

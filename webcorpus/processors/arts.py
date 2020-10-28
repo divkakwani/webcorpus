@@ -17,8 +17,8 @@ class ArtsProcessor:
     def __init__(self, lang, input_path, output_path):
         self.lang = lang
         self.script = code2script(lang)
-        self.input_corpus = CatCorpus(input_path)
-        self.output_corpus = CatCorpus(output_path)
+        self.input_corpus = NewsCorpus(lang, input_path)
+        self.output_corpus = NewsCorpus(lang, output_path)
 
     def art_ok(self, text, win_sz=250, thres=200):
         """
@@ -44,7 +44,7 @@ class ArtsProcessor:
         return False
 
     def process_item(self, tpl):
-        cat, iden, data = tpl
+        fpath, data = tpl
         try:
             html_page = json.loads(data)
             from boilerpipe.extract import Extractor
@@ -61,7 +61,7 @@ class ArtsProcessor:
             }
             if self.art_ok(art['body']):
                 art_json = json.dumps(art, ensure_ascii=False)
-                self.output_corpus.add_file(cat, iden, art_json)
+                self.output_corpus.add_file(art_json)
         except Exception as e:
             pass
 
