@@ -115,7 +115,7 @@ def run_jobs(job_list):
                      '/tmp/{}_sent.tar.xz'.format(job[1]))
 
             corpus = SentCorpus('/tmp/{}_sent'.format(job[1]))
-            doc_ref.update({'sent.{}'.format(job[1]): corpus.stats()['tokens']})
+            doc_ref.update({'sent.{}'.format(job[1]): corpus.get_stats()['tokens']})
             os.remove('/tmp/{}_sent'.format(job[1]))
             os.remove('/tmp/{}_sent.tar.xz'.format(job[1]))
             os.remove('/tmp/{}_arts.tar.xz'.format(job[1]))
