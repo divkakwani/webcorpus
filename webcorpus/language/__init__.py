@@ -41,7 +41,8 @@ LC_SCRIPT = {
     'ne': 'devanagari',
     'pa': 'gurmukhi',
     'as': 'bengali',
-    'en': 'latin'
+    'en': 'latin',
+    'ur': 'arabic'
 }
 
 
@@ -55,7 +56,8 @@ SCRIPT_DIGITS = {
     'kannada': '೦೧೨೩೪೫೬೭೮',
     'oriya': '୦୧୨୩୪୫୬୭୮୯',
     'gurmukhi': '੦੧੨੩੪੫੬੭੮੯',
-    'latin': '0123456789'
+    'latin': '0123456789',
+    'urdu': '٠١٢٣٤٥٦٧٨٩٪'
 }
 
 
