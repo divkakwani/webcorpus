@@ -21,7 +21,7 @@ from functools import reduce
 from itertools import filterfalse
 from tqdm import tqdm
 from urllib.parse import quote
-from ..corpus.io import CatCorpus, SentCorpus
+from ..corpus import NewsCorpus
 from ..language.normalize import IndicNormalizerFactory
 from ..language.tokenize import trivial_tokenize
 from ..language.sentence_tokenize import sentence_split
@@ -213,7 +213,7 @@ class HeadlinesProcessor:
     def __init__(self, lang, input_path, output_path):
         self.lang = lang
         self.script = code2script(lang)
-        self.input_corpus = CatCorpus(input_path)
+        self.input_corpus = NewsCorpus(lang, input_path)
         self.artdb = ArticlesDatabase(self.lang)
 
     def _strip_txt(self, txt):
@@ -231,7 +231,7 @@ class HeadlinesProcessor:
         # remove unneccesary fields in the title like newspaper name etc.
         titles = art['title'].split('|')
         art['title'] = max(titles, key=len)
-            
+
         # remove title from the body content
         # boilerpipe tends to include the title also in the body content
         pattern = regex.compile('({}){{e<=5}}'.format(regex.escape(art['title'])))
@@ -240,14 +240,14 @@ class HeadlinesProcessor:
             end_idx = match.span()[1]
             art['body'] = art['body'][end_idx:]
 
-        art['title'] = self._strip_txt(art['title']) 
-        art['body'] = self._strip_txt(art['body']) 
+        art['title'] = self._strip_txt(art['title'])
+        art['body'] = self._strip_txt(art['body'])
 
         return art
 
 
     def gen_dataset(self):
-        for cat, iden, payload in tqdm(self.input_corpus.files()):
+        for fpath, payload in tqdm(self.input_corpus.instances()):
             art = json.loads(payload)
 
             if not art['title']:
@@ -302,5 +302,5 @@ class HeadlinesProcessor:
 
 lang = sys.argv[1]
 print('Processing lang: ', lang)
-p = HeadlinesProcessor(lang, '/media/divkakwani/drive/{}-articles'.format(lang), '/home/divkakwani/temp')
+p = HeadlinesProcessor(lang, '/Users/divkakwani/Projects/webcorpus/artdir', '/Users/divkakwani/Projects/webcorpus/gendir')
 p.gen_dataset()
