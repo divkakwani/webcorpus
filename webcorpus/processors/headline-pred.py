@@ -213,6 +213,7 @@ class HeadlinesProcessor:
     def __init__(self, lang, input_path, output_path):
         self.lang = lang
         self.script = code2script(lang)
+        self.output_path = output_path
         self.input_corpus = NewsCorpus(lang, input_path)
         self.artdb = ArticlesDatabase(self.lang)
 
@@ -295,9 +296,31 @@ class HeadlinesProcessor:
         train = instances[:s1]
         valid = instances[s1:s2]
         test = instances[s2:]
-        json.dump(train, open('{}-train.json'.format(self.lang), 'w'), ensure_ascii=False, indent=4, sort_keys=True)
-        json.dump(valid, open('{}-valid.json'.format(self.lang), 'w'), ensure_ascii=False, indent=4, sort_keys=True)
-        json.dump(test, open('{}-test.json'.format(self.lang), 'w'), ensure_ascii=False, indent=4, sort_keys=True)
+        json.dump(
+            train,
+            open(
+                os.path.join(self.output_path, "{}-train.json".format(self.lang)), "w"
+            ),
+            ensure_ascii=False,
+            indent=4,
+            sort_keys=True,
+        )
+        json.dump(
+            valid,
+            open(
+                os.path.join(self.output_path, "{}-valid.json".format(self.lang)), "w"
+            ),
+            ensure_ascii=False,
+            indent=4,
+            sort_keys=True,
+        )
+        json.dump(
+            test,
+            open(os.path.join(self.output_path, "{}-test.json".format(self.lang)), "w"),
+            ensure_ascii=False,
+            indent=4,
+            sort_keys=True,
+        )
 
 
 lang = sys.argv[1]
