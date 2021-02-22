@@ -1,29 +1,40 @@
 name,home_url,sitemap_url,use_sitemap,active
-tameel irshaad,https://tameelirshad.net/,,FALSE,True
-kashmir uzma,www.kashmiruzma.net,,FALSE,True
-inquilab,https://www.inquilab.com/,,FALSE,True
-Roznama sahara,http://www.roznamasahara.com/,,FALSE,True
-Daily aag,http://dailyaag.com/phase2/,,FALSE,True
-Daily udaan,https://www.dailyudaan.com/,,FALSE,True
-Jadid Khabar,http://www.jadidkhabar.com/,,FALSE,True
-Hind news,https://hindnews.co.in/,,FALSE,True
-Sach ki awaaz,http://sachkiawaz.com/,,FALSE,True
-Dawat News,https://dawatnews.net/,,FALSE,True
-daily aftab,http://www.dailyaftab.com/,,FALSE,True
-Urdu news18,https://urdu.news18.com/,,FALSE,True
-naya nazriya,http://nayanazariya.com/,,FALSE,True
-Alhail media,http://www.alhilalmedia.com/,,FALSE,True
-The wire Urdu,http://thewireurdu.com/,,FALSE,True
-Urdu Tahzeb,https://urdutahzeeb.com/,,FALSE,True
-uni urdu,http://www.uniurdu.com/,,FALSE,True
-trt net urdu,https://www.trt.net.tr/urdu/,,FALSE,True
-Star news urdu,https://urdu.starnews.today/,,FALSE,True
-urdu siasat,https://urdu.siasat.com/,,FALSE,True
-sahil online,http://www.sahilonline.net/ur,,FALSE,True
-tameer news,https://www.taemeernews.com/,,FALSE,True
-baseerat online,https://www.baseeratonline.com/,,FALSE,True
-harpal online,https://harpalonline.com/,,False,True
-kawish e jameel,http://kawishejameel.com/,,False,True
-Urdu milaatimes,https://urdu.millattimes.com/,,False,True
-daily ausaf,https://dailyausaf.com/,,False,True
-etemadad daily,https://www.etemaaddaily.com/index.php,,False,True
+aalmiakhabar,https://aalmiakhbar.com/,,False,True
+alhailmedia,http://www.alhilalmedia.com/,,False,True
+alhayatindia,https://www.alhayatindia.com/,,False,True
+asiaexpress,http://asiaexpress.co.in/,,False,True
+baseeratonline,https://www.baseeratonline.com/,,False,True
+dailyaag,http://dailyaag.com/phase2/,,False,True
+dailyaftab,http://www.dailyaftab.com/,,False,True
+dailyausaf,https://dailyausaf.com/,,False,True
+dailysalar,https://www.dailysalar.com/,,False,True
+dailyudaan,https://www.dailyudaan.com/,,False,True
+dawatnews,https://dawatnews.net/,,False,True
+etemadaddaily,https://www.etemaaddaily.com/,,False,True
+harpalonline,https://harpalonline.com/,,False,True
+hindnews,https://hindnews.co.in/,,False,True
+hindsamachar,https://www.hindsamachar.in/,,False,True
+hindustanurdutimes,https://hindustanurdutimes.com/,,False,True
+inquilab,https://www.inquilab.com/,,False,True
+jadidkhabar,http://www.jadidkhabar.com/,,False,True
+kashmiruzma,www.kashmiruzma.net,,False,True
+kawishejameel,http://kawishejameel.com/,,False,True
+nayanazriya,http://nayanazariya.com/,,False,True
+news18,https://urdu.news18.com/,,False,True
+newsonair,http://newsonair.com/urdu/,,False,True
+quamiawaz,https://www.qaumiawaz.com/,,False,True
+roznamasahara,http://www.roznamasahara.com/,,False,True
+sachkiawaaz,http://sachkiawaz.com/,,False,True
+sahilonline,http://www.sahilonline.net/ur,,False,True
+siasat,https://urdu.siasat.com/,,False,True
+starnewsurdu,https://urdu.starnews.today/,,False,True
+taasir,https://taasir.com/,,False,True
+tameelirshaad,https://tameelirshad.net/,,False,True
+tameernews,https://www.taemeernews.com/,,False,True
+thewireurdu,http://thewireurdu.com/,,False,True
+trtneturdu,https://www.trt.net.tr/urdu/,,False,True
+uniurdu,http://www.uniurdu.com/,,False,True
+urdumilaatimes,https://urdu.millattimes.com/,,False,True
+urdunews,https://www.urdunews.com,,False,True
+urdusiasat,https://urdu.siasat.com/,,False,True
+urdutahzeb,https://urdutahzeeb.com/,,False,True
