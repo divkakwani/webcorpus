@@ -27,6 +27,7 @@ indianhorizon,http://indianhorizon.org/,http://indianhorizon.org/sitemap.xml,Fal
 indiatimes,https://mumbaimirror.indiatimes.com/,https://mumbaimirror.indiatimes.com/sitemap.xml,False,True
 indiatoday,https://www.indiatoday.in/,,False,True
 indiatvnews,https://www.indiatvnews.com/,,False,True
+jagran,https://english.jagran.com/,,False,True
 jehlumpost,http://www.jehlumpost.com/,http://www.jehlumpost.com/sitemap.xml,False,True
 kashmirobserver,https://kashmirobserver.net/,https://kashmirobserver.net/sitemap.xml,False,True
 kashmirtimes,http://www.kashmirtimes.com/,http://www.kashmirtimes.com/sitemap.xml,False,True
@@ -49,6 +50,7 @@ organiser,https://www.organiser.org/,https://www.organiser.org/sitemap.xml,False
 orissapost,https://www.orissapost.com/,https://www.orissapost.com/sitemap.xml,False,True
 outlook,https://www.outlookindia.com/,,False,True
 peoplesdemocracy,https://peoplesdemocracy.in/,https://peoplesdemocracy.in/sitemap.xml,False,True
+republicworld,https://www.republicworld.com/,,False,True
 scroll,https://scroll.in/,,False,True
 sentinelassam,https://www.sentinelassam.com/,https://www.sentinelassam.com/sitemap.xml,False,True
 sikkimexpress,http://sikkimexpress.com/,http://sikkimexpress.com/sitemap.xml,False,True
@@ -66,6 +68,7 @@ theprint,https://theprint.in/,,False,True
 theshillongtimes,https://theshillongtimes.com/,https://theshillongtimes.com/sitemap.xml,False,True
 thestatesman,https://www.thestatesman.com/,https://www.thestatesman.com/sitemap.xml,False,True
 thewire,https://thewire.in/,,False,True
+timesnownews,https://www.timesnownews.com/,,False,True
 timesofassam,https://www.timesofassam.com/,https://www.timesofassam.com/sitemap.xml,False,True
 timesofindia,https://timesofindia.indiatimes.com/,,False,True
 tribuneindia,https://www.tribuneindia.com/,https://www.tribuneindia.com/sitemap.xml,False,True
