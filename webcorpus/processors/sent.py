@@ -5,6 +5,7 @@ Create a sentence file from an article corpus
 
 """
 import json
+import sys
 import nltk
 
 from nltk.tokenize import sent_tokenize, word_tokenize
@@ -35,7 +36,9 @@ class SentProcessor:
             * normalize and tokenize the sentence
             * Replace every number by # token
         """
-        newline_removed = sent.replace('\n', '\n')
+        newline_removed = sent.replace('\n', ' ')
+
+        """
         if self.lang == 'en':
             return ' '.join(word_tokenize(newline_removed))
 
@@ -44,7 +47,8 @@ class SentProcessor:
         # native_digits = SCRIPT_DIGITS[self.script]
         # num_masked = re.sub(r'[{}]+'.format(native_digits), '#', num_masked)
         spaced = ' '.join(trivial_tokenize(normalized, self.lang))
-        return spaced
+        """
+        return newline_removed
 
     def check_sent(self, sent):
         """
@@ -60,14 +64,18 @@ class SentProcessor:
         return False
 
     def gen_dataset(self):
-        for fpath, payload in tqdm(self.input_corpus.instances()):
-            article = json.loads(payload)
+        for fpath, article in tqdm(self.input_corpus.all_instances()):
+            # article = json.loads(payload)
             content = article['body']
+            content = content.replace(u'\xa0', u' ')
+            content = content.replace('\\n', '\n')
+            sents = []
             if self.lang == 'en':
                 sents = sent_tokenize(content)
             else:
-                sents = sentence_split(content, self.lang)
-            sents = [self.process_sent(sent) for sent in sents]
+                for para in content.split('\n'):
+                    sents += sentence_split(para, self.lang)
+            # sents = [self.process_sent(sent) for sent in sents]
             sents = [sent for sent in sents if self.check_sent(sent)]
             for sent in sents:
                 self.output_corpus.add_sent(sent)
