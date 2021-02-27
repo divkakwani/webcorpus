@@ -20,13 +20,14 @@ class SentCorpus:
         self.storage = Storage(self, mode='same', format='plain')
         self.archiver = Archiver(self)
 
-    def __getattr__(self, attrname):
-        if attrname in dir(self):
-            return getattr(self, attrname)
-        elif attrname in dir(self.storage):
-            return getattr(self.storage, attrname)
-        else:
-            return getattr(self.archiver, attrname)
+    def all_instances(self):
+        return self.storage.all_instances()
+
+    def add_sent(self, sent):
+        return self.storage.add_instance(sent)
+
+    def flush(self):
+        self.storage.flush()
 
 
 class NewsCorpus:
@@ -43,10 +44,8 @@ class NewsCorpus:
         fname = sha1(iden.encode('utf-8')).hexdigest()
         return os.path.join(source, fname)
 
-    def __getattr__(self, attrname):
-        if attrname in dir(self):
-            return getattr(self, attrname)
-        elif attrname in dir(self.storage):
-            return getattr(self.storage, attrname)
-        else:
-            return getattr(self.archiver, attrname)
+    def all_instances(self):
+        return self.storage.all_instances()
+
+    def add_instance(self, instance):
+        return self.storage.add_instance(instance)
