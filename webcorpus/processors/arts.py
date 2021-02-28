@@ -1,5 +1,5 @@
 """
-Copyright © Divyanshu Kakwani 2019, all rights reserved.
+Copyright © Divyanshu Kakwani 2021, all rights reserved.
 
 Create a article corpus from html corpus
 
@@ -64,11 +64,9 @@ class ArtsProcessor:
         except Exception as e:
             pass
 
-    def gen_dataset(self):
+    def run(self):
         proc_pool = mp.Pool(mp.cpu_count())
-        # for _ in tqdm(proc_pool.imap_unordered(self.process_item, self.input_corpus.instances(), 32)):
-        #     pass
-        for item in tqdm(self.input_corpus.instances()):
-            self.process_item(item)
+        for _ in tqdm(proc_pool.imap_unordered(self.process_item, self.input_corpus.instances(), 32)):
+            pass
         proc_pool.terminate()
         proc_pool.join()
