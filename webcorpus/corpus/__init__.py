@@ -46,11 +46,11 @@ class CsvEncoder:
 
 def get_encoder(scheme):
     if scheme == 'plain':
-        return PlainEncoder
+        return PlainEncoder()
     elif scheme == 'json':
-        return JsonEncoder
+        return JsonEncoder()
     elif scheme == 'csv':
-        return CsvEncoder
+        return CsvEncoder()
 
 
 class FileCorpus:
