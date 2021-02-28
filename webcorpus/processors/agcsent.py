@@ -25,7 +25,8 @@ class AgcSent:
     def __init__(self, lang, input_path, output_path):
         self.lang = lang
         self.script = code2script(lang)
-        self.input_corpus = FileCorpus(lang, input_path, encoding='csv', header=True)
+        # TODO: add header as an argument to AgcSent and other classes
+        self.input_corpus = FileCorpus(lang, input_path, encoding='csv', header=False)
         self.output_corpus = FileCorpus(lang, output_path)
         normalizer_factory = IndicNormalizerFactory()
         self.normalizer = normalizer_factory.get_normalizer(self.lang)
@@ -44,7 +45,9 @@ class AgcSent:
         return False
 
     def run(self):
-        for _, content in tqdm(self.input_corpus.all_instances()):
+        for content in tqdm(self.input_corpus.all_instances()):
+            # remove category from content
+            content = ','.join(content.split(',')[1:])
             content = content.replace(u'\xa0', u' ')
             content = content.replace('\\n', '\n')
             sents = []
