@@ -43,10 +43,8 @@ class ArtsProcessor:
 
         return False
 
-    def process_item(self, tpl):
-        fpath, data = tpl
+    def process_item(self, html_page):
         try:
-            html_page = json.loads(data)
             from boilerpipe.extract import Extractor
             extractor = Extractor(extractor='ArticleExtractor',
                                   html=html_page['html'])
@@ -66,7 +64,7 @@ class ArtsProcessor:
 
     def run(self):
         proc_pool = mp.Pool(mp.cpu_count())
-        for _ in tqdm(proc_pool.imap_unordered(self.process_item, self.input_corpus.instances(), 32)):
+        for _ in tqdm(proc_pool.imap_unordered(self.process_item, self.input_corpus.all_instances(), 32)):
             pass
         proc_pool.terminate()
         proc_pool.join()
