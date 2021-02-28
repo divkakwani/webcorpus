@@ -10,7 +10,7 @@ import nltk
 
 from nltk.tokenize import sent_tokenize, word_tokenize
 from tqdm import tqdm
-from ..corpus import NewsCorpus, SentCorpus
+from ..corpus import NewsCorpus, FileCorpus
 from ..language.normalize import IndicNormalizerFactory
 from ..language.tokenize import trivial_tokenize
 from ..language.sentence_tokenize import sentence_split
@@ -78,5 +78,5 @@ class SentProcessor:
             # sents = [self.process_sent(sent) for sent in sents]
             sents = [sent for sent in sents if self.check_sent(sent)]
             for sent in sents:
-                self.output_corpus.add_sent(sent)
+                self.output_corpus.add_instance(sent)
         self.output_corpus.flush()
