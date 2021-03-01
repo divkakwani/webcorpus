@@ -7,26 +7,8 @@ Creates text classification dataset from a news article corpus
 import json
 
 from tqdm import tqdm
-from ..corpus import CatCorpus
+from ..corpus import NewsCorpus, FileCorpus
 
-
-
-class GenreProcessor:
-
-    def __init__(self, lang, input_path, output_path):
-        self.lang = lang
-        self.script = code2script(lang)
-        self.input_corpus = CatCorpus(input_path)
-        self.output_corpus = SentCorpus(output_path)
-        normalizer_factory = IndicNormalizerFactory()
-        self.normalizer = normalizer_factory.get_normalizer(self.lang)
-
-    def gen_dataset(self):
-        for cat, iden, payload in tqdm(self.input_corpus.files()):
-            article = json.loads(payload)
-            txt = ''
-            self.output_corpus.add_sents(sents)
-# TODO: use wor2word
 
 topic_synsets = {
     'entertainment': ['entertainment', 'cinema', 'bollywood', 'film', 'tv',
@@ -34,9 +16,9 @@ topic_synsets = {
                       'manoranjan-news'],
     'politics': ['politics', 'election'],
     'business':  ['business', 'business-news', 'kannada-business-news',
-                  'stockmarket', 'money'],
+                  'stockmarket', 'money', 'business-economy'],
     'crime': ['crime', 'crime-news'],
-    'technology': ['technology', 'tech', 'gadgets'],
+    'technology': ['technology', 'tech', 'gadgets', 'science-technology'],
     'astrology':  ['astrology', 'astro', 'astro-news', 'astrology-news',
                    'horoscope'],
     'sports':   ['sports', 'cricket', 'football', 'krida', 'krida-news',
@@ -46,37 +28,26 @@ topic_synsets = {
     'auto': ['auto', 'automobile'],
     'agriculture': ['agriculture', 'agro']
 }
-min_len = 200
 
+class TopicProcessor:
 
-def gen_dataset(*args, **kwargs):
-    """
-    """
-    topics = kwargs.get('topics', None)
-    max_samples = kwargs.get('max_samples', 20000)
-    input_path = kwargs.get['input_path']
-    output_path = kwargs.get['output_path']
+    def __init__(self, lang, input_path, output_path):
+        self.lang = lang
+        self.input_corpus = NewsCorpus(lang, input_path)
+        self.output_corpus = FileCorpus(lang, output_path, encoding='csv')
 
-    if not topics:
-        topics = topic_synsets.keys()
-
-    samples_seen = {t: 0 for t in topics}
-    in_corpus = CatCorpus(input_path)
-    out_corpus = CatCorpus(output_path)
-
-    for content in tqdm(in_corpus.files()):
-        article = json.loads(content)
-
-        # find article's topic
-        topic = None
-        for tr in topic_synsets:
-            for tv in topic_synsets[tr]:
-                if '/{}/'.format(tv) in article['url']:
-                    topic = tr
-                    break
-
-        if topic:
-            txt = article['content']
-            if len(txt) >= min_len and samples_seen[topic] < max_samples:
-                samples_seen[topic] += 1
-                out_corpus.add_file(topic, samples_seen[topic], txt)
+    def run(self):
+        samples_seen = {t: 0 for t in topics}
+        min_len, max_samples = 200, 20000
+        for article in tqdm(self.input_corpus.all_instances()):
+            # find article's topic
+            topic = None
+            for tr in topic_synsets:
+                for tv in topic_synsets[tr]:
+                    if '/{}/'.format(tv) in article['url']:
+                        topic = tr
+                        break
+            if topic:
+                txt = article['body']
+                if len(txt) >= min_len and samples_seen[topic] < max_samples:
+                    self.output_corpus.add_instance([topic, txt])
