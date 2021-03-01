@@ -37,7 +37,7 @@ class TopicProcessor:
         self.output_corpus = FileCorpus(lang, output_path, encoding='csv')
 
     def run(self):
-        samples_seen = {t: 0 for t in topics}
+        samples_seen = {t: 0 for t in topic_synsets}
         min_len, max_samples = 200, 20000
         for article in tqdm(self.input_corpus.all_instances()):
             # find article's topic
