@@ -36,20 +36,18 @@ class ArtsProcessor:
 
     def clean_article(self, art):
         # remove unneccesary fields in the title like newspaper name etc.
-        titles = art['title'].split('|')
-        art['title'] = max(titles, key=len)
+        if art['title']:
+            titles = art['title'].split('|')
+            art['title'] = max(titles, key=len)
+            # remove title from the body content
+            # boilerpipe tends to include the title also in the body content
+            pattern = regex.compile('({}){{e<=5}}'.format(regex.escape(art['title'])))
+            match = pattern.search(art['body'])
+            if match:
+                end_idx = match.span()[1]
+                art['body'] = art['body'][end_idx:]
+            art['title'] = self._strip_txt(art['title'])
 
-        # remove title from the body content
-        # boilerpipe tends to include the title also in the body content
-        pattern = regex.compile('({}){{e<=5}}'.format(regex.escape(art['title'])))
-        match = pattern.search(art['body'])
-        if match:
-            end_idx = match.span()[1]
-            art['body'] = art['body'][end_idx:]
-            art['body'] = self._strip_txt(art['body'])
-            art = self.clean_article(art)
-        
-        art['title'] = self._strip_txt(art['title'])
         art['body'] = self._strip_txt(art['body'])
 
         return art
