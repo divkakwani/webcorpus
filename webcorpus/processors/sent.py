@@ -26,7 +26,7 @@ class SentProcessor:
         self.lang = lang
         self.script = code2script(lang)
         self.input_corpus = NewsCorpus(lang, input_path)
-        self.output_corpus = SentCorpus(lang, output_path)
+        self.output_corpus = FileCorpus(lang, output_path)
         normalizer_factory = IndicNormalizerFactory()
         self.normalizer = normalizer_factory.get_normalizer(self.lang)
 
@@ -63,8 +63,8 @@ class SentProcessor:
             return True
         return False
 
-    def gen_dataset(self):
-        for fpath, article in tqdm(self.input_corpus.all_instances()):
+    def run(self):
+        for article in tqdm(self.input_corpus.all_instances()):
             # article = json.loads(payload)
             content = article['body']
             content = content.replace(u'\xa0', u' ')
