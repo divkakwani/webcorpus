@@ -24,7 +24,7 @@ class DatedCorpus(DirCorpus):
         date = datetime.strptime(instance['publish_date'],'%Y-%m-%d')
         url = instance['url']
         fname = sha1(url.encode('utf-8')).hexdigest()
-        return os.path.join(date.year, date.month, date.day, fname)
+        return os.path.join(str(date.year), str(date.month), str(date.day), fname)
 
 
 class DatedProcessor:
@@ -48,6 +48,10 @@ class DatedProcessor:
             return False
 
         chr_valid = [in_script(c, self.script) for c in text]
+
+        if sum(chr_valid) < 0.7*txt_sz:
+            return False
+
         subarr_sum = chr_valid.copy()
         for cur_sz in range(2, win_sz):
             subarr_sum = [
@@ -83,6 +87,7 @@ class DatedProcessor:
             art = {
                 'title': title,
                 'body': body,
+                'lang': self.lang,
                 'source': html_page['source'],
                 'url': html_page['url'],
                 'crawl_date': html_page['timestamp'],
@@ -102,7 +107,7 @@ class DatedProcessor:
                         sents += sentence_split(para, self.lang)
                     sents = [sent for sent in sents if self.check_sent(sent)]
                 art['sentences'] = sents
-                if len(sents) > 3:
+                if len(sents) >= 3:
                     self.output_corpus.add_instance(art)
         except Exception as e:
             pass
