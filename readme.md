@@ -2,14 +2,15 @@
 
 ![pypi badge](https://badge.fury.io/py/webcorpus.svg)
 
-A tool to generate large textual corpora by crawling the web.
+Generate large-scale NLP corpora from web crawls. This project has been used to generate [IndicCorp](https://indicnlp.ai4bharat.org/corpora/), a large-scale corpora for Indic languages.
+
 
 ### Installation
 
+Install it using pip:
+
 ```bash
-git clone https://github.com/divkakwani/webcorpus
-cd webcorpus
-sudo pip3 install .
+pip3 install webcorpus
 ```
 
 ### Usage
@@ -24,6 +25,7 @@ sudo pip3 install .
   scrapy-deploy
   ```
 
+
 * Start a crawl
 
   ```bash
@@ -35,7 +37,10 @@ sudo pip3 install .
 ###### Processing corpus
 
 
-
+  ```bash
+  # all paths must be absolute paths
+  python3 scripts/process.py --operation <operation code> --lang <lang code> --input <input path> --output <output path>
+  ```
 
 
 
@@ -44,11 +49,6 @@ sudo pip3 install .
 * supports crawling and processing of 17 Indian languages
 * designed to run in distributed fashion
 
-
-
-### Crawled Datasets
-
-Checkout the [docs](https://github.com/divkakwani/webcorpus/tree/master/docs) directory to download the crawled datasets and other resources derived from the datasets.
 
 
 
