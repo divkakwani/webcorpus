@@ -14,10 +14,10 @@ from webcorpus.processors.sent import SentProcessor
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument("operation", type=str)
-parser.add_argument("lang", type=str)
-parser.add_argument("input", type=str)
-parser.add_argument("output", type=str)
+parser.add_argument("--operation", type=str)
+parser.add_argument("--lang", type=str)
+parser.add_argument("--input", type=str)
+parser.add_argument("--output", type=str)
 
 args = parser.parse_args()
 
