@@ -17,7 +17,7 @@ from ..language.sentence_tokenize import sentence_split
 from ..language import code2script, in_script
 
 
-# nltk.download('punkt')
+nltk.download('punkt')
 
 
 class SentProcessor:
