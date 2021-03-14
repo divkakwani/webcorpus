@@ -80,7 +80,7 @@ setup(
     # For an analysis of "install_requires" vs pip's requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
     install_requires=['morfessor', 'boilerpipe3', 'tldextract', 'click',
-                      'scrapy', 'tqdm', 'pandas'],  # Optional
+                      'scrapy', 'tqdm', 'pandas', 'scrapyd', 'nltk', 'scrapyd-client'],  # Optional
 
     # If there are data files included in your packages that need to be
     # installed, specify them here.

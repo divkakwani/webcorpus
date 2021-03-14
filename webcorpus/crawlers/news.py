@@ -26,7 +26,6 @@ from datetime import datetime
 from twisted.internet import task
 from ..corpus import NewsCorpus
 from ..language import code2script
-# from ..cloud.gcp import CloudStore
 from datetime import date, timedelta
 
 
@@ -48,9 +47,6 @@ class BaseNewsSpider(scrapy.Spider):
                                comments=True, links=False, meta=False,
                                page_structure=False, embedded=True,
                                frames=True, forms=False, annoying_tags=False)
-        # self.store = CloudStore(bucketstore_key='keys/ai4b-gcp-key.json',
-        #                         firestore_key='keys/ai4b-gcp-key.json',
-        #                         bucket_name='nlp-corpora--ai4bharat')
 
         os.makedirs(self.html_path, exist_ok=True)
 
@@ -62,8 +58,7 @@ class BaseNewsSpider(scrapy.Spider):
 
         self.allowed_domains = [domain]
 
-        corpus_path = os.path.join(self.html_path, self.name)
-        self.html_corpus = NewsCorpus(self.lang, corpus_path)
+        self.html_corpus = NewsCorpus(self.lang, self.html_path)
 
         super().__init__(self.name)
 

@@ -7,24 +7,24 @@ Generate large-scale NLP corpora from web crawls. This project has been used to 
 
 ### Installation
 
-Install it using pip:
+Make sure you have java installed on your system. Next, go to the project root directory and install it using pip:
 
 ```bash
-pip3 install webcorpus
+pip3 install .
 ```
 
 ### Usage
 
 ###### Running Crawls
 
-* Start scrapyd server from project directory and deploy the spiders:
+* Next, create the log directory where all the logs will be dumped. Now, start the scrapyd server from project directory and deploy the spiders:
 
   ```bash
   # current directory is webcorpus
+  mkdir logs
   sudo scrapyd
-  scrapy-deploy
+  scrapyd-deploy
   ```
-
 
 * Start a crawl
 
@@ -33,6 +33,11 @@ pip3 install webcorpus
   curl http://localhost/schedule.json -d project=webcorpus -d spider=recursive-spider -d html_path=<html_path> -d source_name=<source_name> -d home_url=<home_url> -d lang=<iso code> -d log_path=<path_to_webcorpus>/logs
   
   ```
+
+* Monitor crawls:
+
+You can monitor the jobs at the dashboard available at `http://<ip address>`. If using GCP, make sure to enable HTTP traffic on your VM.
+
 
 ###### Processing corpus
 
