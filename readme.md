@@ -15,9 +15,9 @@ pip3 install .
 
 ### Usage
 
-###### Running Crawls
+##### Running Crawls
 
-* Next, create the log directory where all the logs will be dumped. Now, start the scrapyd server from project directory and deploy the spiders:
+* First, create a log directory where all the logs will be dumped. Next, start the scrapyd server from project directory and deploy the spiders:
 
   ```bash
   # current directory is webcorpus
@@ -34,12 +34,10 @@ pip3 install .
   
   ```
 
-* Monitor crawls:
-
-You can monitor the jobs at the dashboard available at `http://<ip address>`. If using GCP, make sure to enable HTTP traffic on your VM.
+* Monitor crawls: You can monitor the jobs at the dashboard available at `http://<ip address>`. If using GCP, make sure to enable HTTP traffic on your VM.
 
 
-###### Processing corpus
+##### Processing corpus
 
 
   ```bash
