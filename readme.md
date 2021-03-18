@@ -10,7 +10,7 @@ Generate large-scale NLP corpora from web crawls. This project has been used to 
 Make sure you have java installed on your system. Next, go to the project root directory and install it using pip:
 
 ```bash
-pip3 install .
+sudo pip3 install .
 ```
 
 ### Usage
@@ -45,6 +45,7 @@ pip3 install .
   python3 scripts/process.py --operation <operation code> --lang <lang code> --input <input path> --output <output path>
   ```
 
+* Processing operations supported: `extract_arts`, `extract_sents`, `extract_genres`
 
 
 ### Features
