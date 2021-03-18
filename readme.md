@@ -24,7 +24,7 @@ To build the dataset, we first need to crawl the web and then process the crawls
 To start crawling websites, you first need to start the webcorpus crawling server:
 
 ````bash
-webcorpus start
+sudo webcorpus start
 ````
 
 Once the server has started, you can start crawls using the following command.

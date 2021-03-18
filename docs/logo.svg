@@ -27,8 +27,7 @@
 				}
 			</style>
 			<div class="container">
-				<h1>webcorpus</h1>
-				<p>Auto-build NLP Datasets from Web</p>
+				<h1>webcorpus</h1> Auto-build NLP Datasets from Web
 			</div>
 		</div>
 	</foreignObject>
