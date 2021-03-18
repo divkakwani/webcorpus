@@ -16,7 +16,7 @@ with open(path.join(here, 'readme.md'), encoding='utf-8') as f:
 
 setup(
     name='webcorpus',
-    version='1.0',
+    version='0.2',
 
     description='Generate large textual corpora for almost any language by crawling the web',
     long_description=long_description,
@@ -37,7 +37,7 @@ setup(
         'Intended Audience :: Developers',
 
         # Pick your license as you wish
-        'License :: OSI Approved :: MIT License',
+        'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
 
         # Specify the Python versions you support here. In particular, ensure
         # that you indicate whether you support Python 2, Python 3 or both.
@@ -80,7 +80,8 @@ setup(
     # For an analysis of "install_requires" vs pip's requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
     install_requires=['morfessor', 'boilerpipe3', 'tldextract', 'click',
-                      'scrapy', 'tqdm', 'pandas', 'scrapyd', 'nltk', 'scrapyd-client'],  # Optional
+                      'scrapy', 'tqdm', 'pandas', 'scrapyd', 'nltk',
+                      'scrapyd-client', 'htmldate'],
 
     # If there are data files included in your packages that need to be
     # installed, specify them here.

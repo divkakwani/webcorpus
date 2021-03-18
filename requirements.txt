@@ -10,3 +10,4 @@ scrapyd-client
 firbase_admin
 google_cloud_storage
 google
+htmldate

@@ -1,66 +1,52 @@
-# webcorpus
+<img src="docs/logo.svg"/>
 
-![pypi badge](https://badge.fury.io/py/webcorpus.svg)
+![pypi badge](https://badge.fury.io/py/webcorpus.svg)  ![GPL License](https://img.shields.io/pypi/l/webcorpus) 
 
-Generate large-scale NLP corpora from web crawls. This project has been used to generate [IndicCorp](https://indicnlp.ai4bharat.org/corpora/), a large-scale corpora for Indic languages.
+webcorpus is an end-to-end tool used to crawl and generate datasets from the crawled data. It can be used to generate monolingual corpora and has various processors to create labelled datasets automatically. webcorpus is particulary suited for low-resource languages which need automated methods for creating large-scale datasets.
+
+This project has been used to generate [IndicCorp](https://indicnlp.ai4bharat.org/corpora/), a large-scale corpora for Indic languages, and some datasets for [IndicGLUE](https://indicnlp.ai4bharat.org/indic-glue/).
 
 
 ### Installation
 
-Make sure you have java installed on your system. Next, go to the project root directory and install it using pip:
+Make sure you have java installed on your system. Next, install it using pip:
 
 ```bash
-sudo pip3 install .
+sudo pip3 install webcorpus
 ```
 
 ### Usage
 
-##### Running Crawls
+To build the dataset, we first need to crawl the web and then process the crawls to create the final dataset.
 
-* First, create a log directory where all the logs will be dumped. Next, start the scrapyd server from project directory and deploy the spiders:
+##### Step 1: Crawling Sources
+
+To start crawling websites, you first need to start the webcorpus crawling server:
+
+````bash
+webcorpus start
+````
+
+Once the server has started, you can start crawls using the following command.
+
+```bash
+webcorpus crawl --path <path> --name <name> --url <url> --log <path> [--host <ip address>]
+```
+
+You can see the status of the crawls anytime by executing:
+
+```bash
+webcorpus log [--host <ip address>]
+```
+
+The last two steps can also been remotely, which can be useful in distributed mode where you are running multiple webcorpus servers.
+
+##### Step 2: Processing Corpus
+
 
   ```bash
-  # current directory is webcorpus
-  mkdir logs
-  sudo scrapyd
-  scrapyd-deploy
+webcorpus process --operation <operation code> --lang <lang code> --input <input path> --output <output path>
   ```
 
-* Start a crawl
-
-  ```bash
-  # all paths must be absolute paths
-  curl http://localhost/schedule.json -d project=webcorpus -d spider=recursive-spider -d html_path=<html_path> -d source_name=<source_name> -d home_url=<home_url> -d lang=<iso code> -d log_path=<path_to_webcorpus>/logs
-  
-  ```
-
-* Monitor crawls: You can monitor the jobs at the dashboard available at `http://<ip address>`. If using GCP, make sure to enable HTTP traffic on your VM.
-
-
-##### Processing corpus
-
-
-  ```bash
-  # all paths must be absolute paths
-  python3 scripts/process.py --operation <operation code> --lang <lang code> --input <input path> --output <output path>
-  ```
-
-* Processing operations supported: `extract_arts`, `extract_sents`, `extract_genres`
-
-
-### Features
-
-* supports crawling and processing of 17 Indian languages
-* designed to run in distributed fashion
-
-
-
-
-### Similar Projects
-
-* [news-please](https://github.com/fhamborg/news-please)
-* [newspaper3k](https://github.com/codelucas/newspaper)
-* [lazynlp](https://github.com/chiphuyen/lazynlp)
-
-
+Currently, the following processing operations are supported: `extract_arts`, `extract_sents`, `extract_genres`, `archive`.
 
