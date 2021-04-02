@@ -42,21 +42,25 @@ class ArtsProcessor:
             return True
 
         return False
+    
+    def extract_article(self, html_page):
+        from boilerpipe.extract import Extractor
+        extractor = Extractor(extractor='ArticleExtractor',
+                              html=html_page['html'])
+        body = str(extractor.getText())
+        title = str(extractor.source.getTitle())
+        art = {
+            'title': title,
+            'body': body,
+            'source': html_page['source'],
+            'url': html_page['url'],
+            'timestamp': html_page['timestamp']
+         }
+         return art
 
     def process_item(self, html_page):
         try:
-            from boilerpipe.extract import Extractor
-            extractor = Extractor(extractor='ArticleExtractor',
-                                  html=html_page['html'])
-            body = str(extractor.getText())
-            title = str(extractor.source.getTitle())
-            art = {
-                'title': title,
-                'body': body,
-                'source': html_page['source'],
-                'url': html_page['url'],
-                'timestamp': html_page['timestamp']
-            }
+            art = self.extact_article(html_page)
             if self.art_ok(art['body']):
                 self.output_corpus.add_instance(art)
         except Exception as e:
